@@ -22,8 +22,6 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 15% 5%, rgba(56, 189, 248, 0.18), transparent 28rem),
-    radial-gradient(circle at 85% 18%, rgba(167, 139, 250, 0.16), transparent 30rem),
     linear-gradient(180deg, #05070b 0%, #070a10 48%, #05070b 100%);
   color: var(--text);
   font-family:
@@ -122,7 +120,7 @@ a {
   align-items: stretch;
   display: grid;
   gap: 24px;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
   min-height: 520px;
   padding: 54px 0 34px;
 }
@@ -196,6 +194,34 @@ h1 {
   margin-top: 18px;
 }
 
+.hero-stats {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 34px 0 0;
+  max-width: 620px;
+  padding-top: 22px;
+  width: 100%;
+}
+
+.hero-stats div {
+  min-width: 0;
+}
+
+.hero-stats dt {
+  color: var(--text);
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.hero-stats dd {
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin: 8px 0 0;
+}
+
 .button {
   border-radius: 8px;
   display: inline-flex;
@@ -231,7 +257,28 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 30px;
+  padding: 0;
+}
+
+.visual-panel {
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.visual-panel img {
+  aspect-ratio: 16 / 11;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+}
+
+.visual-panel-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px;
 }
 
 .panel-label {
@@ -285,6 +332,12 @@ h1 {
   margin-bottom: 0;
 }
 
+.section-heading a {
+  color: var(--blue);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .news-grid {
   display: grid;
   gap: 16px;
@@ -317,6 +370,17 @@ h1 {
 .project-card p {
   line-height: 1.6;
   margin-bottom: 0;
+}
+
+.impact-pill {
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 8px;
+  color: #bae6fd;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-top: 22px;
+  padding: 8px 10px;
 }
 
 .sidebar {
@@ -625,6 +689,13 @@ tbody tr:last-child td {
   margin-bottom: 12px;
 }
 
+.package-card strong {
+  color: var(--green);
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
+
 .package-card p,
 .text-panel p,
 .cta-panel p {
@@ -671,6 +742,10 @@ tbody tr:last-child td {
     min-height: auto;
   }
 
+  .visual-panel {
+    min-height: auto;
+  }
+
   .mover-grid,
   .project-grid,
   .package-grid,
@@ -700,7 +775,16 @@ tbody tr:last-child td {
   }
 
   h1 {
-    font-size: 3rem;
+    font-size: 2.7rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .news-grid,

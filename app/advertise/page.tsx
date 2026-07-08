@@ -1,24 +1,6 @@
 import Link from "next/link";
 import PageHero from "../../components/PageHero";
-
-const packages = [
-  {
-    name: "Banner Ads",
-    description: "High-visibility placements across homepage, category pages, and market pages.",
-  },
-  {
-    name: "Sponsored Articles",
-    description: "Clearly labeled partner articles written for crypto-native readers.",
-  },
-  {
-    name: "Featured Project Listings",
-    description: "Premium visibility inside rankings and project discovery sections.",
-  },
-  {
-    name: "Newsletter Sponsorship",
-    description: "Dedicated brand placement in future ChainBrief email briefings.",
-  },
-];
+import { sponsorPackages } from "../../lib/siteData";
 
 export default function AdvertisePage() {
   return (
@@ -30,9 +12,10 @@ export default function AdvertisePage() {
       />
 
       <section className="package-grid">
-        {packages.map((item) => (
+        {sponsorPackages.map((item) => (
           <article className="package-card" key={item.name}>
             <h2>{item.name}</h2>
+            <strong>{item.price}</strong>
             <p>{item.description}</p>
           </article>
         ))}

@@ -4,9 +4,28 @@ import Footer from "../components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ChainBrief - Crypto News, Markets & Project Rankings",
+  metadataBase: new URL("https://chainbrief.example"),
+  title: {
+    default: "ChainBrief - Crypto News, Markets & Project Rankings",
+    template: "%s | ChainBrief",
+  },
   description:
     "ChainBrief tracks crypto news, market signals, Web3 trends, and emerging digital asset projects.",
+  keywords: [
+    "crypto news",
+    "Bitcoin",
+    "Ethereum",
+    "DeFi",
+    "Web3",
+    "crypto markets",
+    "project rankings",
+  ],
+  openGraph: {
+    title: "ChainBrief - Crypto News, Markets & Project Rankings",
+    description:
+      "Fast context on crypto markets, Web3 trends, and emerging digital asset projects.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
 };
 
 export default function RootLayout({
