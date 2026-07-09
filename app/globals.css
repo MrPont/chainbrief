@@ -1328,6 +1328,84 @@ tbody tr:last-child td {
   font-size: 2rem;
 }
 
+.admin-queue-card,
+.admin-filter-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.12), transparent 42%),
+    rgba(11, 16, 24, 0.82);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  margin-bottom: 18px;
+  padding: clamp(20px, 4vw, 28px);
+}
+
+.admin-queue-card {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.admin-queue-card h2,
+.admin-queue-card p {
+  margin: 0;
+}
+
+.admin-queue-card p:not(.eyebrow) {
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.admin-filter-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-filter-chips,
+.admin-search-form {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-filter-chip {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 9px 13px;
+}
+
+.admin-filter-chip.active,
+.admin-filter-chip:hover {
+  border-color: rgba(56, 189, 248, 0.46);
+  color: var(--blue);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.admin-search-form label {
+  color: var(--text);
+  display: grid;
+  flex: 1 1 220px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  gap: 8px;
+}
+
+.admin-search-form input,
+.admin-search-form select {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 14px;
+  background: rgba(5, 7, 11, 0.78);
+}
+
 .admin-table-card {
   overflow-x: auto;
 }
@@ -1354,6 +1432,12 @@ tbody tr:last-child td {
   gap: 12px;
 }
 
+.admin-table-actions.article-actions {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  min-width: 220px;
+}
+
 .admin-table-actions a,
 .admin-table-actions button {
   border: 0;
@@ -1367,6 +1451,16 @@ tbody tr:last-child td {
 
 .admin-table-actions button {
   color: var(--red);
+}
+
+.admin-table-actions button.admin-status-action {
+  color: var(--blue);
+}
+
+.admin-table-actions button:disabled,
+.button.disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .admin-muted-line {
@@ -1420,6 +1514,19 @@ tbody tr:last-child td {
 .status-sponsored {
   border-color: rgba(45, 212, 191, 0.32);
   color: var(--teal);
+}
+
+.admin-pagination {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.admin-pagination span:not(.button) {
+  color: var(--muted);
+  font-weight: 800;
 }
 
 .admin-form-panel {

@@ -368,7 +368,7 @@ export async function fetchArticles() {
   const { data, error } = await supabaseAdmin
     .from("articles")
     .select(
-      "id,title,slug,status,category,is_sponsored,is_imported,source_name,original_source_url,published_at,created_at,updated_at",
+      "id,title,slug,status,category,is_sponsored,is_imported,source_name,original_source_url,published_at,imported_at,created_at,updated_at",
     )
     .order("created_at", { ascending: false });
 
@@ -377,6 +377,47 @@ export async function fetchArticles() {
   }
 
   return data || [];
+}
+
+export async function updateArticleStatus(formData: FormData) {
+  await requireAdmin();
+
+  const id = getString(formData, "id");
+  const status = getString(formData, "status") as ArticleStatus;
+  const returnTo = getString(formData, "return_to");
+  const safeReturnTo = returnTo.startsWith("/admin/articles") ? returnTo : "/admin/articles";
+
+  if (!id || !["draft", "pending", "published", "rejected"].includes(status)) {
+    redirect(`${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=invalid-status`);
+  }
+
+  const payload: {
+    status: ArticleStatus;
+    updated_at: string;
+    published_at?: string;
+  } = {
+    status,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (status === "published") {
+    payload.published_at = new Date().toISOString();
+  }
+
+  const { error } = await supabaseAdmin.from("articles").update(payload).eq("id", id);
+
+  if (error) {
+    redirect(
+      `${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=${encodeURIComponent(
+        error.message,
+      )}`,
+    );
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/articles");
+  revalidatePath("/news");
+  redirect(`${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}statusUpdated=1`);
 }
 
 export async function fetchBannerAds() {
@@ -731,19 +772,25 @@ export async function deleteArticle(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
+  const returnTo = getString(formData, "return_to");
+  const safeReturnTo = returnTo.startsWith("/admin/articles") ? returnTo : "/admin/articles";
 
   if (!id) {
-    redirect("/admin/articles?error=missing-id");
+    redirect(`${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=missing-id`);
   }
 
   const { error } = await supabaseAdmin.from("articles").delete().eq("id", id);
 
   if (error) {
-    redirect(`/admin/articles?error=${encodeURIComponent(error.message)}`);
+    redirect(
+      `${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=${encodeURIComponent(
+        error.message,
+      )}`,
+    );
   }
 
   revalidatePath("/admin/articles");
-  redirect("/admin/articles?deleted=1");
+  redirect(`${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}deleted=1`);
 }
 
 export async function deleteBannerAd(formData: FormData) {
