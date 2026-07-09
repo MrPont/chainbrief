@@ -67,7 +67,7 @@ export default async function ImportNewsPage({ searchParams }: ImportNewsPagePro
           <code>/api/cron/import-news</code>
         </p>
         <p>
-          Automatic import is configured to run every 6 hours on Vercel.
+          Automatic import is configured to run once per day on Vercel Hobby.
           Imported articles remain pending until reviewed and published.
         </p>
       </section>

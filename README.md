@@ -117,13 +117,13 @@ Vercel Cron is configured in `vercel.json`:
   "crons": [
     {
       "path": "/api/cron/import-news",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
 ```
 
-Schedule: every 6 hours.
+Vercel Hobby supports daily cron only. Current schedule: daily at 09:00 UTC.
 
 Setup:
 
@@ -143,5 +143,7 @@ curl -H "Authorization: Bearer YOUR_SECRET" http://localhost:3000/api/cron/impor
 ```
 
 For systems that cannot set headers, the endpoint also accepts `?secret=YOUR_SECRET`, but the `Authorization` header is preferred. Public `/news` still only shows articles with `status = published`.
+
+Manual import is still available from `/admin/import`. More frequent import requires Vercel Pro or an external cron service.
 
 After deployment, check Vercel dashboard cron logs to confirm scheduled runs. Imported articles remain pending; public `/news` only shows published articles.
