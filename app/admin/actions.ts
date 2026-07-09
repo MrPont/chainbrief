@@ -8,6 +8,15 @@ import { supabaseAdmin } from "../../lib/supabaseAdmin";
 const ADMIN_COOKIE = "chainbrief_admin";
 
 type ArticleStatus = "draft" | "pending" | "published" | "rejected";
+type BannerPlacement =
+  | "header"
+  | "homepage_top"
+  | "homepage_mid"
+  | "article_inline"
+  | "article_sidebar"
+  | "sidebar"
+  | "footer"
+  | "leaderboard";
 
 type ArticlePayload = {
   title: string;
@@ -27,6 +36,29 @@ type ArticlePayload = {
   published_at: string | null;
   updated_at: string;
 };
+
+type BannerPayload = {
+  title: string;
+  advertiser_name: string | null;
+  image_url: string | null;
+  target_url: string | null;
+  placement: BannerPlacement;
+  is_active: boolean;
+  start_date: string | null;
+  end_date: string | null;
+  updated_at: string;
+};
+
+const bannerPlacements: BannerPlacement[] = [
+  "header",
+  "homepage_top",
+  "homepage_mid",
+  "article_inline",
+  "article_sidebar",
+  "sidebar",
+  "footer",
+  "leaderboard",
+];
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -72,6 +104,22 @@ function getArticlePayload(formData: FormData): ArticlePayload {
       normalizedStatus === "published"
         ? getNullableString(formData, "published_at") || new Date().toISOString()
         : getNullableString(formData, "published_at"),
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function getBannerPayload(formData: FormData): BannerPayload {
+  const placement = getString(formData, "placement") as BannerPlacement;
+
+  return {
+    title: getString(formData, "title"),
+    advertiser_name: getNullableString(formData, "advertiser_name"),
+    image_url: getNullableString(formData, "image_url"),
+    target_url: getNullableString(formData, "target_url"),
+    placement: bannerPlacements.includes(placement) ? placement : "homepage_top",
+    is_active: formData.get("is_active") === "on",
+    start_date: getNullableString(formData, "start_date"),
+    end_date: getNullableString(formData, "end_date"),
     updated_at: new Date().toISOString(),
   };
 }
@@ -130,6 +178,39 @@ export async function fetchArticles() {
   return data || [];
 }
 
+export async function fetchBannerAds() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("banner_ads")
+    .select(
+      "id,title,advertiser_name,image_url,target_url,placement,is_active,start_date,end_date,created_at,updated_at",
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function fetchBannerAdById(id: string) {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("banner_ads")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export async function fetchArticleById(id: string) {
   await requireAdmin();
 
@@ -168,6 +249,31 @@ export async function createArticle(formData: FormData) {
   redirect("/admin/articles?created=1");
 }
 
+export async function createBannerAd(formData: FormData) {
+  await requireAdmin();
+
+  const payload = {
+    ...getBannerPayload(formData),
+    created_at: new Date().toISOString(),
+  };
+
+  if (!payload.title || !payload.placement) {
+    redirect("/admin/banners/new?error=missing");
+  }
+
+  const { error } = await supabaseAdmin.from("banner_ads").insert(payload);
+
+  if (error) {
+    redirect(`/admin/banners/new?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/banners");
+  revalidatePath("/");
+  revalidatePath("/news");
+  redirect("/admin/banners?created=1");
+}
+
 export async function updateArticle(id: string, formData: FormData) {
   await requireAdmin();
 
@@ -188,6 +294,29 @@ export async function updateArticle(id: string, formData: FormData) {
   redirect(`/admin/articles/${id}?saved=1`);
 }
 
+export async function updateBannerAd(id: string, formData: FormData) {
+  await requireAdmin();
+
+  const payload = getBannerPayload(formData);
+
+  if (!payload.title || !payload.placement) {
+    redirect(`/admin/banners/${id}?error=missing`);
+  }
+
+  const { error } = await supabaseAdmin.from("banner_ads").update(payload).eq("id", id);
+
+  if (error) {
+    redirect(`/admin/banners/${id}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/banners");
+  revalidatePath(`/admin/banners/${id}`);
+  revalidatePath("/");
+  revalidatePath("/news");
+  redirect(`/admin/banners/${id}?saved=1`);
+}
+
 export async function deleteArticle(formData: FormData) {
   await requireAdmin();
 
@@ -205,4 +334,26 @@ export async function deleteArticle(formData: FormData) {
 
   revalidatePath("/admin/articles");
   redirect("/admin/articles?deleted=1");
+}
+
+export async function deleteBannerAd(formData: FormData) {
+  await requireAdmin();
+
+  const id = getString(formData, "id");
+
+  if (!id) {
+    redirect("/admin/banners?error=missing-id");
+  }
+
+  const { error } = await supabaseAdmin.from("banner_ads").delete().eq("id", id);
+
+  if (error) {
+    redirect(`/admin/banners?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/banners");
+  revalidatePath("/");
+  revalidatePath("/news");
+  redirect("/admin/banners?deleted=1");
 }

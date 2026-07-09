@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import BannerAd from "../components/BannerAd";
 import { latestNews, marketMovers, topProjects } from "../lib/siteData";
 
 export const metadata: Metadata = {
@@ -24,6 +25,8 @@ export const metadata: Metadata = {
     images: ["/chainbrief-market-intelligence.png"],
   },
 };
+
+export const dynamic = "force-dynamic";
 
 const projectBenefits = [
   {
@@ -60,9 +63,11 @@ const campaignChannels = [
 export default function Home() {
   return (
     <>
-      <section className="ad-banner top-banner" aria-label="Advertisement">
-        <span>Premium Banner Ad Placement</span>
-      </section>
+      <BannerAd
+        placement="homepage_top"
+        className="top-banner"
+        fallbackLabel="Premium Banner Ad Placement"
+      />
 
       <section className="hero-section">
         <div className="hero-content">
@@ -143,10 +148,12 @@ export default function Home() {
         </div>
 
         <aside className="sidebar">
-          <section className="ad-box" aria-label="Advertisement">
-            <span>Available placement</span>
-            <strong>300 x 250</strong>
-          </section>
+          <BannerAd
+            placement="sidebar"
+            variant="box"
+            fallbackLabel="Available placement"
+            fallbackSize="300 x 250"
+          />
           <section className="sponsored-card">
             <p className="eyebrow">Sponsored Article</p>
             <h2>How Infrastructure Teams Are Scaling Onchain Data Products</h2>
@@ -261,9 +268,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ad-banner bottom-banner" aria-label="Advertisement">
-        <span>Leaderboard Ad Placement</span>
-      </section>
+      <BannerAd
+        placement="leaderboard"
+        className="bottom-banner"
+        fallbackLabel="Leaderboard Ad Placement"
+      />
     </>
   );
 }

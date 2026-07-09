@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import AdminLogin from "../../AdminLogin";
 import AdminNav from "../../AdminNav";
-import ArticleForm from "../../ArticleForm";
-import { createArticle, isAdminAuthenticated } from "../../actions";
+import BannerForm from "../../BannerForm";
+import { createBannerAd, isAdminAuthenticated } from "../../actions";
 
 export const metadata: Metadata = {
-  title: "New Article",
+  title: "New Banner",
 };
 
-type NewArticlePageProps = {
+type NewBannerPageProps = {
   searchParams: Promise<{
     error?: string;
   }>;
 };
 
-export default async function NewArticlePage({ searchParams }: NewArticlePageProps) {
+export default async function NewBannerPage({ searchParams }: NewBannerPageProps) {
   const { error } = await searchParams;
 
   if (!(await isAdminAuthenticated())) {
@@ -26,14 +26,14 @@ export default async function NewArticlePage({ searchParams }: NewArticlePagePro
       <AdminNav />
       <section className="admin-page-heading">
         <p className="eyebrow">Create</p>
-        <h1>New Article</h1>
-        <p>Create a Supabase-backed article for the public news section.</p>
+        <h1>New Banner</h1>
+        <p>Create a Supabase-backed banner ad for public ChainBrief placements.</p>
       </section>
       {error === "missing" ? (
-        <p className="form-error">Title and slug are required.</p>
+        <p className="form-error">Title and placement are required.</p>
       ) : null}
       {error && error !== "missing" ? <p className="form-error">Error: {error}</p> : null}
-      <ArticleForm action={createArticle} submitLabel="Create Article" />
+      <BannerForm action={createBannerAd} submitLabel="Create Banner" />
     </>
   );
 }

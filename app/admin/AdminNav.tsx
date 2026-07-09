@@ -12,6 +12,8 @@ export default function AdminNav() {
         <Link href="/admin">Dashboard</Link>
         <Link href="/admin/articles">Articles</Link>
         <Link href="/admin/articles/new">New Article</Link>
+        <Link href="/admin/banners">Banners</Link>
+        <Link href="/admin/banners/new">New Banner</Link>
       </nav>
       <form action={logoutAdmin}>
         <button className="button button-secondary admin-logout" type="submit">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BannerAd from "../../../components/BannerAd";
 import {
   getPublicArticleBySlug,
   getRelatedPublicArticles,
@@ -58,9 +59,11 @@ function ArticleBody({ article }: { article: PublicArticle }) {
             <h2>{section.heading}</h2>
             <p>{section.body}</p>
             {index === 0 ? (
-              <aside className="ad-banner article-ad" aria-label="Advertisement">
-                <span>In-Article Banner Ad Placement</span>
-              </aside>
+              <BannerAd
+                placement="article_inline"
+                className="article-ad"
+                fallbackLabel="In-Article Banner Ad Placement"
+              />
             ) : null}
           </section>
         ))}
@@ -78,9 +81,11 @@ function ArticleBody({ article }: { article: PublicArticle }) {
         ) : (
           <p>{article.excerpt}</p>
         )}
-        <aside className="ad-banner article-ad" aria-label="Advertisement">
-          <span>In-Article Banner Ad Placement</span>
-        </aside>
+        <BannerAd
+          placement="article_inline"
+          className="article-ad"
+          fallbackLabel="In-Article Banner Ad Placement"
+        />
       </section>
     </>
   );
