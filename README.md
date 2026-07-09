@@ -108,7 +108,22 @@ Important: RSS import should only store attribution, title, source URL, original
 
 ## Automated RSS Import
 
-ChainBrief includes a cron-ready RSS import endpoint for future scheduled imports. It uses the same import logic as `/admin/import`, and imported articles remain `pending` until reviewed and published by an admin.
+ChainBrief includes a cron-ready RSS import endpoint for scheduled imports. It uses the same import logic as `/admin/import`, and imported articles remain `pending` until reviewed and published by an admin.
+
+Vercel Cron is configured in `vercel.json`:
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/import-news",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}
+```
+
+Schedule: every 6 hours.
 
 Setup:
 
@@ -128,3 +143,5 @@ curl -H "Authorization: Bearer YOUR_SECRET" http://localhost:3000/api/cron/impor
 ```
 
 For systems that cannot set headers, the endpoint also accepts `?secret=YOUR_SECRET`, but the `Authorization` header is preferred. Public `/news` still only shows articles with `status = published`.
+
+After deployment, check Vercel dashboard cron logs to confirm scheduled runs. Imported articles remain pending; public `/news` only shows published articles.

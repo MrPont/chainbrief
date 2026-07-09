@@ -66,7 +66,10 @@ export default async function ImportNewsPage({ searchParams }: ImportNewsPagePro
         <p>
           <code>/api/cron/import-news</code>
         </p>
-        <p>Imported news remains pending until reviewed and published.</p>
+        <p>
+          Automatic import is configured to run every 6 hours on Vercel.
+          Imported articles remain pending until reviewed and published.
+        </p>
       </section>
 
       <section className="admin-stat-grid">
