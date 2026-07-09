@@ -1,10 +1,9 @@
 "use server";
 
-import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Parser from "rss-parser";
+import { runRssImport, type RssImportResult } from "../../lib/rssImport";
 import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 const ADMIN_COOKIE = "chainbrief_admin";
@@ -84,12 +83,6 @@ type SourcePayload = {
   updated_at: string;
 };
 
-type ImportResult = {
-  imported: number;
-  skipped: number;
-  errors: string[];
-};
-
 const bannerPlacements: BannerPlacement[] = [
   "header",
   "homepage_top",
@@ -100,8 +93,6 @@ const bannerPlacements: BannerPlacement[] = [
   "footer",
   "leaderboard",
 ];
-
-const rssParser = new Parser();
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -235,94 +226,6 @@ function getSourcePayload(formData: FormData): SourcePayload {
     is_active: formData.get("is_active") === "on",
     updated_at: new Date().toISOString(),
   };
-}
-
-function cleanExcerpt(value?: string) {
-  if (!value) {
-    return null;
-  }
-
-  const text = value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (!text) {
-    return null;
-  }
-
-  return text.length > 320 ? `${text.slice(0, 317)}...` : text;
-}
-
-function normalizeDate(value?: string) {
-  if (!value) {
-    return null;
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return date.toISOString();
-}
-
-async function articleExistsByImportKeys(originalSourceUrl: string, externalId: string | null) {
-  const byUrl = await supabaseAdmin
-    .from("articles")
-    .select("id")
-    .eq("original_source_url", originalSourceUrl)
-    .maybeSingle();
-
-  if (byUrl.error) {
-    throw new Error(byUrl.error.message);
-  }
-
-  if (byUrl.data) {
-    return true;
-  }
-
-  if (!externalId) {
-    return false;
-  }
-
-  const byExternalId = await supabaseAdmin
-    .from("articles")
-    .select("id")
-    .eq("external_id", externalId)
-    .maybeSingle();
-
-  if (byExternalId.error) {
-    throw new Error(byExternalId.error.message);
-  }
-
-  return Boolean(byExternalId.data);
-}
-
-async function makeUniqueArticleSlug(title: string) {
-  const base = slugify(title) || "imported-news";
-  let candidate = base;
-
-  for (let index = 0; index < 8; index += 1) {
-    const { data, error } = await supabaseAdmin
-      .from("articles")
-      .select("id")
-      .eq("slug", candidate)
-      .maybeSingle();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data) {
-      return candidate;
-    }
-
-    candidate = `${base}-${index + 2}`;
-  }
-
-  return `${base}-${randomUUID().slice(0, 8)}`;
 }
 
 export async function isAdminAuthenticated() {
@@ -837,78 +740,10 @@ export async function deleteCryptoProject(formData: FormData) {
   redirect("/admin/projects?deleted=1");
 }
 
-export async function importLatestNews(): Promise<ImportResult> {
+export async function importLatestNews(): Promise<RssImportResult> {
   await requireAdmin();
 
-  const sources = await fetchActiveSources();
-  const result: ImportResult = {
-    imported: 0,
-    skipped: 0,
-    errors: [],
-  };
-
-  for (const source of sources) {
-    if (!source.feed_url) {
-      result.skipped += 1;
-      continue;
-    }
-
-    try {
-      const feed = await rssParser.parseURL(source.feed_url);
-      const items = feed.items.slice(0, 20);
-
-      for (const item of items) {
-        const title = item.title?.trim();
-        const originalSourceUrl = item.link?.trim();
-
-        if (!title || !originalSourceUrl) {
-          result.skipped += 1;
-          continue;
-        }
-
-        const externalId = item.guid || item.id || originalSourceUrl;
-        const exists = await articleExistsByImportKeys(originalSourceUrl, externalId);
-
-        if (exists) {
-          result.skipped += 1;
-          continue;
-        }
-
-        const slug = await makeUniqueArticleSlug(title);
-        const publishedAt = normalizeDate(item.isoDate || item.pubDate);
-        const excerpt = cleanExcerpt(item.contentSnippet || item.description || item.content);
-        const now = new Date().toISOString();
-        const { error } = await supabaseAdmin.from("articles").insert({
-          title,
-          slug,
-          excerpt,
-          content: null,
-          category: source.category,
-          source_id: source.id,
-          source_name: source.name,
-          source_url: source.website_url,
-          original_source_url: originalSourceUrl,
-          status: "pending",
-          is_imported: true,
-          imported_at: now,
-          external_id: externalId,
-          published_at: publishedAt,
-          created_at: now,
-          updated_at: now,
-        });
-
-        if (error) {
-          result.errors.push(`${source.name}: ${error.message}`);
-          continue;
-        }
-
-        result.imported += 1;
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown import error";
-      result.errors.push(`${source.name}: ${message}`);
-    }
-  }
+  const result = await runRssImport();
 
   revalidatePath("/admin");
   revalidatePath("/admin/articles");

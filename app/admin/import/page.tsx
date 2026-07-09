@@ -60,6 +60,15 @@ export default async function ImportNewsPage({ searchParams }: ImportNewsPagePro
         </p>
       </section>
 
+      <section className="text-panel">
+        <p className="eyebrow">Automation Ready</p>
+        <h2>Cron Endpoint</h2>
+        <p>
+          <code>/api/cron/import-news</code>
+        </p>
+        <p>Imported news remains pending until reviewed and published.</p>
+      </section>
+
       <section className="admin-stat-grid">
         <article className="admin-stat-card">
           <span>Active sources</span>
@@ -104,7 +113,7 @@ export default async function ImportNewsPage({ searchParams }: ImportNewsPagePro
           </div>
           <form action={runImport}>
             <button className="button button-primary" disabled={sources.length === 0} type="submit">
-              Import Latest News
+              Manual Import
             </button>
           </form>
         </div>

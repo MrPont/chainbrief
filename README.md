@@ -56,11 +56,13 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 SUPABASE_STORAGE_BUCKET=chainbrief-media
 SITE_URL=https://your-domain.example
 SITE_NAME=ChainBrief
+ADMIN_PASSWORD=your-admin-password
+CRON_SECRET=your-random-cron-secret
 ```
 
 10. Later, add the same values to Vercel Environment Variables before deploying Supabase-connected features.
 
-Important: keep `SUPABASE_SERVICE_ROLE_KEY` private. It is only for server/admin code and must never be exposed in public client components.
+Important: keep `SUPABASE_SERVICE_ROLE_KEY` and `CRON_SECRET` private. They are only for server/admin code and must never be exposed in public client components.
 
 ## Supabase Storage Setup
 
@@ -103,3 +105,26 @@ Then use the admin workflow:
 6. Review and edit each imported article before publishing.
 
 Important: RSS import should only store attribution, title, source URL, original article URL, published date, and a short RSS-provided excerpt when available. Do not copy full copyrighted articles into ChainBrief.
+
+## Automated RSS Import
+
+ChainBrief includes a cron-ready RSS import endpoint for future scheduled imports. It uses the same import logic as `/admin/import`, and imported articles remain `pending` until reviewed and published by an admin.
+
+Setup:
+
+1. Add RSS sources in `/admin/sources`.
+2. Add `CRON_SECRET` to `.env.local`.
+3. Add the same `CRON_SECRET` to Vercel Environment Variables.
+4. Use this endpoint:
+
+```bash
+/api/cron/import-news
+```
+
+The endpoint will not run if `CRON_SECRET` is missing or incorrect. Call it with an authorization header:
+
+```bash
+curl -H "Authorization: Bearer YOUR_SECRET" http://localhost:3000/api/cron/import-news
+```
+
+For systems that cannot set headers, the endpoint also accepts `?secret=YOUR_SECRET`, but the `Authorization` header is preferred. Public `/news` still only shows articles with `status = published`.
