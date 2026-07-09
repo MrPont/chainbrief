@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
-import { latestNews } from "../../lib/siteData";
+import { getPublicNewsArticles } from "../../lib/publicArticles";
 
 export const metadata: Metadata = {
   title: "Crypto News",
@@ -27,7 +27,29 @@ export const metadata: Metadata = {
 
 const categories = ["All", "Bitcoin", "Ethereum", "DeFi", "Regulation", "Markets"];
 
-export default function NewsPage() {
+export const dynamic = "force-dynamic";
+
+function formatArticleDate(date: string) {
+  if (!date) {
+    return "Draft date";
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsedDate);
+}
+
+export default async function NewsPage() {
+  const articles = await getPublicNewsArticles();
+
   return (
     <>
       <PageHero
@@ -48,15 +70,25 @@ export default function NewsPage() {
       </section>
 
       <section className="news-grid">
-        {latestNews.map((article) => (
+        {articles.map((article) => (
           <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
             <div className="card-meta">
               <span>{article.category}</span>
-              <span>{article.readingTime}</span>
+              <span>{formatArticleDate(article.publishedDate)}</span>
             </div>
             <h2>{article.title}</h2>
             <p>{article.excerpt}</p>
-            <span className="impact-pill">{article.impact}</span>
+            <div className="article-card-footer">
+              <span>{article.author || article.sourceName}</span>
+              <span>{article.readingTime}</span>
+            </div>
+            {article.isSponsored ? (
+              <span className="impact-pill">
+                Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
+              </span>
+            ) : article.impact ? (
+              <span className="impact-pill">{article.impact}</span>
+            ) : null}
           </Link>
         ))}
       </section>

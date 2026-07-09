@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  getArticleBySlug,
-  getRelatedArticles,
-  latestNews,
-  SITE_URL,
-} from "../../../lib/siteData";
+  getPublicArticleBySlug,
+  getRelatedPublicArticles,
+  type PublicArticle,
+} from "../../../lib/publicArticles";
+import { SITE_URL } from "../../../lib/siteData";
 
 type NewsArticlePageProps = {
   params: Promise<{
@@ -14,25 +14,83 @@ type NewsArticlePageProps = {
   }>;
 };
 
+export const dynamic = "force-dynamic";
+
+function getSiteUrl() {
+  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || SITE_URL;
+}
+
 function getArticleUrl(slug: string) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL;
-
-  return new URL(`/news/${slug}`, siteUrl).toString();
+  return new URL(`/news/${slug}`, getSiteUrl()).toString();
 }
 
-export function generateStaticParams() {
-  return latestNews.map((article) => ({
-    slug: article.slug,
-  }));
+function formatArticleDate(date: string) {
+  if (!date) {
+    return "Not dated";
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsedDate);
 }
 
-export const dynamicParams = false;
+function getArticleParagraphs(article: PublicArticle) {
+  return article.content
+    .split(/\n{2,}|\r?\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+function ArticleBody({ article }: { article: PublicArticle }) {
+  if (article.contentSections.length > 0) {
+    return (
+      <>
+        {article.contentSections.map((section, index) => (
+          <section key={section.heading}>
+            <h2>{section.heading}</h2>
+            <p>{section.body}</p>
+            {index === 0 ? (
+              <aside className="ad-banner article-ad" aria-label="Advertisement">
+                <span>In-Article Banner Ad Placement</span>
+              </aside>
+            ) : null}
+          </section>
+        ))}
+      </>
+    );
+  }
+
+  const paragraphs = getArticleParagraphs(article);
+
+  return (
+    <>
+      <section>
+        {paragraphs.length > 0 ? (
+          paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+        ) : (
+          <p>{article.excerpt}</p>
+        )}
+        <aside className="ad-banner article-ad" aria-label="Advertisement">
+          <span>In-Article Banner Ad Placement</span>
+        </aside>
+      </section>
+    </>
+  );
+}
 
 export async function generateMetadata({
   params,
 }: NewsArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getPublicArticleBySlug(slug);
 
   if (!article) {
     return {
@@ -41,35 +99,37 @@ export async function generateMetadata({
   }
 
   const canonicalUrl = getArticleUrl(article.slug);
+  const title = article.seoTitle || article.title;
+  const description = article.seoDescription || article.excerpt;
 
   return {
-    title: article.title,
-    description: article.excerpt,
+    title,
+    description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: article.title,
-      description: article.excerpt,
+      title,
+      description,
       type: "article",
       url: canonicalUrl,
-      publishedTime: article.publishedDate,
+      publishedTime: article.publishedDate || undefined,
       authors: [article.author],
       tags: article.tags,
-      images: ["/chainbrief-market-intelligence.png"],
+      images: [article.featuredImage || "/chainbrief-market-intelligence.png"],
     },
   };
 }
 
 export default async function NewsArticlePage({ params }: NewsArticlePageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getPublicArticleBySlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const relatedArticles = getRelatedArticles(article.slug);
+  const relatedArticles = await getRelatedPublicArticles(article);
   const articleUrl = getArticleUrl(article.slug);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -114,11 +174,11 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             </div>
             <div>
               <dt>Source</dt>
-              <dd>{article.sourceLabel}</dd>
+              <dd>{article.sourceName}</dd>
             </div>
             <div>
               <dt>Published</dt>
-              <dd>{article.publishedDate}</dd>
+              <dd>{formatArticleDate(article.publishedDate)}</dd>
             </div>
             <div>
               <dt>Read</dt>
@@ -128,32 +188,23 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         </header>
 
         <section className="article-content">
-          {article.contentSections.map((section, index) => (
-            <section key={section.heading}>
-              <h2>{section.heading}</h2>
-              <p>{section.body}</p>
-              {index === 0 ? (
-                <aside className="ad-banner article-ad" aria-label="Advertisement">
-                  <span>In-Article Banner Ad Placement</span>
-                </aside>
-              ) : null}
-            </section>
-          ))}
+          <ArticleBody article={article} />
         </section>
 
         <footer className="article-footer-blocks">
-          <section className="tag-list" aria-label="Article tags">
-            {article.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
-          </section>
+          {article.tags.length > 0 ? (
+            <section className="tag-list" aria-label="Article tags">
+              {article.tags.map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
+            </section>
+          ) : null}
 
-          {article.originalSourceUrl ? (
+          {article.sourceUrl ? (
             <section className="attribution-block">
               <h2>Original Source Attribution</h2>
               <p>
-                Source placeholder:{" "}
-                <a href={article.originalSourceUrl}>{article.originalSourceUrl}</a>
+                Source placeholder: <a href={article.sourceUrl}>{article.sourceUrl}</a>
               </p>
             </section>
           ) : null}
@@ -168,30 +219,36 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         </footer>
       </article>
 
-      <section className="related-section">
-        <div className="section-heading">
-          <p className="eyebrow">Continue reading</p>
-          <h2>Related Articles</h2>
-          <Link href="/news">All news</Link>
-        </div>
-        <div className="news-grid">
-          {relatedArticles.map((relatedArticle) => (
-            <Link
-              className="news-card"
-              href={`/news/${relatedArticle.slug}`}
-              key={relatedArticle.slug}
-            >
-              <div className="card-meta">
-                <span>{relatedArticle.category}</span>
-                <span>{relatedArticle.readingTime}</span>
-              </div>
-              <h3>{relatedArticle.title}</h3>
-              <p>{relatedArticle.excerpt}</p>
-              <span className="impact-pill">{relatedArticle.impact}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {relatedArticles.length > 0 ? (
+        <section className="related-section">
+          <div className="section-heading">
+            <p className="eyebrow">Continue reading</p>
+            <h2>Related Articles</h2>
+            <Link href="/news">All news</Link>
+          </div>
+          <div className="news-grid">
+            {relatedArticles.map((relatedArticle) => (
+              <Link
+                className="news-card"
+                href={`/news/${relatedArticle.slug}`}
+                key={relatedArticle.slug}
+              >
+                <div className="card-meta">
+                  <span>{relatedArticle.category}</span>
+                  <span>{relatedArticle.readingTime}</span>
+                </div>
+                <h3>{relatedArticle.title}</h3>
+                <p>{relatedArticle.excerpt}</p>
+                {relatedArticle.isSponsored ? (
+                  <span className="impact-pill">Sponsored</span>
+                ) : relatedArticle.impact ? (
+                  <span className="impact-pill">{relatedArticle.impact}</span>
+                ) : null}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

@@ -465,6 +465,7 @@ h1 {
   text-transform: uppercase;
 }
 
+.news-card h2,
 .news-card h3 {
   font-size: 1.18rem;
   line-height: 1.35;
@@ -487,6 +488,19 @@ h1 {
   font-weight: 800;
   margin-top: 22px;
   padding: 8px 10px;
+}
+
+.article-card-footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  gap: 10px 16px;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 14px;
 }
 
 .sidebar {
@@ -1338,6 +1352,10 @@ tbody tr:last-child td {
   font-size: 1.02rem;
   line-height: 1.82;
   margin-bottom: 0;
+}
+
+.article-content p + p {
+  margin-top: 18px;
 }
 
 .article-ad {
