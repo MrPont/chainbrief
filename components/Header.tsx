@@ -5,7 +5,7 @@ const navigationLinks = [
   { label: "Markets", href: "/markets" },
   { label: "Rankings", href: "/rankings" },
   { label: "Projects", href: "/projects" },
-  { label: "Sponsored", href: "/sponsored" },
+  { label: "Marketing", href: "/marketing" },
   { label: "Advertise", href: "/advertise" },
 ];
 

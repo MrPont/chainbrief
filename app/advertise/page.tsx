@@ -32,6 +32,18 @@ export default function AdvertisePage() {
           Contact Advertising
         </Link>
       </section>
+
+      <section className="cta-panel compact-cta-panel">
+        <p className="eyebrow">Marketing services</p>
+        <h2>Need a full crypto marketing campaign?</h2>
+        <p>
+          Explore ChainBrief Marketing for PR, banners, listings, influencer
+          outreach, AMAs, programmatic exposure, and launch support.
+        </p>
+        <Link className="button button-secondary" href="/marketing">
+          Explore Marketing Services
+        </Link>
+      </section>
     </>
   );
 }

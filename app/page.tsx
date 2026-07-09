@@ -143,6 +143,19 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="cta-panel marketing-home-panel">
+        <p className="eyebrow">For Crypto Projects</p>
+        <h2>Visibility support beyond the newsroom</h2>
+        <p>
+          ChainBrief also supports project visibility through PR, banner
+          campaigns, project listings, influencer outreach, AMAs, and
+          programmatic advertising for crypto and Web3 teams.
+        </p>
+        <Link className="button button-primary" href="/marketing">
+          Explore Marketing Services
+        </Link>
+      </section>
+
       <section className="ad-banner bottom-banner" aria-label="Advertisement">
         <span>Leaderboard Ad Placement</span>
       </section>
