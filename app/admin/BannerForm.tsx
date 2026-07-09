@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import ImageUploadField from "./ImageUploadField";
+
 const placements = [
   "header",
   "homepage_top",
@@ -46,6 +51,8 @@ function formatPlacementLabel(placement: string) {
 }
 
 export default function BannerForm({ action, banner, submitLabel }: BannerFormProps) {
+  const [imageUrl, setImageUrl] = useState(banner?.image_url || "");
+
   return (
     <form action={action} className="admin-form-panel">
       <div className="form-grid">
@@ -61,10 +68,17 @@ export default function BannerForm({ action, banner, submitLabel }: BannerFormPr
             defaultValue={banner?.advertiser_name || ""}
           />
         </label>
-        <label>
-          Image URL
-          <input name="image_url" type="url" defaultValue={banner?.image_url || ""} />
-        </label>
+        <div className="form-wide">
+          <ImageUploadField
+            label="Image URL"
+            name="image_url"
+            value={imageUrl}
+            onChange={setImageUrl}
+            folder="banners"
+            recommendedSize="1200x180 for header/leaderboard, 300x250 for sidebar, 970x250 or 728x90 for article inline"
+            helpText="This image displays through the public BannerAd component."
+          />
+        </div>
         <label>
           Target URL
           <input name="target_url" type="url" defaultValue={banner?.target_url || ""} />

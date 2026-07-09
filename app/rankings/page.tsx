@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
@@ -42,6 +43,9 @@ export default async function RankingsPage() {
         {projects.map((project) => (
           <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
             <span className="project-rank">{String(project.rank).padStart(2, "0")}</span>
+            {project.logoUrl ? (
+              <img className="project-card-logo" src={project.logoUrl} alt="" />
+            ) : null}
             <div>
               <h2>{project.name}</h2>
               <p>{project.category}</p>

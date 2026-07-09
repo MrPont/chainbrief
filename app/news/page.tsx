@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
@@ -72,6 +73,11 @@ export default async function NewsPage() {
       <section className="news-grid">
         {articles.map((article) => (
           <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
+            {article.featuredImage ? (
+              <div className="news-card-image">
+                <img src={article.featuredImage} alt="" />
+              </div>
+            ) : null}
             <div className="card-meta">
               <span>{article.category}</span>
               <span>{formatArticleDate(article.publishedDate)}</span>

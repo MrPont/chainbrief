@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
@@ -73,6 +74,11 @@ export default async function ProjectsPage() {
               </div>
               <strong>#{project.rank}</strong>
             </div>
+            {project.logoUrl ? (
+              <div className="project-logo-row">
+                <img src={project.logoUrl} alt="" />
+              </div>
+            ) : null}
             <h2>
               {project.name} <span>{project.symbol}</span>
             </h2>

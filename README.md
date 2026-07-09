@@ -53,6 +53,7 @@ ChainBrief is still a static MVP. Supabase files are included for the future adm
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_STORAGE_BUCKET=chainbrief-media
 SITE_URL=https://your-domain.example
 SITE_NAME=ChainBrief
 ```
@@ -60,3 +61,23 @@ SITE_NAME=ChainBrief
 10. Later, add the same values to Vercel Environment Variables before deploying Supabase-connected features.
 
 Important: keep `SUPABASE_SERVICE_ROLE_KEY` private. It is only for server/admin code and must never be exposed in public client components.
+
+## Supabase Storage Setup
+
+ChainBrief admin image uploads use Supabase Storage.
+
+1. Go to Supabase -> Storage.
+2. Create a public bucket called `chainbrief-media`.
+3. Enable file size restriction.
+4. Set the bucket max file size to 5 MB.
+5. Enable MIME type restriction.
+6. Allow these MIME types:
+   - `image/jpeg`
+   - `image/png`
+   - `image/webp`
+   - `image/gif`
+   - `image/svg+xml`
+7. Uploaded admin images are saved to Supabase Storage.
+8. Public image URLs are stored in article, banner, and project records.
+
+If `SUPABASE_STORAGE_BUCKET` is missing, the app falls back to `chainbrief-media`.

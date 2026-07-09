@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import ImageUploadField from "./ImageUploadField";
+
 type ArticleFormProps = {
   action: (formData: FormData) => void | Promise<void>;
   article?: {
@@ -36,6 +41,7 @@ function dateTimeLocalValue(value?: string | null) {
 
 export default function ArticleForm({ action, article, submitLabel }: ArticleFormProps) {
   const status = article?.status || "draft";
+  const [featuredImage, setFeaturedImage] = useState(article?.featured_image || "");
 
   return (
     <form action={action} className="admin-form-panel">
@@ -64,14 +70,17 @@ export default function ArticleForm({ action, article, submitLabel }: ArticleFor
           Source URL
           <input name="source_url" type="url" defaultValue={article?.source_url || ""} />
         </label>
-        <label>
-          Featured image URL
-          <input
+        <div className="form-wide">
+          <ImageUploadField
+            label="Featured image URL"
             name="featured_image"
-            type="url"
-            defaultValue={article?.featured_image || ""}
+            value={featuredImage}
+            onChange={setFeaturedImage}
+            folder="articles/featured"
+            recommendedSize="1200x630 or 1600x900"
+            helpText="Used on public article cards and article detail pages when available."
           />
-        </label>
+        </div>
         <label>
           Status
           <select name="status" defaultValue={status}>

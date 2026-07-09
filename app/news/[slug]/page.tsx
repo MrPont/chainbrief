@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -191,6 +192,12 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             </div>
           </dl>
         </header>
+
+        {article.featuredImage ? (
+          <figure className="article-featured-image">
+            <img src={article.featuredImage} alt="" />
+          </figure>
+        ) : null}
 
         <section className="article-content">
           <ArticleBody article={article} />

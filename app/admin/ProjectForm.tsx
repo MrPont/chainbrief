@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import ImageUploadField from "./ImageUploadField";
+
 type ProjectFormProps = {
   action: (formData: FormData) => void | Promise<void>;
   project?: {
@@ -28,6 +33,8 @@ function arrayValue(value?: string[] | null) {
 }
 
 export default function ProjectForm({ action, project, submitLabel }: ProjectFormProps) {
+  const [logoUrl, setLogoUrl] = useState(project?.logo_url || "");
+
   return (
     <form action={action} className="admin-form-panel">
       <div className="form-grid">
@@ -63,10 +70,17 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
           Telegram URL
           <input name="telegram_url" type="url" defaultValue={project?.telegram_url || ""} />
         </label>
-        <label>
-          Logo URL
-          <input name="logo_url" type="url" defaultValue={project?.logo_url || ""} />
-        </label>
+        <div className="form-wide">
+          <ImageUploadField
+            label="Logo URL"
+            name="logo_url"
+            value={logoUrl}
+            onChange={setLogoUrl}
+            folder="projects/logos"
+            recommendedSize="Square image, at least 512x512"
+            helpText="Used on project directory, rankings, and project profile pages."
+          />
+        </div>
         <label>
           Rank
           <input name="rank" type="number" min="1" defaultValue={project?.rank ?? ""} />

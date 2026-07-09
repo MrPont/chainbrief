@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -143,6 +144,11 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
           <h1>
             {project.name} <span>{project.symbol}</span>
           </h1>
+          {project.logoUrl ? (
+            <div className="project-profile-logo">
+              <img src={project.logoUrl} alt="" />
+            </div>
+          ) : null}
           <p className="article-excerpt">{project.shortDescription}</p>
           <dl className="article-meta project-profile-meta" aria-label="Project metadata">
             <div>
