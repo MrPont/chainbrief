@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "About ChainBrief, a crypto media and marketing services platform covering news, markets, project rankings and Web3 visibility.",
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default function AboutPage() {
   return (

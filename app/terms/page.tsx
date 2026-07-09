@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
+
+export const metadata: Metadata = {
+  title: "Terms",
+  description:
+    "ChainBrief terms placeholder for website usage, sponsored content rules, intellectual property and liability limits.",
+  alternates: {
+    canonical: "/terms",
+  },
+};
 
 export default function TermsPage() {
   return (

@@ -1,6 +1,61 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { latestNews, marketMovers, topProjects } from "../lib/siteData";
+
+export const metadata: Metadata = {
+  title: "ChainBrief - Crypto News, Markets & Project Rankings",
+  description:
+    "Crypto news, market signals, project rankings, and marketing visibility services for Web3 teams.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "ChainBrief - Crypto News, Markets & Project Rankings",
+    description:
+      "Track crypto news, markets, rankings, and Web3 visibility opportunities with ChainBrief.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ChainBrief - Crypto News, Markets & Project Rankings",
+    description:
+      "Crypto news, market signals, project rankings, and marketing visibility services for Web3 teams.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
+
+const projectBenefits = [
+  {
+    title: "Crypto-native audience",
+    description:
+      "Reach readers who already understand token launches, DeFi, infrastructure, exchanges, and Web3 product cycles.",
+  },
+  {
+    title: "Editorial-style visibility",
+    description:
+      "Present your story through structured, credible media formats rather than generic promotional noise.",
+  },
+  {
+    title: "Multi-channel campaign support",
+    description:
+      "Combine PR, sponsored content, banners, influencer outreach, AMAs, and programmatic visibility.",
+  },
+  {
+    title: "Project ranking and discovery layer",
+    description:
+      "Use project profiles, rankings, and directory placements to support long-term discovery.",
+  },
+];
+
+const campaignChannels = [
+  "ChainBrief Media",
+  "Partner Media Placements",
+  "Banner Campaigns",
+  "Influencer & KOL Network",
+  "AMA & Community Campaigns",
+  "Exchange Listing Visibility",
+];
 
 export default function Home() {
   return (
@@ -147,13 +202,63 @@ export default function Home() {
         <p className="eyebrow">For Crypto Projects</p>
         <h2>Visibility support beyond the newsroom</h2>
         <p>
-          ChainBrief also supports project visibility through PR, banner
-          campaigns, project listings, influencer outreach, AMAs, and
-          programmatic advertising for crypto and Web3 teams.
+          ChainBrief helps projects gain visibility through PR articles,
+          sponsored content, banner ads, project rankings, influencer campaigns,
+          AMAs, programmatic campaigns, and exchange or listing visibility.
         </p>
-        <Link className="button button-primary" href="/marketing">
-          Explore Marketing Services
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/marketing">
+            Explore Marketing Services
+          </Link>
+          <Link className="button button-secondary" href="/media-kit">
+            Request Media Kit
+          </Link>
+        </div>
+      </section>
+
+      <section className="marketing-section">
+        <div className="section-heading">
+          <p className="eyebrow">Why projects use ChainBrief</p>
+          <h2>Built for credible crypto visibility</h2>
+        </div>
+        <div className="marketing-grid compact-marketing-grid">
+          {projectBenefits.map((benefit) => (
+            <article className="marketing-card" key={benefit.title}>
+              <span>Project growth</span>
+              <h3>{benefit.title}</h3>
+              <p>{benefit.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section">
+        <div className="section-heading">
+          <p className="eyebrow">Campaign channels</p>
+          <h2>Media, community and launch visibility</h2>
+        </div>
+        <div className="use-case-grid">
+          {campaignChannels.map((channel) => (
+            <span key={channel}>{channel}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="cta-panel marketing-cta">
+        <p className="eyebrow">Campaign CTA</p>
+        <h2>Ready to Put Your Project in Front of Crypto Readers?</h2>
+        <p>
+          Build awareness with ChainBrief media, advertising placements, project
+          discovery, and multi-channel Web3 campaign support.
+        </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/marketing">
+            Start a Campaign
+          </Link>
+          <Link className="button button-secondary" href="/advertise">
+            View Advertising Options
+          </Link>
+        </div>
       </section>
 
       <section className="ad-banner bottom-banner" aria-label="Advertisement">

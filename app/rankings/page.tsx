@@ -1,6 +1,29 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
 import { topProjects } from "../../lib/siteData";
+
+export const metadata: Metadata = {
+  title: "Crypto Project Rankings",
+  description:
+    "ChainBrief rankings for notable crypto projects based on market position, ecosystem strength, product maturity and narrative momentum.",
+  alternates: {
+    canonical: "/rankings",
+  },
+  openGraph: {
+    title: "Crypto Project Rankings | ChainBrief",
+    description:
+      "Discover ranked crypto projects across infrastructure, DeFi, L1s, L2s and Web3.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto Project Rankings | ChainBrief",
+    description:
+      "Crypto project rankings and discovery from ChainBrief.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
 
 export default function RankingsPage() {
   return (

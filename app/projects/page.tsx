@@ -1,6 +1,29 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
 import { cryptoProjects } from "../../lib/siteData";
+
+export const metadata: Metadata = {
+  title: "Crypto Project Directory",
+  description:
+    "Explore ChainBrief crypto project profiles, rankings, categories, market signals and project discovery pages.",
+  alternates: {
+    canonical: "/projects",
+  },
+  openGraph: {
+    title: "Crypto Project Directory | ChainBrief",
+    description:
+      "Track crypto project profiles across DeFi, infrastructure, L1s, L2s, data networks and Web3.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto Project Directory | ChainBrief",
+    description:
+      "Project discovery profiles and rankings for crypto and Web3 markets.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
 
 const projectCategories = [
   "All",

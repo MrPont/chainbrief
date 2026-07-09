@@ -5,6 +5,22 @@ export const metadata: Metadata = {
   title: "Brand",
   description:
     "ChainBrief brand system with the primary logo, icon mark, color palette, and usage examples.",
+  alternates: {
+    canonical: "/brand",
+  },
+  openGraph: {
+    title: "ChainBrief Brand",
+    description:
+      "ChainBrief logo, icon mark, color palette and usage guidance.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ChainBrief Brand",
+    description:
+      "ChainBrief logo, icon mark, color palette and usage guidance.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
 };
 
 const colors = [
@@ -38,6 +54,15 @@ export default function BrandPage() {
         <article className="brand-showcase-card">
           <span className="panel-label">Icon mark</span>
           <div className="brand-logo-stage brand-icon-stage">
+            <Logo variant="icon" size="lg" />
+          </div>
+        </article>
+
+        <article className="brand-showcase-card">
+          <span className="panel-label">Favicon preview</span>
+          <div className="brand-logo-stage brand-favicon-stage">
+            <Logo variant="icon" size="sm" />
+            <Logo variant="icon" size="md" />
             <Logo variant="icon" size="lg" />
           </div>
         </article>
@@ -80,6 +105,47 @@ export default function BrandPage() {
           crypto infrastructure, the document shape signals news and research,
           and the rising bars signal market intelligence.
         </p>
+      </section>
+
+      <section className="brand-section">
+        <div className="section-heading">
+          <p className="eyebrow">Usage notes</p>
+          <h2>How to Use the Logo</h2>
+        </div>
+        <div className="marketing-grid compact-marketing-grid">
+          <article className="marketing-card">
+            <span>Primary</span>
+            <h3>Use the full logo for navigation and media kits</h3>
+            <p>
+              The full lockup pairs the mark with the ChainBrief wordmark for
+              maximum recognition.
+            </p>
+          </article>
+          <article className="marketing-card">
+            <span>Icon</span>
+            <h3>Use the mark for favicons and social avatars</h3>
+            <p>
+              The simplified symbol stays readable at small sizes and preserves
+              the chain, brief and market signal concept.
+            </p>
+          </article>
+          <article className="marketing-card">
+            <span>Contrast</span>
+            <h3>Prefer dark or high-contrast backgrounds</h3>
+            <p>
+              The blue, green and violet accents are designed for near-black
+              fintech surfaces and clean light contexts.
+            </p>
+          </article>
+          <article className="marketing-card">
+            <span>Spacing</span>
+            <h3>Keep the icon clear of dense UI</h3>
+            <p>
+              Allow breathing room around the mark so the document and signal
+              bars remain visible.
+            </p>
+          </article>
+        </div>
       </section>
     </>
   );

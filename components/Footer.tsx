@@ -4,10 +4,12 @@ import Logo from "./Logo";
 const footerLinks = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
+  { label: "Brand", href: "/brand" },
+  { label: "Media Kit", href: "/media-kit" },
+  { label: "Submit Project", href: "/submit-project" },
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms" },
   { label: "Disclaimer", href: "/disclaimer" },
-  { label: "Brand", href: "/brand" },
 ];
 
 export default function Footer() {

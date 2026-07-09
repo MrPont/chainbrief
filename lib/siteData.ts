@@ -710,22 +710,22 @@ export function getRelatedProjectNews(project: CryptoProject, limit = 3) {
 export const sponsorPackages = [
   {
     name: "Homepage Leaderboard",
-    price: "$2,400 / week",
+    price: "Request media kit",
     description: "Top-of-page visibility across the highest-intent ChainBrief entry point.",
   },
   {
     name: "Sponsored Article",
-    price: "$3,800 / campaign",
+    price: "Request media kit",
     description: "Clearly labeled partner education written for crypto-native readers.",
   },
   {
     name: "Project Spotlight",
-    price: "$1,900 / week",
+    price: "Request media kit",
     description: "Premium positioning inside rankings and project discovery modules.",
   },
   {
     name: "Newsletter Sponsorship",
-    price: "$1,250 / send",
+    price: "Request media kit",
     description: "Dedicated placement in future market briefings and weekly recaps.",
   },
 ];

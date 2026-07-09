@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
+
+export const metadata: Metadata = {
+  title: "Sponsored Articles",
+  description:
+    "Clearly labeled sponsored articles and partner content for crypto and Web3 teams on ChainBrief.",
+  alternates: {
+    canonical: "/sponsored",
+  },
+  openGraph: {
+    title: "Sponsored Articles | ChainBrief",
+    description:
+      "Partner content and sponsored crypto articles published on ChainBrief.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
 
 const sponsoredArticles = [
   {

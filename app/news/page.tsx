@@ -1,6 +1,29 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
 import { latestNews } from "../../lib/siteData";
+
+export const metadata: Metadata = {
+  title: "Crypto News",
+  description:
+    "Latest crypto news, Bitcoin and Ethereum updates, DeFi coverage, regulation, Web3 trends and market narratives from ChainBrief.",
+  alternates: {
+    canonical: "/news",
+  },
+  openGraph: {
+    title: "Crypto News | ChainBrief",
+    description:
+      "Read ChainBrief crypto news, market updates, regulation coverage and Web3 analysis.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto News | ChainBrief",
+    description:
+      "Latest crypto news, market updates and Web3 trend coverage.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
 
 const categories = ["All", "Bitcoin", "Ethereum", "DeFi", "Regulation", "Markets"];
 

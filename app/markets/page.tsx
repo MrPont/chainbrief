@@ -1,5 +1,28 @@
+import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
 import { marketMovers } from "../../lib/siteData";
+
+export const metadata: Metadata = {
+  title: "Crypto Markets",
+  description:
+    "Sample crypto market board for Bitcoin, Ethereum, Solana, altcoins, price moves and market cap signals.",
+  alternates: {
+    canonical: "/markets",
+  },
+  openGraph: {
+    title: "Crypto Markets | ChainBrief",
+    description:
+      "Track sample crypto market data, price movement and market cap signals.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto Markets | ChainBrief",
+    description:
+      "Crypto market board with sample asset data and market movement.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+};
 
 export default function MarketsPage() {
   return (

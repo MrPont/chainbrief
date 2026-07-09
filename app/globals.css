@@ -78,13 +78,13 @@ a {
 }
 
 .logo-size-sm .logo-mark-svg {
-  height: 30px;
-  width: 30px;
+  height: 32px;
+  width: 32px;
 }
 
 .logo-size-md .logo-mark-svg {
-  height: 38px;
-  width: 38px;
+  height: 44px;
+  width: 44px;
 }
 
 .logo-size-lg .logo-mark-svg {
@@ -100,10 +100,11 @@ a {
 .brand-wordmark {
   align-items: baseline;
   display: inline-flex;
-  font-size: 1.08rem;
+  font-size: 1.16rem;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
+  text-transform: none;
 }
 
 .logo-size-lg .brand-wordmark {
@@ -118,6 +119,7 @@ a {
   background: linear-gradient(135deg, var(--blue), var(--violet));
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.16));
 }
 
 .main-nav,
@@ -869,7 +871,8 @@ tbody tr:last-child td {
 }
 
 .marketing-card,
-.process-card {
+.process-card,
+.form-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(11, 16, 24, 0.82);
@@ -879,6 +882,10 @@ tbody tr:last-child td {
 .marketing-card {
   min-height: 260px;
   padding: 24px;
+}
+
+.compact-marketing-grid .marketing-card {
+  min-height: 210px;
 }
 
 .marketing-card span,
@@ -933,6 +940,87 @@ tbody tr:last-child td {
 .process-card span {
   color: var(--violet);
   font-size: 1.15rem;
+}
+
+.form-panel {
+  margin-top: 18px;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid label,
+.checkbox-panel label {
+  color: var(--text);
+  display: grid;
+  font-size: 0.9rem;
+  font-weight: 800;
+  gap: 8px;
+}
+
+.form-wide {
+  grid-column: 1 / -1;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 14px;
+  background: rgba(5, 7, 11, 0.78);
+}
+
+.form-grid textarea {
+  min-height: 132px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.form-grid input::placeholder,
+.form-grid textarea::placeholder {
+  color: var(--muted);
+}
+
+.checkbox-panel {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 20px 0 0;
+  padding: 18px;
+}
+
+.checkbox-panel legend {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 0 8px;
+  text-transform: uppercase;
+}
+
+.checkbox-panel label {
+  align-items: center;
+  display: flex;
+  gap: 9px;
+}
+
+.checkbox-panel input {
+  accent-color: var(--green);
+}
+
+.form-note {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 20px 0 0;
 }
 
 .article-shell {
@@ -1278,6 +1366,12 @@ tbody tr:last-child td {
   justify-content: center;
 }
 
+.brand-favicon-stage {
+  align-items: center;
+  gap: 18px;
+  justify-content: center;
+}
+
 .brand-dark-sample {
   background:
     linear-gradient(135deg, rgba(56, 189, 248, 0.14), transparent 48%),
@@ -1358,7 +1452,16 @@ tbody tr:last-child td {
   .two-column-list,
   .brand-showcase-grid,
   .palette-grid,
+  .form-grid,
   .article-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .marketing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .checkbox-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1409,8 +1512,17 @@ tbody tr:last-child td {
   .two-column-list,
   .brand-showcase-grid,
   .palette-grid,
+  .form-grid,
   .article-meta {
     grid-template-columns: 1fr;
+  }
+
+  .checkbox-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-wordmark {
+    font-size: 1.05rem;
   }
 
   .button {

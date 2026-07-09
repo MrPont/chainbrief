@@ -11,6 +11,16 @@ export const metadata: Metadata = {
       "Crypto PR, banner advertising, project listings, influencer campaigns, AMAs, programmatic ads and launch visibility services for Web3 projects.",
     images: ["/chainbrief-market-intelligence.png"],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto Marketing Services | ChainBrief",
+    description:
+      "Crypto PR, banner advertising, project listings, influencer campaigns, AMAs, programmatic ads and launch visibility services for Web3 projects.",
+    images: ["/chainbrief-market-intelligence.png"],
+  },
+  alternates: {
+    canonical: "/marketing",
+  },
 };
 
 const services = [
@@ -110,6 +120,16 @@ const processSteps = [
   "Track reach and results",
 ];
 
+const beyondServices = [
+  "PR placements on partner crypto websites",
+  "Banner advertising on external crypto media",
+  "Exchange listing visibility support",
+  "Influencer campaigns",
+  "Telegram and X/Twitter community campaigns",
+  "Programmatic advertising",
+  "Investor and email campaigns",
+];
+
 export default function MarketingPage() {
   return (
     <>
@@ -124,7 +144,7 @@ export default function MarketingPage() {
             strategic launch support.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/contact">
+            <Link className="button button-primary" href="/media-kit">
               Request Media Kit
             </Link>
             <Link className="button button-secondary" href="/contact">
@@ -205,6 +225,19 @@ export default function MarketingPage() {
         </div>
       </section>
 
+      <section className="marketing-section">
+        <div className="section-heading">
+          <p className="eyebrow">Beyond ChainBrief</p>
+          <h2>Services Beyond ChainBrief</h2>
+          <Link href="/advertise">On-site ads</Link>
+        </div>
+        <div className="use-case-grid">
+          {beyondServices.map((service) => (
+            <span key={service}>{service}</span>
+          ))}
+        </div>
+      </section>
+
       <section className="cta-panel marketing-cta">
         <p className="eyebrow">Campaign planning</p>
         <h2>Ready to Build Visibility for Your Crypto Project?</h2>
@@ -214,7 +247,7 @@ export default function MarketingPage() {
           programmatic exposure.
         </p>
         <div className="hero-actions">
-          <Link className="button button-primary" href="/contact">
+          <Link className="button button-primary" href="/media-kit">
             Request Media Kit
           </Link>
           <Link className="button button-secondary" href="/contact">
