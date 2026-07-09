@@ -322,50 +322,390 @@ export const marketMovers = [
   { symbol: "AVAX", name: "Avalanche", price: "$64.80", change: "+2.1%", cap: "$27B", accent: "violet" },
 ];
 
-export const topProjects = [
+export type CryptoProject = {
+  slug: string;
+  name: string;
+  symbol: string;
+  category: string;
+  shortDescription: string;
+  fullDescription: string;
+  rank: number;
+  score: number;
+  chain: string;
+  websiteUrl: string;
+  twitterUrl: string;
+  tags: string[];
+  keyMetrics: {
+    marketPosition: string;
+    ecosystemStrength: string;
+    developerActivity: string;
+    liquidityProfile: string;
+  };
+  highlights: string[];
+  risks: string[];
+  isSponsored: boolean;
+  sponsorLabel?: string;
+};
+
+export const cryptoProjects: CryptoProject[] = [
   {
-    rank: "01",
+    slug: "arbitrum",
     name: "Arbitrum",
-    sector: "Layer 2",
-    score: "94",
-    note: "Strong developer activity and expanding DeFi liquidity.",
+    symbol: "ARB",
+    category: "Layer 2",
+    shortDescription: "Ethereum scaling network focused on low-cost execution and DeFi liquidity.",
+    fullDescription:
+      "Arbitrum is tracked by ChainBrief as a leading Ethereum Layer 2 ecosystem with deep DeFi activity, active developer tooling, and a broad application base. Its profile is strongest when users value Ethereum alignment, liquidity access, and mature rollup infrastructure over newer high-throughput experiments.",
+    rank: 1,
+    score: 94,
+    chain: "Ethereum Layer 2",
+    websiteUrl: "https://example.com/arbitrum",
+    twitterUrl: "https://example.com/arbitrum-social",
+    tags: ["Layer 2", "Ethereum", "DeFi", "Rollups"],
+    keyMetrics: {
+      marketPosition: "Top-tier Ethereum scaling ecosystem with strong mindshare.",
+      ecosystemStrength: "Broad DeFi, gaming, and infrastructure coverage.",
+      developerActivity: "High, supported by mature tooling and active integrations.",
+      liquidityProfile: "Deep relative liquidity across major onchain venues.",
+    },
+    highlights: [
+      "Strong DeFi footprint and blue-chip protocol integrations.",
+      "Clear Ethereum scaling narrative with established user awareness.",
+      "Developer ecosystem benefits from mature rollup tooling.",
+    ],
+    risks: [
+      "Competes with many Layer 2 networks for users and incentives.",
+      "Fee compression can pressure ecosystem economics.",
+      "Governance and token utility expectations remain important sentiment drivers.",
+    ],
+    isSponsored: false,
   },
   {
-    rank: "02",
+    slug: "eigenlayer",
     name: "EigenLayer",
-    sector: "Restaking",
-    score: "91",
-    note: "Growing validator economy with broad infrastructure integrations.",
+    symbol: "EIGEN",
+    category: "Restaking",
+    shortDescription: "Restaking infrastructure designed to extend Ethereum security to new services.",
+    fullDescription:
+      "EigenLayer sits at the center of the restaking narrative, where staked capital can be used to support additional infrastructure services. ChainBrief tracks it as a high-upside but complex protocol category because growth depends on operator reliability, service demand, and clear risk boundaries for participants.",
+    rank: 2,
+    score: 91,
+    chain: "Ethereum",
+    websiteUrl: "https://example.com/eigenlayer",
+    twitterUrl: "https://example.com/eigenlayer-social",
+    tags: ["Restaking", "Ethereum", "Infrastructure", "Validators"],
+    keyMetrics: {
+      marketPosition: "Category-defining restaking protocol with strong narrative pull.",
+      ecosystemStrength: "Expanding service network and validator-focused integrations.",
+      developerActivity: "High among infrastructure teams building actively validated services.",
+      liquidityProfile: "Improving, with liquidity tied to broader restaking demand.",
+    },
+    highlights: [
+      "One of the most visible restaking ecosystems in crypto.",
+      "Creates a new market for shared security and operator services.",
+      "Institutional interest remains strong around validator economics.",
+    ],
+    risks: [
+      "Restaking risk can be difficult for users to evaluate.",
+      "Service-level failures may affect confidence in the category.",
+      "Token economics and demand capture need continued proof.",
+    ],
+    isSponsored: false,
   },
   {
-    rank: "03",
+    slug: "aave",
     name: "Aave",
-    sector: "DeFi",
-    score: "89",
-    note: "Leading lending protocol with resilient risk management.",
+    symbol: "AAVE",
+    category: "DeFi",
+    shortDescription: "Multi-chain lending protocol with large collateral markets and risk controls.",
+    fullDescription:
+      "Aave is a core DeFi lending venue where users supply collateral, borrow assets, and manage onchain leverage. ChainBrief views Aave as a mature DeFi protocol with durable brand equity, broad asset coverage, and a risk framework that remains central to its long-term positioning.",
+    rank: 3,
+    score: 89,
+    chain: "Multi-chain",
+    websiteUrl: "https://example.com/aave",
+    twitterUrl: "https://example.com/aave-social",
+    tags: ["DeFi", "Lending", "Collateral", "Stablecoins"],
+    keyMetrics: {
+      marketPosition: "Leading decentralized lending brand across major chains.",
+      ecosystemStrength: "Strong integrations with wallets, DeFi apps, and risk dashboards.",
+      developerActivity: "Steady, focused on markets, governance, and risk modules.",
+      liquidityProfile: "Strong liquidity in major collateral and stablecoin markets.",
+    },
+    highlights: [
+      "Established lending markets with broad user familiarity.",
+      "Risk management process is closely watched by the industry.",
+      "Revenue potential increases when borrowing demand rises.",
+    ],
+    risks: [
+      "Collateral volatility can stress liquidation systems.",
+      "Governance decisions around new markets can create risk.",
+      "Competition from newer lending designs remains persistent.",
+    ],
+    isSponsored: false,
   },
   {
-    rank: "04",
+    slug: "celestia",
     name: "Celestia",
-    sector: "Modular",
-    score: "86",
-    note: "Data availability adoption remains a key market narrative.",
+    symbol: "TIA",
+    category: "Modular",
+    shortDescription: "Modular data availability network for rollups and app-specific chains.",
+    fullDescription:
+      "Celestia represents the modular blockchain thesis, separating data availability from execution and settlement. ChainBrief tracks it as a key infrastructure project for teams that want flexible rollup deployment and lower data costs, while still needing market proof that modular demand can scale sustainably.",
+    rank: 4,
+    score: 86,
+    chain: "Celestia",
+    websiteUrl: "https://example.com/celestia",
+    twitterUrl: "https://example.com/celestia-social",
+    tags: ["Modular", "Data availability", "Rollups", "Infrastructure"],
+    keyMetrics: {
+      marketPosition: "High-profile modular infrastructure network.",
+      ecosystemStrength: "Growing builder base around rollups and app chains.",
+      developerActivity: "Active, especially among modular stack teams.",
+      liquidityProfile: "Good exchange visibility with narrative-driven volatility.",
+    },
+    highlights: [
+      "Clear data availability narrative for modular builders.",
+      "Strong relevance to rollup and app-chain experimentation.",
+      "Benefits from demand for cheaper scaling infrastructure.",
+    ],
+    risks: [
+      "Adoption depends on sustained rollup deployment demand.",
+      "Competes with other data availability approaches.",
+      "Token unlocks and supply expectations can influence sentiment.",
+    ],
+    isSponsored: false,
   },
   {
-    rank: "05",
+    slug: "chainlink",
     name: "Chainlink",
-    sector: "Oracle",
-    score: "84",
-    note: "Core oracle and cross-chain infrastructure for data-hungry apps.",
+    symbol: "LINK",
+    category: "Oracle",
+    shortDescription: "Oracle and cross-chain services network for smart contract applications.",
+    fullDescription:
+      "Chainlink provides oracle infrastructure, data feeds, automation, and cross-chain messaging services used by many smart contract applications. ChainBrief tracks Chainlink as a durable infrastructure project whose market position is tied to reliable data delivery and expanding enterprise-grade crypto workflows.",
+    rank: 5,
+    score: 84,
+    chain: "Multi-chain",
+    websiteUrl: "https://example.com/chainlink",
+    twitterUrl: "https://example.com/chainlink-social",
+    tags: ["Oracle", "Infrastructure", "Data", "Cross-chain"],
+    keyMetrics: {
+      marketPosition: "Core oracle provider with broad industry recognition.",
+      ecosystemStrength: "Very broad integrations across DeFi and infrastructure.",
+      developerActivity: "Consistent, with new services beyond price feeds.",
+      liquidityProfile: "Deep major-exchange liquidity and strong market awareness.",
+    },
+    highlights: [
+      "Established oracle brand with extensive integrations.",
+      "Expanding service set beyond price data.",
+      "Cross-chain infrastructure remains a long-running demand area.",
+    ],
+    risks: [
+      "Oracle competition and pricing pressure can evolve over time.",
+      "Token value capture remains debated by some investors.",
+      "Cross-chain systems carry technical and security complexity.",
+    ],
+    isSponsored: false,
   },
   {
-    rank: "06",
+    slug: "uniswap",
     name: "Uniswap",
-    sector: "DEX",
-    score: "82",
-    note: "Leading decentralized exchange brand with durable liquidity share.",
+    symbol: "UNI",
+    category: "DEX",
+    shortDescription: "Decentralized exchange protocol known for automated market making and liquidity depth.",
+    fullDescription:
+      "Uniswap is one of DeFi's most recognizable exchange protocols, providing permissionless swapping and liquidity markets across multiple networks. ChainBrief tracks Uniswap as a mature DEX brand where protocol upgrades, fee debates, and liquidity share remain the key drivers.",
+    rank: 6,
+    score: 82,
+    chain: "Multi-chain",
+    websiteUrl: "https://example.com/uniswap",
+    twitterUrl: "https://example.com/uniswap-social",
+    tags: ["DEX", "DeFi", "Liquidity", "AMM"],
+    keyMetrics: {
+      marketPosition: "Leading decentralized exchange brand by mindshare.",
+      ecosystemStrength: "Large developer and liquidity provider ecosystem.",
+      developerActivity: "Steady protocol and interface development.",
+      liquidityProfile: "Very strong for major pairs and long-tail assets.",
+    },
+    highlights: [
+      "Deep DeFi brand recognition and recurring user demand.",
+      "Important liquidity venue for long-tail token discovery.",
+      "Protocol design continues to influence AMM markets.",
+    ],
+    risks: [
+      "DEX competition remains intense across chains.",
+      "Fee-switch and governance debates can affect sentiment.",
+      "Liquidity incentives may fragment across venues.",
+    ],
+    isSponsored: false,
+  },
+  {
+    slug: "solana",
+    name: "Solana",
+    symbol: "SOL",
+    category: "Layer 1",
+    shortDescription: "High-throughput Layer 1 network focused on fast consumer and trading applications.",
+    fullDescription:
+      "Solana is tracked by ChainBrief as a high-performance Layer 1 with strong momentum in consumer apps, trading venues, payments experiments, and developer-led product cycles. Its profile benefits from fast execution and strong cultural energy, while network reliability and ecosystem concentration remain important watch areas.",
+    rank: 7,
+    score: 81,
+    chain: "Solana",
+    websiteUrl: "https://example.com/solana",
+    twitterUrl: "https://example.com/solana-social",
+    tags: ["Layer 1", "Consumer crypto", "DeFi", "Payments"],
+    keyMetrics: {
+      marketPosition: "Major alternative Layer 1 with strong retail and builder attention.",
+      ecosystemStrength: "Strong apps across trading, NFTs, payments, and consumer UX.",
+      developerActivity: "High, with rapid product experimentation.",
+      liquidityProfile: "Deep liquidity for SOL and growing ecosystem markets.",
+    },
+    highlights: [
+      "Fast execution supports consumer-style product experiences.",
+      "Strong developer culture and rapid app iteration.",
+      "Market narrative benefits from visible ecosystem momentum.",
+    ],
+    risks: [
+      "Network reliability history remains a diligence point.",
+      "High expectations can make sentiment volatile.",
+      "Competition from Ethereum L2s and other L1s is constant.",
+    ],
+    isSponsored: false,
+  },
+  {
+    slug: "avalanche",
+    name: "Avalanche",
+    symbol: "AVAX",
+    category: "Layer 1",
+    shortDescription: "Layer 1 ecosystem focused on subnets, DeFi, and custom blockchain deployments.",
+    fullDescription:
+      "Avalanche is positioned around fast settlement, DeFi activity, and customizable network deployments. ChainBrief tracks Avalanche for its subnet strategy, institutional experiments, and ability to attract applications that want more control over execution environments.",
+    rank: 8,
+    score: 79,
+    chain: "Avalanche",
+    websiteUrl: "https://example.com/avalanche",
+    twitterUrl: "https://example.com/avalanche-social",
+    tags: ["Layer 1", "Subnets", "DeFi", "Enterprise"],
+    keyMetrics: {
+      marketPosition: "Established Layer 1 with custom-chain positioning.",
+      ecosystemStrength: "Moderate to strong, with DeFi and institutional pilots.",
+      developerActivity: "Steady around subnet and application-chain tooling.",
+      liquidityProfile: "Solid major exchange liquidity with selective onchain depth.",
+    },
+    highlights: [
+      "Subnet narrative appeals to custom blockchain deployments.",
+      "Recognizable brand with prior DeFi cycle traction.",
+      "Institutional pilots can support differentiated positioning.",
+    ],
+    risks: [
+      "Layer 1 competition is crowded and capital-intensive.",
+      "Subnet adoption must translate into durable user activity.",
+      "Liquidity can be selective outside major AVAX markets.",
+    ],
+    isSponsored: true,
+    sponsorLabel: "Featured ecosystem profile",
+  },
+  {
+    slug: "optimism",
+    name: "Optimism",
+    symbol: "OP",
+    category: "Layer 2",
+    shortDescription: "Ethereum Layer 2 ecosystem built around optimistic rollups and the Superchain thesis.",
+    fullDescription:
+      "Optimism is an Ethereum scaling ecosystem focused on rollup infrastructure and a multi-chain Superchain strategy. ChainBrief tracks it as a major Layer 2 project where governance, ecosystem incentives, and shared infrastructure adoption are key to the long-term profile.",
+    rank: 9,
+    score: 78,
+    chain: "Ethereum Layer 2",
+    websiteUrl: "https://example.com/optimism",
+    twitterUrl: "https://example.com/optimism-social",
+    tags: ["Layer 2", "Ethereum", "Rollups", "Superchain"],
+    keyMetrics: {
+      marketPosition: "Major Ethereum L2 with a distinct multi-chain strategy.",
+      ecosystemStrength: "Strong, supported by aligned chains and governance programs.",
+      developerActivity: "High around OP Stack and shared infrastructure.",
+      liquidityProfile: "Good exchange access and solid onchain ecosystem liquidity.",
+    },
+    highlights: [
+      "OP Stack gives builders a recognizable rollup toolkit.",
+      "Superchain narrative differentiates ecosystem strategy.",
+      "Governance programs support application and infrastructure growth.",
+    ],
+    risks: [
+      "Layer 2 competition can fragment users and liquidity.",
+      "Shared-chain strategy requires coordination across many teams.",
+      "Token incentives must convert into durable adoption.",
+    ],
+    isSponsored: false,
+  },
+  {
+    slug: "the-graph",
+    name: "The Graph",
+    symbol: "GRT",
+    category: "Data",
+    shortDescription: "Decentralized indexing network for querying blockchain application data.",
+    fullDescription:
+      "The Graph provides indexing infrastructure that helps applications retrieve and organize blockchain data. ChainBrief tracks it as a foundational data network whose relevance grows when developers need reliable query layers across increasingly complex multi-chain environments.",
+    rank: 10,
+    score: 76,
+    chain: "Multi-chain",
+    websiteUrl: "https://example.com/the-graph",
+    twitterUrl: "https://example.com/the-graph-social",
+    tags: ["Data", "Indexing", "Infrastructure", "Web3"],
+    keyMetrics: {
+      marketPosition: "Recognized data indexing network for Web3 applications.",
+      ecosystemStrength: "Broad relevance across apps that need reliable blockchain queries.",
+      developerActivity: "Steady, with focus on indexing performance and network adoption.",
+      liquidityProfile: "Adequate major-market liquidity with infrastructure narrative exposure.",
+    },
+    highlights: [
+      "Core data layer for many blockchain application workflows.",
+      "Multi-chain complexity increases indexing needs.",
+      "Clear infrastructure role beyond short-term market narratives.",
+    ],
+    risks: [
+      "Developer adoption must justify decentralized indexing economics.",
+      "Centralized data providers remain strong competitors.",
+      "Infrastructure tokens can lag during purely speculative rotations.",
+    ],
+    isSponsored: false,
   },
 ];
+
+export const topProjects = cryptoProjects.slice(0, 6).map((project) => ({
+  slug: project.slug,
+  rank: String(project.rank).padStart(2, "0"),
+  name: project.name,
+  sector: project.category,
+  score: String(project.score),
+  note: project.shortDescription,
+}));
+
+export function getProjectBySlug(slug: string) {
+  return cryptoProjects.find((project) => project.slug === slug);
+}
+
+export function getRelatedProjectNews(project: CryptoProject, limit = 3) {
+  const matches = latestNews.filter((article) => {
+    const searchableProjectTerms = [
+      project.name,
+      project.symbol,
+      project.category,
+      ...project.tags,
+    ];
+
+    return (
+      article.relatedAsset === project.symbol ||
+      searchableProjectTerms.some((term) => article.tags.includes(term)) ||
+      article.category === project.category
+    );
+  });
+
+  const fallback = latestNews.filter(
+    (article) => !matches.some((match) => match.slug === article.slug),
+  );
+
+  return [...matches, ...fallback].slice(0, limit);
+}
 
 export const sponsorPackages = [
   {

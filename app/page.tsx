@@ -126,11 +126,11 @@ export default function Home() {
         <div className="section-heading">
           <p className="eyebrow">Research desk</p>
           <h2>Top Crypto Projects</h2>
-          <Link href="/rankings">View rankings</Link>
+          <Link href="/projects">View directory</Link>
         </div>
         <div className="project-grid">
           {topProjects.slice(0, 4).map((project) => (
-            <article className="project-card" key={project.name}>
+            <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
               <span className="project-rank">{project.rank}</span>
               <div>
                 <h3>{project.name}</h3>
@@ -138,7 +138,7 @@ export default function Home() {
               </div>
               <strong>{project.score}</strong>
               <p>{project.note}</p>
-            </article>
+            </Link>
           ))}
         </div>
       </section>

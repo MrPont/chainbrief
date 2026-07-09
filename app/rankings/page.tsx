@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PageHero from "../../components/PageHero";
 import { topProjects } from "../../lib/siteData";
 
@@ -12,7 +13,7 @@ export default function RankingsPage() {
 
       <section className="project-grid wide-grid">
         {topProjects.map((project) => (
-          <article className="project-card" key={project.name}>
+          <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
             <span className="project-rank">{project.rank}</span>
             <div>
               <h2>{project.name}</h2>
@@ -20,7 +21,7 @@ export default function RankingsPage() {
             </div>
             <strong>{project.score}</strong>
             <p>{project.note}</p>
-          </article>
+          </Link>
         ))}
       </section>
     </>

@@ -4,6 +4,7 @@ const navigationLinks = [
   { label: "News", href: "/news" },
   { label: "Markets", href: "/markets" },
   { label: "Rankings", href: "/rankings" },
+  { label: "Projects", href: "/projects" },
   { label: "Sponsored", href: "/sponsored" },
   { label: "Advertise", href: "/advertise" },
 ];
