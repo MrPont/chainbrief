@@ -211,6 +211,40 @@ export async function fetchBannerAdById(id: string) {
   return data;
 }
 
+export async function fetchContactRequests() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("contact_requests")
+    .select(
+      "id,name,email,company_project,inquiry_type,message,status,created_at,updated_at",
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function fetchProjectSubmissions() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("project_submissions")
+    .select(
+      "id,project_name,website,category,chain,token_symbol,contact_email,telegram,twitter,short_description,campaign_interests,status,created_at,updated_at",
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
 export async function fetchArticleById(id: string) {
   await requireAdmin();
 

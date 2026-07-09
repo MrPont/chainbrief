@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ContactForm from "./ContactForm";
 import PageHero from "../../components/PageHero";
 
 export const metadata: Metadata = {
@@ -49,42 +50,7 @@ export default function ContactPage() {
         ))}
       </section>
 
-      <section className="form-panel">
-        <div className="form-grid">
-          <label>
-            Name
-            <input type="text" placeholder="Your name" />
-          </label>
-          <label>
-            Email
-            <input type="email" placeholder="you@example.com" />
-          </label>
-          <label>
-            Company/project
-            <input type="text" placeholder="Company or project name" />
-          </label>
-          <label>
-            Inquiry type
-            <select defaultValue="">
-              <option value="" disabled>
-                Select inquiry type
-              </option>
-              <option>Editorial</option>
-              <option>Advertising</option>
-              <option>Project submission</option>
-              <option>Partnership</option>
-            </select>
-          </label>
-          <label className="form-wide">
-            Message
-            <textarea placeholder="Tell us what you need help with." />
-          </label>
-        </div>
-        <p className="form-note">
-          Form submission will be connected later. For now, email the relevant
-          ChainBrief inbox above.
-        </p>
-      </section>
+      <ContactForm />
     </>
   );
 }

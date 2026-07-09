@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AdminLogin from "./AdminLogin";
 import AdminNav from "./AdminNav";
-import { fetchArticles, fetchBannerAds, isAdminAuthenticated } from "./actions";
+import {
+  fetchArticles,
+  fetchBannerAds,
+  fetchContactRequests,
+  fetchProjectSubmissions,
+  isAdminAuthenticated,
+} from "./actions";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -21,7 +27,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     return <AdminLogin error={error} />;
   }
 
-  const [articles, banners] = await Promise.all([fetchArticles(), fetchBannerAds()]);
+  const [articles, banners, contactRequests, projectSubmissions] = await Promise.all([
+    fetchArticles(),
+    fetchBannerAds(),
+    fetchContactRequests(),
+    fetchProjectSubmissions(),
+  ]);
   const total = articles.length;
   const published = articles.filter((article) => article.status === "published").length;
   const drafts = articles.filter((article) => article.status === "draft").length;
@@ -38,6 +49,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     { label: "Pending imported news", value: pendingImported },
     { label: "Active banners", value: activeBanners },
     { label: "Total banners", value: banners.length },
+    { label: "Total contact requests", value: contactRequests.length },
+    { label: "Total project submissions", value: projectSubmissions.length },
   ];
 
   return (
@@ -75,6 +88,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </Link>
           <Link className="button button-secondary" href="/admin/banners">
             View Banners
+          </Link>
+          <Link className="button button-secondary" href="/admin/requests">
+            View Requests
           </Link>
         </div>
       </section>

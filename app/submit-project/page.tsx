@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import SubmitProjectForm from "./SubmitProjectForm";
 
 export const metadata: Metadata = {
   title: "Submit Project",
@@ -23,15 +23,6 @@ export const metadata: Metadata = {
   },
 };
 
-const campaignInterests = [
-  "Project listing",
-  "Sponsored article",
-  "Banner ads",
-  "Influencer campaign",
-  "AMA",
-  "Launch campaign",
-];
-
 export default function SubmitProjectPage() {
   return (
     <>
@@ -44,70 +35,7 @@ export default function SubmitProjectPage() {
         </p>
       </section>
 
-      <section className="form-panel">
-        <div className="form-grid">
-          <label>
-            Project name
-            <input type="text" placeholder="Example Protocol" />
-          </label>
-          <label>
-            Website
-            <input type="url" placeholder="https://example.com" />
-          </label>
-          <label>
-            Category
-            <input type="text" placeholder="Layer 2, DeFi, AI, GameFi..." />
-          </label>
-          <label>
-            Chain
-            <input type="text" placeholder="Ethereum, Solana, Base..." />
-          </label>
-          <label>
-            Token symbol
-            <input type="text" placeholder="EXM" />
-          </label>
-          <label>
-            Contact email
-            <input type="email" placeholder="team@example.com" />
-          </label>
-          <label>
-            Telegram
-            <input type="text" placeholder="@projecthandle" />
-          </label>
-          <label>
-            X/Twitter
-            <input type="text" placeholder="@project" />
-          </label>
-          <label className="form-wide">
-            Short description
-            <textarea placeholder="Briefly describe the project, category, traction, and campaign goals." />
-          </label>
-        </div>
-
-        <fieldset className="checkbox-panel">
-          <legend>Campaign interest</legend>
-          {campaignInterests.map((interest) => (
-            <label key={interest}>
-              <input type="checkbox" />
-              {interest}
-            </label>
-          ))}
-        </fieldset>
-
-        <p className="form-note">
-          Form submission will be connected in a later version. For now, contact
-          ads@chainbrief.example.
-        </p>
-
-        <div className="hero-actions">
-          <Link className="button button-primary" href="/marketing">
-            Explore Marketing Services
-          </Link>
-          <Link className="button button-secondary" href="/media-kit">
-            View Media Kit
-          </Link>
-        </div>
-      </section>
+      <SubmitProjectForm />
     </>
   );
 }
