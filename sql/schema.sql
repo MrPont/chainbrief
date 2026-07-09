@@ -28,7 +28,11 @@ create table if not exists categories (
 create table if not exists sources (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  slug text unique,
   website_url text,
+  feed_url text,
+  category text,
+  is_active boolean not null default true,
   source_type text not null default 'editorial',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -48,11 +52,14 @@ create table if not exists articles (
   source_name text,
   source_id uuid references sources(id) on delete set null,
   source_url text,
+  original_source_url text,
   featured_image text,
   status text not null default 'draft' check (status in ('draft', 'pending', 'published', 'rejected')),
   is_imported boolean not null default false,
   is_sponsored boolean not null default false,
   sponsor_name text,
+  imported_at timestamptz,
+  external_id text,
   published_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -166,6 +173,10 @@ create table if not exists project_submissions (
 
 create index if not exists articles_status_published_at_idx on articles (status, published_at desc);
 create index if not exists articles_slug_idx on articles (slug);
+create index if not exists articles_imported_status_idx on articles (is_imported, status);
+create index if not exists articles_original_source_url_idx on articles (original_source_url);
+create index if not exists articles_external_id_idx on articles (external_id);
+create index if not exists sources_active_idx on sources (is_active);
 create index if not exists banner_ads_placement_active_idx on banner_ads (placement, is_active);
 create index if not exists crypto_projects_slug_idx on crypto_projects (slug);
 create index if not exists crypto_projects_rank_idx on crypto_projects (rank);

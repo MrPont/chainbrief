@@ -60,6 +60,7 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
               <th>Slug</th>
               <th>Status</th>
               <th>Category</th>
+              <th>Source</th>
               <th>Sponsored</th>
               <th>Published</th>
               <th>Actions</th>
@@ -72,9 +73,32 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
                   <strong>{article.title}</strong>
                 </td>
                 <td>{article.slug}</td>
-                <td>{article.status}</td>
+                <td>
+                  <div className="admin-badge-row">
+                    <span className={`admin-status-badge status-${article.status}`}>
+                      {article.status}
+                    </span>
+                    {article.is_imported ? (
+                      <span className="admin-status-badge status-imported">Imported</span>
+                    ) : null}
+                  </div>
+                </td>
                 <td>{article.category || "Uncategorized"}</td>
-                <td>{article.is_sponsored ? "Yes" : "No"}</td>
+                <td>
+                  {article.source_name || "ChainBrief"}
+                  {article.original_source_url ? (
+                    <a className="admin-muted-line" href={article.original_source_url}>
+                      Original URL
+                    </a>
+                  ) : null}
+                </td>
+                <td>
+                  {article.is_sponsored ? (
+                    <span className="admin-status-badge status-sponsored">Sponsored</span>
+                  ) : (
+                    "No"
+                  )}
+                </td>
                 <td>{formatDate(article.published_at)}</td>
                 <td>
                   <div className="admin-table-actions">
@@ -89,7 +113,7 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
             ))}
             {articles.length === 0 ? (
               <tr>
-                <td colSpan={7}>No articles yet.</td>
+                <td colSpan={8}>No articles yet.</td>
               </tr>
             ) : null}
           </tbody>

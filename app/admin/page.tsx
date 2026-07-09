@@ -4,6 +4,7 @@ import AdminLogin from "./AdminLogin";
 import AdminNav from "./AdminNav";
 import {
   fetchArticles,
+  fetchActiveSources,
   fetchBannerAds,
   fetchContactRequests,
   fetchCryptoProjects,
@@ -28,11 +29,19 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     return <AdminLogin error={error} />;
   }
 
-  const [articles, banners, projects, contactRequests, projectSubmissions] =
+  const [
+    articles,
+    banners,
+    projects,
+    activeSources,
+    contactRequests,
+    projectSubmissions,
+  ] =
     await Promise.all([
       fetchArticles(),
       fetchBannerAds(),
       fetchCryptoProjects(),
+      fetchActiveSources(),
       fetchContactRequests(),
       fetchProjectSubmissions(),
     ]);
@@ -55,6 +64,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     { label: "Total banners", value: banners.length },
     { label: "Total projects", value: projects.length },
     { label: "Sponsored projects", value: sponsoredProjects },
+    { label: "Active sources", value: activeSources.length },
     { label: "Total contact requests", value: contactRequests.length },
     { label: "Total project submissions", value: projectSubmissions.length },
   ];
@@ -100,6 +110,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </Link>
           <Link className="button button-secondary" href="/admin/requests">
             View Requests
+          </Link>
+          <Link className="button button-secondary" href="/admin/import">
+            Import News
           </Link>
         </div>
       </section>

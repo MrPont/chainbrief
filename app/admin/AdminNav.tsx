@@ -16,6 +16,8 @@ export default function AdminNav() {
         <Link href="/admin/banners/new">New Banner</Link>
         <Link href="/admin/projects">Projects</Link>
         <Link href="/admin/projects/new">New Project</Link>
+        <Link href="/admin/sources">Sources</Link>
+        <Link href="/admin/import">Import News</Link>
         <Link href="/admin/requests">Requests</Link>
         <Link href="/admin/requests/contact">Contact Requests</Link>
         <Link href="/admin/requests/projects">Project Submissions</Link>

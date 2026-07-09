@@ -1,8 +1,10 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import Parser from "rss-parser";
 import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 const ADMIN_COOKIE = "chainbrief_admin";
@@ -72,6 +74,22 @@ type ProjectPayload = {
   updated_at: string;
 };
 
+type SourcePayload = {
+  name: string;
+  slug: string;
+  website_url: string | null;
+  feed_url: string | null;
+  category: string | null;
+  is_active: boolean;
+  updated_at: string;
+};
+
+type ImportResult = {
+  imported: number;
+  skipped: number;
+  errors: string[];
+};
+
 const bannerPlacements: BannerPlacement[] = [
   "header",
   "homepage_top",
@@ -82,6 +100,8 @@ const bannerPlacements: BannerPlacement[] = [
   "footer",
   "leaderboard",
 ];
+
+const rssParser = new Parser();
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -193,6 +213,118 @@ function getProjectPayload(formData: FormData): ProjectPayload {
   };
 }
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 90);
+}
+
+function getSourcePayload(formData: FormData): SourcePayload {
+  const name = getString(formData, "name");
+  const slug = getString(formData, "slug") || slugify(name);
+
+  return {
+    name,
+    slug,
+    website_url: getNullableString(formData, "website_url"),
+    feed_url: getNullableString(formData, "feed_url"),
+    category: getNullableString(formData, "category"),
+    is_active: formData.get("is_active") === "on",
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function cleanExcerpt(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  const text = value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!text) {
+    return null;
+  }
+
+  return text.length > 320 ? `${text.slice(0, 317)}...` : text;
+}
+
+function normalizeDate(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toISOString();
+}
+
+async function articleExistsByImportKeys(originalSourceUrl: string, externalId: string | null) {
+  const byUrl = await supabaseAdmin
+    .from("articles")
+    .select("id")
+    .eq("original_source_url", originalSourceUrl)
+    .maybeSingle();
+
+  if (byUrl.error) {
+    throw new Error(byUrl.error.message);
+  }
+
+  if (byUrl.data) {
+    return true;
+  }
+
+  if (!externalId) {
+    return false;
+  }
+
+  const byExternalId = await supabaseAdmin
+    .from("articles")
+    .select("id")
+    .eq("external_id", externalId)
+    .maybeSingle();
+
+  if (byExternalId.error) {
+    throw new Error(byExternalId.error.message);
+  }
+
+  return Boolean(byExternalId.data);
+}
+
+async function makeUniqueArticleSlug(title: string) {
+  const base = slugify(title) || "imported-news";
+  let candidate = base;
+
+  for (let index = 0; index < 8; index += 1) {
+    const { data, error } = await supabaseAdmin
+      .from("articles")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data) {
+      return candidate;
+    }
+
+    candidate = `${base}-${index + 2}`;
+  }
+
+  return `${base}-${randomUUID().slice(0, 8)}`;
+}
+
 export async function isAdminAuthenticated() {
   const cookieStore = await cookies();
 
@@ -236,7 +368,7 @@ export async function fetchArticles() {
   const { data, error } = await supabaseAdmin
     .from("articles")
     .select(
-      "id,title,slug,status,category,is_sponsored,is_imported,published_at,created_at,updated_at",
+      "id,title,slug,status,category,is_sponsored,is_imported,source_name,original_source_url,published_at,created_at,updated_at",
     )
     .order("created_at", { ascending: false });
 
@@ -277,6 +409,54 @@ export async function fetchCryptoProjects() {
   }
 
   return data || [];
+}
+
+export async function fetchSources() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("sources")
+    .select("id,name,slug,website_url,feed_url,category,is_active,created_at,updated_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function fetchActiveSources() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("sources")
+    .select("id,name,slug,website_url,feed_url,category,is_active")
+    .eq("is_active", true)
+    .not("feed_url", "is", null)
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function fetchSourceById(id: string) {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("sources")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }
 
 export async function fetchCryptoProjectById(id: string) {
@@ -433,6 +613,29 @@ export async function createCryptoProject(formData: FormData) {
   redirect("/admin/projects?created=1");
 }
 
+export async function createSource(formData: FormData) {
+  await requireAdmin();
+
+  const payload = {
+    ...getSourcePayload(formData),
+    created_at: new Date().toISOString(),
+  };
+
+  if (!payload.name || !payload.slug || !payload.feed_url) {
+    redirect("/admin/sources/new?error=missing");
+  }
+
+  const { error } = await supabaseAdmin.from("sources").insert(payload);
+
+  if (error) {
+    redirect(`/admin/sources/new?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/sources");
+  redirect("/admin/sources?created=1");
+}
+
 export async function updateArticle(id: string, formData: FormData) {
   await requireAdmin();
 
@@ -503,6 +706,27 @@ export async function updateCryptoProject(id: string, formData: FormData) {
   redirect(`/admin/projects/${id}?saved=1`);
 }
 
+export async function updateSource(id: string, formData: FormData) {
+  await requireAdmin();
+
+  const payload = getSourcePayload(formData);
+
+  if (!payload.name || !payload.slug || !payload.feed_url) {
+    redirect(`/admin/sources/${id}?error=missing`);
+  }
+
+  const { error } = await supabaseAdmin.from("sources").update(payload).eq("id", id);
+
+  if (error) {
+    redirect(`/admin/sources/${id}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/sources");
+  revalidatePath(`/admin/sources/${id}`);
+  redirect(`/admin/sources/${id}?saved=1`);
+}
+
 export async function deleteArticle(formData: FormData) {
   await requireAdmin();
 
@@ -564,4 +788,84 @@ export async function deleteCryptoProject(formData: FormData) {
   revalidatePath("/projects");
   revalidatePath("/rankings");
   redirect("/admin/projects?deleted=1");
+}
+
+export async function importLatestNews(): Promise<ImportResult> {
+  await requireAdmin();
+
+  const sources = await fetchActiveSources();
+  const result: ImportResult = {
+    imported: 0,
+    skipped: 0,
+    errors: [],
+  };
+
+  for (const source of sources) {
+    if (!source.feed_url) {
+      result.skipped += 1;
+      continue;
+    }
+
+    try {
+      const feed = await rssParser.parseURL(source.feed_url);
+      const items = feed.items.slice(0, 20);
+
+      for (const item of items) {
+        const title = item.title?.trim();
+        const originalSourceUrl = item.link?.trim();
+
+        if (!title || !originalSourceUrl) {
+          result.skipped += 1;
+          continue;
+        }
+
+        const externalId = item.guid || item.id || originalSourceUrl;
+        const exists = await articleExistsByImportKeys(originalSourceUrl, externalId);
+
+        if (exists) {
+          result.skipped += 1;
+          continue;
+        }
+
+        const slug = await makeUniqueArticleSlug(title);
+        const publishedAt = normalizeDate(item.isoDate || item.pubDate);
+        const excerpt = cleanExcerpt(item.contentSnippet || item.description || item.content);
+        const now = new Date().toISOString();
+        const { error } = await supabaseAdmin.from("articles").insert({
+          title,
+          slug,
+          excerpt,
+          content: null,
+          category: source.category,
+          source_id: source.id,
+          source_name: source.name,
+          source_url: source.website_url,
+          original_source_url: originalSourceUrl,
+          status: "pending",
+          is_imported: true,
+          imported_at: now,
+          external_id: externalId,
+          published_at: publishedAt,
+          created_at: now,
+          updated_at: now,
+        });
+
+        if (error) {
+          result.errors.push(`${source.name}: ${error.message}`);
+          continue;
+        }
+
+        result.imported += 1;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown import error";
+      result.errors.push(`${source.name}: ${message}`);
+    }
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/articles");
+  revalidatePath("/admin/import");
+
+  return result;
 }

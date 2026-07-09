@@ -81,3 +81,25 @@ ChainBrief admin image uploads use Supabase Storage.
 8. Public image URLs are stored in article, banner, and project records.
 
 If `SUPABASE_STORAGE_BUCKET` is missing, the app falls back to `chainbrief-media`.
+
+## News Import Setup
+
+ChainBrief can import RSS items into an admin review queue. Imported stories are saved as `pending` articles and are not visible on the public news pages until an admin reviews, edits, and publishes them.
+
+If your Supabase database was created before RSS import support, run the migration first:
+
+1. Open Supabase -> SQL Editor.
+2. Open `sql/add_news_import_fields.sql` in this repository.
+3. Paste the SQL into Supabase.
+4. Run it once.
+
+Then use the admin workflow:
+
+1. Go to `/admin/sources`.
+2. Add RSS sources with a name, slug, website URL, feed URL, category, and active status.
+3. Go to `/admin/import`.
+4. Click **Import Latest News**.
+5. Imported items appear in `/admin/articles` with `Pending` and `Imported` badges.
+6. Review and edit each imported article before publishing.
+
+Important: RSS import should only store attribution, title, source URL, original article URL, published date, and a short RSS-provided excerpt when available. Do not copy full copyrighted articles into ChainBrief.
