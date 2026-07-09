@@ -1329,7 +1329,9 @@ tbody tr:last-child td {
 }
 
 .admin-queue-card,
-.admin-filter-panel {
+.admin-filter-panel,
+.admin-ai-card,
+.admin-review-warning {
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -1338,6 +1340,43 @@ tbody tr:last-child td {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
   margin-bottom: 18px;
   padding: clamp(20px, 4vw, 28px);
+}
+
+.admin-ai-card,
+.admin-review-warning {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-ai-card h2,
+.admin-review-warning h2 {
+  margin: 0;
+}
+
+.admin-ai-card p,
+.admin-review-warning p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.admin-ai-card-highlight {
+  border-color: rgba(56, 189, 248, 0.48);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(56, 189, 248, 0.16);
+}
+
+.admin-review-warning {
+  border-color: rgba(251, 113, 133, 0.34);
+  background:
+    linear-gradient(135deg, rgba(251, 113, 133, 0.12), transparent 42%),
+    rgba(11, 16, 24, 0.82);
+}
+
+.admin-warning-text {
+  color: var(--green) !important;
+  font-weight: 800;
 }
 
 .admin-queue-card {

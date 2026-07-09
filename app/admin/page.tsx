@@ -52,6 +52,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const pendingImported = articles.filter(
     (article) => article.status === "pending" && article.is_imported,
   ).length;
+  const aiAssisted = articles.filter((article) => article.ai_rewritten_at).length;
   const activeBanners = banners.filter((banner) => banner.is_active).length;
   const sponsoredProjects = projects.filter((project) => project.is_sponsored).length;
   const stats = [
@@ -60,6 +61,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     { label: "Draft articles", value: drafts },
     { label: "Sponsored articles", value: sponsored },
     { label: "Pending imported news", value: pendingImported },
+    { label: "AI-assisted articles", value: aiAssisted },
     { label: "Active banners", value: activeBanners },
     { label: "Total banners", value: banners.length },
     { label: "Total projects", value: projects.length },

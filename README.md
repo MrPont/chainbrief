@@ -58,6 +58,8 @@ SITE_URL=https://your-domain.example
 SITE_NAME=ChainBrief
 ADMIN_PASSWORD=your-admin-password
 CRON_SECRET=your-random-cron-secret
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5.4-mini
 ```
 
 10. Later, add the same values to Vercel Environment Variables before deploying Supabase-connected features.
@@ -105,6 +107,35 @@ Then use the admin workflow:
 6. Review and edit each imported article before publishing.
 
 Important: RSS import should only store attribution, title, source URL, original article URL, published date, and a short RSS-provided excerpt when available. Do not copy full copyrighted articles into ChainBrief.
+
+## AI Rewrite Setup
+
+ChainBrief can generate an original admin-only draft from imported RSS metadata already stored in Supabase. The AI rewrite assistant does not scrape original article pages, does not publish content automatically, and does not expose the OpenAI API key to client components.
+
+Database migration:
+
+1. Open Supabase -> SQL Editor.
+2. Open `sql/add_ai_article_fields.sql` in this repository.
+3. Paste the SQL into Supabase.
+4. Run it once.
+
+OpenAI setup:
+
+1. Create an OpenAI API key.
+2. Add `OPENAI_API_KEY` to `.env.local`.
+3. Add `OPENAI_API_KEY` to Vercel Environment Variables.
+4. Optionally set `OPENAI_MODEL`. If omitted, ChainBrief uses `gpt-5.4-mini`.
+
+Editorial workflow:
+
+1. Import RSS articles into the pending queue.
+2. Open a pending imported article in `/admin/articles`.
+3. Use **Generate AI Rewrite**.
+4. Review and edit title, slug, excerpt, content, SEO title, SEO description, facts, and source attribution.
+5. Save manually.
+6. Publish manually only after review.
+
+Do not publish generated text without checking facts, source attribution, and editorial tone. AI rewrite creates draft content only; the admin remains responsible for review.
 
 ## Automated RSS Import
 

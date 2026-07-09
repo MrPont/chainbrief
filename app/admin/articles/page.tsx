@@ -344,6 +344,11 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
                 <td>
                   <div className="admin-table-actions article-actions">
                     <Link href={`/admin/articles/${article.id}`}>Edit</Link>
+                    {article.is_imported && article.status === "pending" ? (
+                      <Link href={`/admin/articles/${article.id}?ai=rewrite`}>
+                        AI Rewrite
+                      </Link>
+                    ) : null}
                     {(["draft", "published", "rejected"] as const).map((status) => (
                       <form action={updateArticleStatus} key={status}>
                         <input name="id" type="hidden" value={article.id} />

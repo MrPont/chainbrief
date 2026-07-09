@@ -13,6 +13,7 @@ type EditArticlePageProps = {
     id: string;
   }>;
   searchParams: Promise<{
+    ai?: string;
     saved?: string;
     error?: string;
   }>;
@@ -47,7 +48,21 @@ export default async function EditArticlePage({
       {query.error && query.error !== "missing" ? (
         <p className="form-error">Error: {query.error}</p>
       ) : null}
-      <ArticleForm action={updateAction} article={article} submitLabel="Save Article" />
+      {article.needs_review ? (
+        <section className="admin-review-warning">
+          <p className="eyebrow">Editorial Review</p>
+          <h2>This article was AI-assisted and still needs editorial review.</h2>
+          <p>You can publish manually, but check facts, source attribution, and tone first.</p>
+        </section>
+      ) : null}
+      <ArticleForm
+        action={updateAction}
+        article={article}
+        articleId={id}
+        highlightAiAssistant={query.ai === "rewrite"}
+        showAiAssistant
+        submitLabel="Save Article"
+      />
     </>
   );
 }

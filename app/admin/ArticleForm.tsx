@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import ImageUploadField from "./ImageUploadField";
+import { generateArticleAiRewrite } from "./ai/actions";
 
 type ArticleFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -21,8 +22,18 @@ type ArticleFormProps = {
     published_at?: string | null;
     seo_title?: string | null;
     seo_description?: string | null;
+    is_imported?: boolean | null;
+    original_source_url?: string | null;
+    ai_rewritten_at?: string | null;
+    ai_model?: string | null;
+    ai_status?: string | null;
+    ai_notes?: string | null;
+    needs_review?: boolean | null;
   };
   submitLabel: string;
+  articleId?: string;
+  showAiAssistant?: boolean;
+  highlightAiAssistant?: boolean;
 };
 
 function dateTimeLocalValue(value?: string | null) {
@@ -39,21 +50,130 @@ function dateTimeLocalValue(value?: string | null) {
   return date.toISOString().slice(0, 16);
 }
 
-export default function ArticleForm({ action, article, submitLabel }: ArticleFormProps) {
+export default function ArticleForm({
+  action,
+  article,
+  submitLabel,
+  articleId,
+  showAiAssistant = false,
+  highlightAiAssistant = false,
+}: ArticleFormProps) {
   const status = article?.status || "draft";
+  const [isAiPending, startAiTransition] = useTransition();
   const [featuredImage, setFeaturedImage] = useState(article?.featured_image || "");
+  const [title, setTitle] = useState(article?.title || "");
+  const [slug, setSlug] = useState(article?.slug || "");
+  const [excerpt, setExcerpt] = useState(article?.excerpt || "");
+  const [content, setContent] = useState(article?.content || "");
+  const [seoTitle, setSeoTitle] = useState(article?.seo_title || "");
+  const [seoDescription, setSeoDescription] = useState(article?.seo_description || "");
+  const [needsReview, setNeedsReview] = useState(Boolean(article?.needs_review));
+  const [aiMessage, setAiMessage] = useState("");
+  const [aiError, setAiError] = useState("");
+  const [aiNotes, setAiNotes] = useState(article?.ai_notes || "");
+  const [aiModel, setAiModel] = useState(article?.ai_model || "");
+  const [aiStatus, setAiStatus] = useState(article?.ai_status || "");
+
+  function generateRewrite() {
+    if (!articleId) {
+      setAiError("Article must be saved before AI rewrite can run.");
+      return;
+    }
+
+    setAiMessage("");
+    setAiError("");
+
+    startAiTransition(async () => {
+      const result = await generateArticleAiRewrite(articleId);
+
+      if (!result.ok) {
+        setAiError(result.error);
+        return;
+      }
+
+      setTitle(result.data.title);
+      setSlug(result.data.slug);
+      setExcerpt(result.data.excerpt);
+      setContent(result.data.content);
+      setSeoTitle(result.data.seo_title);
+      setSeoDescription(result.data.seo_description);
+      setAiNotes(result.data.ai_notes);
+      setAiModel(result.model);
+      setAiStatus("generated");
+      setNeedsReview(true);
+      setAiMessage("AI rewrite generated. Review the fields, edit as needed, then save.");
+    });
+  }
 
   return (
-    <form action={action} className="admin-form-panel">
-      <div className="form-grid">
-        <label>
-          Title
-          <input name="title" required type="text" defaultValue={article?.title || ""} />
-        </label>
-        <label>
-          Slug
-          <input name="slug" required type="text" defaultValue={article?.slug || ""} />
-        </label>
+    <>
+      {showAiAssistant ? (
+        <section
+          className={
+            highlightAiAssistant ? "admin-ai-card admin-ai-card-highlight" : "admin-ai-card"
+          }
+        >
+          <div>
+            <p className="eyebrow">AI Rewrite Assistant</p>
+            <h2>Generate ChainBrief Draft</h2>
+            <p>
+              AI output must be reviewed before publishing. It uses only the saved
+              RSS metadata and excerpt for this article.
+            </p>
+            {article?.is_imported ? (
+              <p className="admin-warning-text">
+                Imported RSS article. Recommended workflow: Generate rewrite, review,
+                publish.
+              </p>
+            ) : null}
+            {needsReview ? (
+              <p className="admin-warning-text">
+                This article was AI-assisted and still needs editorial review.
+              </p>
+            ) : null}
+            {aiStatus ? (
+              <p className="admin-muted-line">
+                AI status: {aiStatus}
+                {aiModel ? ` with ${aiModel}` : ""}
+              </p>
+            ) : null}
+            {aiNotes ? <p className="admin-muted-line">AI notes: {aiNotes}</p> : null}
+          </div>
+          <button
+            className="button button-primary"
+            disabled={isAiPending}
+            onClick={generateRewrite}
+            type="button"
+          >
+            {isAiPending ? "Generating..." : "Generate AI Rewrite"}
+          </button>
+          {aiMessage ? <p className="form-success">{aiMessage}</p> : null}
+          {aiError ? <p className="form-error">{aiError}</p> : null}
+        </section>
+      ) : null}
+
+      <form action={action} className="admin-form-panel">
+        <div className="form-grid">
+          <label>
+            Title
+            <input
+              name="title"
+              onChange={(event) => setTitle(event.target.value)}
+              required
+              type="text"
+              value={title}
+            />
+          </label>
+          <label>
+            Slug
+            <input
+              name="slug"
+              onChange={(event) => setSlug(event.target.value)}
+              required
+              type="text"
+              value={slug}
+            />
+          </label>
         <label>
           Category
           <input name="category" type="text" defaultValue={article?.category || ""} />
@@ -104,22 +224,36 @@ export default function ArticleForm({ action, article, submitLabel }: ArticleFor
         </label>
         <label className="form-wide">
           Excerpt
-          <textarea name="excerpt" defaultValue={article?.excerpt || ""} />
+          <textarea
+            name="excerpt"
+            onChange={(event) => setExcerpt(event.target.value)}
+            value={excerpt}
+          />
         </label>
         <label className="form-wide">
           Content
-          <textarea name="content" defaultValue={article?.content || ""} />
+          <textarea
+            name="content"
+            onChange={(event) => setContent(event.target.value)}
+            value={content}
+          />
         </label>
         <label>
           SEO title
-          <input name="seo_title" type="text" defaultValue={article?.seo_title || ""} />
+          <input
+            name="seo_title"
+            onChange={(event) => setSeoTitle(event.target.value)}
+            type="text"
+            value={seoTitle}
+          />
         </label>
         <label>
           SEO description
           <input
             name="seo_description"
+            onChange={(event) => setSeoDescription(event.target.value)}
             type="text"
-            defaultValue={article?.seo_description || ""}
+            value={seoDescription}
           />
         </label>
       </div>
@@ -131,9 +265,19 @@ export default function ArticleForm({ action, article, submitLabel }: ArticleFor
         />
         Sponsored article
       </label>
+      <label className="admin-checkbox">
+        <input
+          checked={needsReview}
+          name="needs_review"
+          onChange={(event) => setNeedsReview(event.target.checked)}
+          type="checkbox"
+        />
+        Needs editorial review
+      </label>
       <button className="button button-primary" type="submit">
         {submitLabel}
       </button>
-    </form>
+      </form>
+    </>
   );
 }

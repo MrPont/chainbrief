@@ -34,6 +34,7 @@ type ArticlePayload = {
   sponsor_name: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  needs_review: boolean;
   published_at: string | null;
   updated_at: string;
 };
@@ -153,6 +154,7 @@ function getArticlePayload(formData: FormData): ArticlePayload {
     sponsor_name: isSponsored ? getNullableString(formData, "sponsor_name") : null,
     seo_title: getNullableString(formData, "seo_title"),
     seo_description: getNullableString(formData, "seo_description"),
+    needs_review: formData.get("needs_review") === "on",
     published_at:
       normalizedStatus === "published"
         ? getNullableString(formData, "published_at") || new Date().toISOString()
@@ -271,7 +273,7 @@ export async function fetchArticles() {
   const { data, error } = await supabaseAdmin
     .from("articles")
     .select(
-      "id,title,slug,status,category,is_sponsored,is_imported,source_name,original_source_url,published_at,imported_at,created_at,updated_at",
+      "id,title,slug,status,category,is_sponsored,is_imported,source_name,original_source_url,published_at,imported_at,ai_rewritten_at,ai_status,needs_review,created_at,updated_at",
     )
     .order("created_at", { ascending: false });
 

@@ -64,7 +64,12 @@ create table if not exists articles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   seo_title text,
-  seo_description text
+  seo_description text,
+  ai_rewritten_at timestamptz,
+  ai_model text,
+  ai_status text,
+  ai_notes text,
+  needs_review boolean not null default true
 );
 
 -- Banner ads manage future display placements across header, homepage, sidebar, and articles.
@@ -176,6 +181,8 @@ create index if not exists articles_slug_idx on articles (slug);
 create index if not exists articles_imported_status_idx on articles (is_imported, status);
 create index if not exists articles_original_source_url_idx on articles (original_source_url);
 create index if not exists articles_external_id_idx on articles (external_id);
+create index if not exists articles_ai_status_idx on articles (ai_status);
+create index if not exists articles_needs_review_idx on articles (needs_review);
 create index if not exists sources_active_idx on sources (is_active);
 create index if not exists banner_ads_placement_active_idx on banner_ads (placement, is_active);
 create index if not exists crypto_projects_slug_idx on crypto_projects (slug);
