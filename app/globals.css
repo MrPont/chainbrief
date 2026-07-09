@@ -1023,6 +1023,205 @@ tbody tr:last-child td {
   margin: 20px 0 0;
 }
 
+.form-error,
+.form-success {
+  border-radius: 8px;
+  font-weight: 800;
+  margin: 18px 0;
+  padding: 14px 16px;
+}
+
+.form-error {
+  border: 1px solid rgba(251, 113, 133, 0.32);
+  color: #fecdd3;
+  background: rgba(127, 29, 29, 0.22);
+}
+
+.form-success {
+  border: 1px solid rgba(52, 211, 153, 0.32);
+  color: #bbf7d0;
+  background: rgba(6, 78, 59, 0.22);
+}
+
+.admin-login-shell {
+  align-items: center;
+  display: flex;
+  min-height: calc(100vh - 160px);
+  justify-content: center;
+}
+
+.admin-login-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 24px;
+  max-width: 520px;
+  padding: clamp(26px, 5vw, 44px);
+  width: 100%;
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.14), transparent 44%),
+    rgba(11, 16, 24, 0.9);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+}
+
+.admin-login-card p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-login-form,
+.admin-form-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-login-form label,
+.admin-form-panel label {
+  color: var(--text);
+  display: grid;
+  font-size: 0.9rem;
+  font-weight: 800;
+  gap: 8px;
+}
+
+.admin-login-form input,
+.admin-form-panel input,
+.admin-form-panel select,
+.admin-form-panel textarea {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 14px;
+  background: rgba(5, 7, 11, 0.78);
+}
+
+.admin-form-panel textarea {
+  min-height: 150px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.admin-header {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding: 14px 16px;
+  background: rgba(5, 7, 11, 0.78);
+}
+
+.admin-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-header nav a {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-header nav a:hover {
+  color: var(--text);
+}
+
+.admin-logout {
+  min-width: auto;
+  padding: 10px 12px;
+}
+
+.admin-page-heading {
+  margin: 34px 0 22px;
+  max-width: 880px;
+}
+
+.admin-page-heading p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-stat-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-stat-card,
+.admin-table-card,
+.admin-form-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(11, 16, 24, 0.82);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+}
+
+.admin-stat-card {
+  padding: 22px;
+}
+
+.admin-stat-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.admin-stat-card strong {
+  color: var(--green);
+  font-size: 2rem;
+}
+
+.admin-table-card {
+  overflow-x: auto;
+}
+
+.admin-table-card table {
+  min-width: 980px;
+}
+
+.admin-table-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-table-actions a,
+.admin-table-actions button {
+  border: 0;
+  color: var(--blue);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0;
+  background: transparent;
+}
+
+.admin-table-actions button {
+  color: var(--red);
+}
+
+.admin-form-panel {
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.admin-checkbox {
+  align-items: center;
+  display: flex !important;
+  gap: 10px !important;
+}
+
+.admin-checkbox input {
+  accent-color: var(--green);
+  min-height: auto;
+}
+
 .article-shell {
   margin: 22px auto 0;
   max-width: 920px;
@@ -1453,6 +1652,7 @@ tbody tr:last-child td {
   .brand-showcase-grid,
   .palette-grid,
   .form-grid,
+  .admin-stat-grid,
   .article-meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1523,6 +1723,15 @@ tbody tr:last-child td {
 
   .brand-wordmark {
     font-size: 1.05rem;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: 1fr;
   }
 
   .button {
