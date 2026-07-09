@@ -6,6 +6,7 @@ import {
   fetchArticles,
   fetchBannerAds,
   fetchContactRequests,
+  fetchCryptoProjects,
   fetchProjectSubmissions,
   isAdminAuthenticated,
 } from "./actions";
@@ -27,12 +28,14 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     return <AdminLogin error={error} />;
   }
 
-  const [articles, banners, contactRequests, projectSubmissions] = await Promise.all([
-    fetchArticles(),
-    fetchBannerAds(),
-    fetchContactRequests(),
-    fetchProjectSubmissions(),
-  ]);
+  const [articles, banners, projects, contactRequests, projectSubmissions] =
+    await Promise.all([
+      fetchArticles(),
+      fetchBannerAds(),
+      fetchCryptoProjects(),
+      fetchContactRequests(),
+      fetchProjectSubmissions(),
+    ]);
   const total = articles.length;
   const published = articles.filter((article) => article.status === "published").length;
   const drafts = articles.filter((article) => article.status === "draft").length;
@@ -41,6 +44,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     (article) => article.status === "pending" && article.is_imported,
   ).length;
   const activeBanners = banners.filter((banner) => banner.is_active).length;
+  const sponsoredProjects = projects.filter((project) => project.is_sponsored).length;
   const stats = [
     { label: "Total articles", value: total },
     { label: "Published articles", value: published },
@@ -49,6 +53,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     { label: "Pending imported news", value: pendingImported },
     { label: "Active banners", value: activeBanners },
     { label: "Total banners", value: banners.length },
+    { label: "Total projects", value: projects.length },
+    { label: "Sponsored projects", value: sponsoredProjects },
     { label: "Total contact requests", value: contactRequests.length },
     { label: "Total project submissions", value: projectSubmissions.length },
   ];
@@ -88,6 +94,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </Link>
           <Link className="button button-secondary" href="/admin/banners">
             View Banners
+          </Link>
+          <Link className="button button-secondary" href="/admin/projects">
+            View Projects
           </Link>
           <Link className="button button-secondary" href="/admin/requests">
             View Requests

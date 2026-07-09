@@ -49,6 +49,29 @@ type BannerPayload = {
   updated_at: string;
 };
 
+type ProjectPayload = {
+  name: string;
+  slug: string;
+  symbol: string | null;
+  category: string | null;
+  short_description: string | null;
+  full_description: string | null;
+  chain: string | null;
+  website_url: string | null;
+  twitter_url: string | null;
+  telegram_url: string | null;
+  logo_url: string | null;
+  rank: number | null;
+  score: number | null;
+  tags: string[];
+  highlights: string[];
+  risks: string[];
+  is_sponsored: boolean;
+  sponsor_label: string | null;
+  status: "published";
+  updated_at: string;
+};
+
 const bannerPlacements: BannerPlacement[] = [
   "header",
   "homepage_top",
@@ -74,6 +97,25 @@ function getNullableString(formData: FormData, key: string) {
   const value = getString(formData, key);
 
   return value.length > 0 ? value : null;
+}
+
+function getNullableNumber(formData: FormData, key: string) {
+  const value = getString(formData, key);
+
+  if (!value) {
+    return null;
+  }
+
+  const number = Number(value);
+
+  return Number.isFinite(number) ? number : null;
+}
+
+function getTextArray(formData: FormData, key: string) {
+  return getString(formData, key)
+    .split(/,|\n/)
+    .map((value) => value.trim())
+    .filter(Boolean);
 }
 
 function getArticlePayload(formData: FormData): ArticlePayload {
@@ -120,6 +162,33 @@ function getBannerPayload(formData: FormData): BannerPayload {
     is_active: formData.get("is_active") === "on",
     start_date: getNullableString(formData, "start_date"),
     end_date: getNullableString(formData, "end_date"),
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function getProjectPayload(formData: FormData): ProjectPayload {
+  const isSponsored = formData.get("is_sponsored") === "on";
+
+  return {
+    name: getString(formData, "name"),
+    slug: getString(formData, "slug"),
+    symbol: getNullableString(formData, "symbol"),
+    category: getNullableString(formData, "category"),
+    short_description: getNullableString(formData, "short_description"),
+    full_description: getNullableString(formData, "full_description"),
+    chain: getNullableString(formData, "chain"),
+    website_url: getNullableString(formData, "website_url"),
+    twitter_url: getNullableString(formData, "twitter_url"),
+    telegram_url: getNullableString(formData, "telegram_url"),
+    logo_url: getNullableString(formData, "logo_url"),
+    rank: getNullableNumber(formData, "rank"),
+    score: getNullableNumber(formData, "score"),
+    tags: getTextArray(formData, "tags"),
+    highlights: getTextArray(formData, "highlights"),
+    risks: getTextArray(formData, "risks"),
+    is_sponsored: isSponsored,
+    sponsor_label: isSponsored ? getNullableString(formData, "sponsor_label") : null,
+    status: "published",
     updated_at: new Date().toISOString(),
   };
 }
@@ -193,6 +262,37 @@ export async function fetchBannerAds() {
   }
 
   return data || [];
+}
+
+export async function fetchCryptoProjects() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("crypto_projects")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function fetchCryptoProjectById(id: string) {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("crypto_projects")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }
 
 export async function fetchBannerAdById(id: string) {
@@ -308,6 +408,31 @@ export async function createBannerAd(formData: FormData) {
   redirect("/admin/banners?created=1");
 }
 
+export async function createCryptoProject(formData: FormData) {
+  await requireAdmin();
+
+  const payload = {
+    ...getProjectPayload(formData),
+    created_at: new Date().toISOString(),
+  };
+
+  if (!payload.name || !payload.slug) {
+    redirect("/admin/projects/new?error=missing");
+  }
+
+  const { error } = await supabaseAdmin.from("crypto_projects").insert(payload);
+
+  if (error) {
+    redirect(`/admin/projects/new?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  revalidatePath("/projects");
+  revalidatePath("/rankings");
+  redirect("/admin/projects?created=1");
+}
+
 export async function updateArticle(id: string, formData: FormData) {
   await requireAdmin();
 
@@ -351,6 +476,33 @@ export async function updateBannerAd(id: string, formData: FormData) {
   redirect(`/admin/banners/${id}?saved=1`);
 }
 
+export async function updateCryptoProject(id: string, formData: FormData) {
+  await requireAdmin();
+
+  const payload = getProjectPayload(formData);
+
+  if (!payload.name || !payload.slug) {
+    redirect(`/admin/projects/${id}?error=missing`);
+  }
+
+  const { error } = await supabaseAdmin
+    .from("crypto_projects")
+    .update(payload)
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/admin/projects/${id}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  revalidatePath(`/admin/projects/${id}`);
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${payload.slug}`);
+  revalidatePath("/rankings");
+  redirect(`/admin/projects/${id}?saved=1`);
+}
+
 export async function deleteArticle(formData: FormData) {
   await requireAdmin();
 
@@ -390,4 +542,26 @@ export async function deleteBannerAd(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/news");
   redirect("/admin/banners?deleted=1");
+}
+
+export async function deleteCryptoProject(formData: FormData) {
+  await requireAdmin();
+
+  const id = getString(formData, "id");
+
+  if (!id) {
+    redirect("/admin/projects?error=missing-id");
+  }
+
+  const { error } = await supabaseAdmin.from("crypto_projects").delete().eq("id", id);
+
+  if (error) {
+    redirect(`/admin/projects?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  revalidatePath("/projects");
+  revalidatePath("/rankings");
+  redirect("/admin/projects?deleted=1");
 }

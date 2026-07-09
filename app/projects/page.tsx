@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
-import { cryptoProjects } from "../../lib/siteData";
+import { getPublicProjects } from "../../lib/publicProjects";
 
 export const metadata: Metadata = {
   title: "Crypto Project Directory",
@@ -35,7 +35,11 @@ const projectCategories = [
   "Data",
 ];
 
-export default function ProjectsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  const projects = await getPublicProjects();
+
   return (
     <>
       <PageHero
@@ -56,7 +60,7 @@ export default function ProjectsPage() {
       </section>
 
       <section className="project-directory-grid">
-        {cryptoProjects.map((project) => (
+        {projects.map((project) => (
           <Link className="directory-card" href={`/projects/${project.slug}`} key={project.slug}>
             <div className="directory-card-header">
               <div>

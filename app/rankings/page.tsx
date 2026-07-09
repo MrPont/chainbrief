@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "../../components/PageHero";
-import { topProjects } from "../../lib/siteData";
+import { getRankedPublicProjects } from "../../lib/publicProjects";
 
 export const metadata: Metadata = {
   title: "Crypto Project Rankings",
@@ -25,7 +25,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RankingsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RankingsPage() {
+  const projects = await getRankedPublicProjects();
+
   return (
     <>
       <PageHero
@@ -35,15 +39,15 @@ export default function RankingsPage() {
       />
 
       <section className="project-grid wide-grid">
-        {topProjects.map((project) => (
+        {projects.map((project) => (
           <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
-            <span className="project-rank">{project.rank}</span>
+            <span className="project-rank">{String(project.rank).padStart(2, "0")}</span>
             <div>
               <h2>{project.name}</h2>
-              <p>{project.sector}</p>
+              <p>{project.category}</p>
             </div>
             <strong>{project.score}</strong>
-            <p>{project.note}</p>
+            <p>{project.shortDescription}</p>
           </Link>
         ))}
       </section>

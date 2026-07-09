@@ -87,7 +87,13 @@ create table if not exists crypto_projects (
   chain text,
   website_url text,
   twitter_url text,
+  telegram_url text,
+  logo_url text,
+  rank integer,
+  score integer,
   tags text[] not null default '{}',
+  highlights text[] not null default '{}',
+  risks text[] not null default '{}',
   is_sponsored boolean not null default false,
   sponsor_label text,
   status text not null default 'draft' check (status in ('draft', 'pending', 'published', 'rejected')),
@@ -162,4 +168,5 @@ create index if not exists articles_status_published_at_idx on articles (status,
 create index if not exists articles_slug_idx on articles (slug);
 create index if not exists banner_ads_placement_active_idx on banner_ads (placement, is_active);
 create index if not exists crypto_projects_slug_idx on crypto_projects (slug);
+create index if not exists crypto_projects_rank_idx on crypto_projects (rank);
 create index if not exists project_submissions_status_idx on project_submissions (status, created_at desc);
