@@ -10,7 +10,10 @@ export const metadata: Metadata = {
     template: "%s | ChainBrief",
   },
   description:
-    "ChainBrief tracks crypto news, market signals, Web3 trends, and emerging digital asset projects.",
+    "ChainBrief tracks crypto news, market signals, Web3 trends, project rankings and crypto marketing services.",
+  icons: {
+    icon: "/icon.svg",
+  },
   keywords: [
     "crypto news",
     "Bitcoin",
@@ -23,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ChainBrief - Crypto News, Markets & Project Rankings",
     description:
-      "Fast context on crypto markets, Web3 trends, and emerging digital asset projects.",
+      "ChainBrief tracks crypto news, market signals, Web3 trends, project rankings and crypto marketing services.",
     images: ["/chainbrief-market-intelligence.png"],
   },
 };

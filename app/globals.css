@@ -63,22 +63,61 @@ a {
 .logo {
   align-items: center;
   display: inline-flex;
-  gap: 10px;
-  font-size: 1.08rem;
-  font-weight: 800;
-  letter-spacing: 0;
+  min-width: 0;
 }
 
-.logo-mark {
+.brand-logo {
   align-items: center;
-  background: linear-gradient(135deg, var(--blue), var(--green) 52%, var(--violet));
-  border-radius: 8px;
-  color: #041014;
   display: inline-flex;
-  font-size: 0.78rem;
-  height: 34px;
-  justify-content: center;
-  width: 34px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-logo-icon {
+  gap: 0;
+}
+
+.logo-size-sm .logo-mark-svg {
+  height: 30px;
+  width: 30px;
+}
+
+.logo-size-md .logo-mark-svg {
+  height: 38px;
+  width: 38px;
+}
+
+.logo-size-lg .logo-mark-svg {
+  height: 64px;
+  width: 64px;
+}
+
+.logo-mark-svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.brand-wordmark {
+  align-items: baseline;
+  display: inline-flex;
+  font-size: 1.08rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.logo-size-lg .brand-wordmark {
+  font-size: clamp(2rem, 5vw, 3.35rem);
+}
+
+.brand-wordmark span:first-child {
+  color: var(--logo-chain, var(--text));
+}
+
+.brand-wordmark span:last-child {
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  background-clip: text;
+  color: transparent;
 }
 
 .main-nav,
@@ -1214,6 +1253,79 @@ tbody tr:last-child td {
   padding: 10px 12px;
 }
 
+.brand-showcase-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.brand-showcase-card,
+.palette-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(11, 16, 24, 0.82);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  padding: 24px;
+}
+
+.brand-logo-stage {
+  align-items: center;
+  display: flex;
+  min-height: 176px;
+}
+
+.brand-icon-stage {
+  justify-content: center;
+}
+
+.brand-dark-sample {
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.14), transparent 48%),
+    #05070b;
+}
+
+.brand-light-sample {
+  --logo-chain: #05070b;
+  background: #f8fafc;
+}
+
+.brand-light-sample .panel-label {
+  color: #0369a1;
+}
+
+.brand-section {
+  margin-top: 54px;
+}
+
+.palette-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.palette-card span {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 8px;
+  display: block;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.palette-card h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.palette-card p {
+  color: var(--muted);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  margin-bottom: 0;
+}
+
+.brand-description-panel {
+  margin-top: 18px;
+}
+
 .site-footer {
   border-top: 1px solid var(--line);
   margin-top: 34px;
@@ -1244,6 +1356,8 @@ tbody tr:last-child td {
   .project-directory-grid,
   .metric-grid,
   .two-column-list,
+  .brand-showcase-grid,
+  .palette-grid,
   .article-meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1293,6 +1407,8 @@ tbody tr:last-child td {
   .project-directory-grid,
   .metric-grid,
   .two-column-list,
+  .brand-showcase-grid,
+  .palette-grid,
   .article-meta {
     grid-template-columns: 1fr;
   }

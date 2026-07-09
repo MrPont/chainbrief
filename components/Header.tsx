@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 const navigationLinks = [
   { label: "News", href: "/news" },
@@ -13,8 +14,7 @@ export default function Header() {
   return (
     <header className="site-header">
       <Link className="logo" href="/" aria-label="ChainBrief home">
-        <span className="logo-mark">CB</span>
-        <span>ChainBrief</span>
+        <Logo />
       </Link>
 
       <nav className="main-nav" aria-label="Primary navigation">
