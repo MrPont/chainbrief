@@ -34,3 +34,29 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Supabase Setup
+
+ChainBrief is still a static MVP. Supabase files are included for the future admin/content system, but the live pages are not connected to Supabase yet.
+
+1. Create a new project at [Supabase](https://supabase.com).
+2. Open the Supabase project dashboard.
+3. Go to **SQL Editor**.
+4. Open `sql/schema.sql` in this repository.
+5. Paste the full SQL file into the Supabase SQL Editor.
+6. Run the SQL to create the ChainBrief tables.
+7. In Supabase, go to **Project Settings** -> **API**.
+8. Copy the project URL and anon public key.
+9. Create a local `.env.local` file based on `.env.example`:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SITE_URL=https://your-domain.example
+SITE_NAME=ChainBrief
+```
+
+10. Later, add the same values to Vercel Environment Variables before deploying Supabase-connected features.
+
+Important: keep `SUPABASE_SERVICE_ROLE_KEY` private. It is only for server/admin code and must never be exposed in public client components.
