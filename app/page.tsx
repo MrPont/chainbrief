@@ -74,15 +74,15 @@ export default function Home() {
           </div>
           <div className="news-grid">
             {latestNews.map((article) => (
-              <article className="news-card" key={article.title}>
+              <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
                 <div className="card-meta">
                   <span>{article.category}</span>
-                  <span>{article.time}</span>
+                  <span>{article.readingTime}</span>
                 </div>
                 <h3>{article.title}</h3>
                 <p>{article.excerpt}</p>
                 <span className="impact-pill">{article.impact}</span>
-              </article>
+              </Link>
             ))}
           </div>
         </div>

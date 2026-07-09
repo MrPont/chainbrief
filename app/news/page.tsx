@@ -1,7 +1,8 @@
+import Link from "next/link";
 import PageHero from "../../components/PageHero";
 import { latestNews } from "../../lib/siteData";
 
-const categories = ["All", "Bitcoin", "Ethereum", "DeFi", "Regulation", "Web3"];
+const categories = ["All", "Bitcoin", "Ethereum", "DeFi", "Regulation", "Markets"];
 
 export default function NewsPage() {
   return (
@@ -25,15 +26,15 @@ export default function NewsPage() {
 
       <section className="news-grid">
         {latestNews.map((article) => (
-          <article className="news-card" key={article.title}>
+          <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
             <div className="card-meta">
               <span>{article.category}</span>
-              <span>{article.time}</span>
+              <span>{article.readingTime}</span>
             </div>
             <h2>{article.title}</h2>
             <p>{article.excerpt}</p>
             <span className="impact-pill">{article.impact}</span>
-          </article>
+          </Link>
         ))}
       </section>
     </>
