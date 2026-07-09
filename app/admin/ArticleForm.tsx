@@ -34,6 +34,7 @@ type ArticleFormProps = {
   articleId?: string;
   showAiAssistant?: boolean;
   highlightAiAssistant?: boolean;
+  aiRewriteEnabled?: boolean;
 };
 
 function dateTimeLocalValue(value?: string | null) {
@@ -57,6 +58,7 @@ export default function ArticleForm({
   articleId,
   showAiAssistant = false,
   highlightAiAssistant = false,
+  aiRewriteEnabled = false,
 }: ArticleFormProps) {
   const status = article?.status || "draft";
   const [isAiPending, startAiTransition] = useTransition();
@@ -75,6 +77,11 @@ export default function ArticleForm({
   const [aiStatus, setAiStatus] = useState(article?.ai_status || "");
 
   function generateRewrite() {
+    if (!aiRewriteEnabled) {
+      setAiError("AI rewrite is currently disabled. Manual editorial review is active.");
+      return;
+    }
+
     if (!articleId) {
       setAiError("Article must be saved before AI rewrite can run.");
       return;
@@ -139,16 +146,44 @@ export default function ArticleForm({
             ) : null}
             {aiNotes ? <p className="admin-muted-line">AI notes: {aiNotes}</p> : null}
           </div>
-          <button
-            className="button button-primary"
-            disabled={isAiPending}
-            onClick={generateRewrite}
-            type="button"
-          >
-            {isAiPending ? "Generating..." : "Generate AI Rewrite"}
-          </button>
+          {aiRewriteEnabled ? (
+            <button
+              className="button button-primary"
+              disabled={isAiPending}
+              onClick={generateRewrite}
+              type="button"
+            >
+              {isAiPending ? "Generating..." : "Generate AI Rewrite"}
+            </button>
+          ) : (
+            <p className="admin-disabled-notice">
+              AI rewrite is currently disabled. Manual editorial review is active.
+            </p>
+          )}
           {aiMessage ? <p className="form-success">{aiMessage}</p> : null}
           {aiError ? <p className="form-error">{aiError}</p> : null}
+        </section>
+      ) : null}
+
+      {article?.is_imported ? (
+        <section className="admin-ai-card">
+          <div>
+            <p className="eyebrow">Manual Rewrite Helper</p>
+            <h2>Editorial Workflow</h2>
+            <ul className="admin-helper-list">
+              <li>Review original source.</li>
+              <li>Rewrite title, excerpt and content manually.</li>
+              <li>Keep source attribution.</li>
+              <li>Set status to published only after review.</li>
+            </ul>
+            <label className="admin-copy-template">
+              Prompt template
+              <textarea
+                readOnly
+                value={`Rewrite this imported crypto news item into an original ChainBrief brief. Use only the facts in the source metadata and excerpt. Keep source attribution, avoid hype, do not provide financial advice, and write clean editorial paragraphs.\n\nTitle: ${title}\nSource: ${article.source_name || ""}\nOriginal URL: ${article.original_source_url || article.source_url || ""}\nCategory: ${article.category || ""}\nExcerpt: ${excerpt}`}
+              />
+            </label>
+          </div>
         </section>
       ) : null}
 

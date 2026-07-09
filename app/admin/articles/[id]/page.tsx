@@ -32,6 +32,7 @@ export default async function EditArticlePage({
 
   const article = await fetchArticleById(id);
   const updateAction = updateArticle.bind(null, id);
+  const aiRewriteEnabled = process.env.AI_REWRITE_ENABLED === "true";
 
   return (
     <>
@@ -59,6 +60,7 @@ export default async function EditArticlePage({
         action={updateAction}
         article={article}
         articleId={id}
+        aiRewriteEnabled={aiRewriteEnabled}
         highlightAiAssistant={query.ai === "rewrite"}
         showAiAssistant
         submitLabel="Save Article"

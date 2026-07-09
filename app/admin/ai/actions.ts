@@ -134,6 +134,13 @@ Content length:
 export async function generateArticleAiRewrite(articleId: string): Promise<AiRewriteResult> {
   await requireAdmin();
 
+  if (process.env.AI_REWRITE_ENABLED !== "true") {
+    return {
+      ok: false,
+      error: "AI rewrite is currently disabled. Manual editorial review is active.",
+    };
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL || "gpt-5.4-mini";
 
@@ -218,7 +225,13 @@ export async function generateArticleAiRewrite(articleId: string): Promise<AiRew
   } catch (rewriteError) {
     return {
       ok: false,
-      error: rewriteError instanceof Error ? rewriteError.message : "AI rewrite failed.",
+      error:
+        rewriteError instanceof Error &&
+        /billing|quota|insufficient_quota|payment|credits/i.test(rewriteError.message)
+          ? "OpenAI API quota is unavailable. Please check billing or continue with manual editing."
+          : rewriteError instanceof Error
+            ? rewriteError.message
+            : "AI rewrite failed.",
     };
   }
 }
