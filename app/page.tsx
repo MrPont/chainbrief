@@ -7,7 +7,6 @@ import FeaturedProjects from "../components/FeaturedProjects";
 import { getMarketData } from "../lib/marketData";
 import { getPublicNewsArticles } from "../lib/publicArticles";
 import { getPublicProjects } from "../lib/publicProjects";
-import { topProjects } from "../lib/siteData";
 
 export const metadata: Metadata = {
   title: "ChainBrief - Crypto News, Markets & Project Rankings",
@@ -94,6 +93,16 @@ export default async function Home() {
   const bitcoin = marketData.assets.find((coin) => coin.id === "bitcoin");
   const ethereum = marketData.assets.find((coin) => coin.id === "ethereum");
   const solana = marketData.assets.find((coin) => coin.id === "solana");
+  const topRankedProjects = publicProjects
+    .filter((project) => project.source === "supabase")
+    .sort((first, second) => {
+      if (first.rank !== second.rank) {
+        return first.rank - second.rank;
+      }
+
+      return second.score - first.score;
+    })
+    .slice(0, 4);
 
   return (
     <>
@@ -251,21 +260,45 @@ export default async function Home() {
         <div className="section-heading">
           <p className="eyebrow">Research desk</p>
           <h2>Top Crypto Projects</h2>
-          <Link href="/projects">View directory</Link>
+          <Link href={topRankedProjects.length > 0 ? "/rankings" : "/submit-project"}>
+            {topRankedProjects.length > 0 ? "View rankings" : "Submit project"}
+          </Link>
         </div>
-        <div className="project-grid">
-          {topProjects.slice(0, 4).map((project) => (
-            <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
-              <span className="project-rank">{project.rank}</span>
-              <div>
-                <h3>{project.name}</h3>
-                <p>{project.sector}</p>
-              </div>
-              <strong>{project.score}</strong>
-              <p>{project.note}</p>
-            </Link>
-          ))}
-        </div>
+        {topRankedProjects.length > 0 ? (
+          <div className="project-grid">
+            {topRankedProjects.map((project) => (
+              <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
+                <span className="project-rank">
+                  {project.rank && project.rank < 999 ? `#${project.rank}` : "Ranked"}
+                </span>
+                <div>
+                  <h3>{project.name}</h3>
+                  <p>{project.category}</p>
+                </div>
+                <strong>{project.score || "N/A"}</strong>
+                <p>{project.shortDescription}</p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <section className="cta-panel compact-cta-panel rankings-update-panel">
+            <p className="eyebrow">Rankings update</p>
+            <h2>Project rankings are being updated</h2>
+            <p>
+              ChainBrief is preparing the editorial ranking layer from public
+              project data. Submit a project for review or explore the current
+              project directory while rankings are being curated.
+            </p>
+            <div className="hero-actions">
+              <Link className="button button-primary" href="/submit-project">
+                Submit Your Project
+              </Link>
+              <Link className="button button-secondary" href="/projects">
+                View Directory
+              </Link>
+            </div>
+          </section>
+        )}
       </section>
 
       <section className="cta-panel marketing-home-panel">
