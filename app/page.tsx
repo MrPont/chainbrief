@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import BannerAd from "../components/BannerAd";
 import { getMarketData } from "../lib/marketData";
-import { latestNews, topProjects } from "../lib/siteData";
+import { getPublicNewsArticles } from "../lib/publicArticles";
+import { topProjects } from "../lib/siteData";
 
 export const metadata: Metadata = {
   title: "ChainBrief - Crypto News, Markets & Project Rankings",
@@ -61,9 +63,31 @@ const campaignChannels = [
   "Exchange Listing Visibility",
 ];
 
+function formatArticleDate(date: string) {
+  if (!date) {
+    return "Draft date";
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsedDate);
+}
+
 export default async function Home() {
-  const marketData = await getMarketData();
+  const [marketData, publicArticles] = await Promise.all([
+    getMarketData(),
+    getPublicNewsArticles(),
+  ]);
   const marketCards = marketData.assets.slice(0, 4);
+  const homepageArticles = publicArticles.slice(0, 4);
   const bitcoin = marketData.assets.find((coin) => coin.id === "bitcoin");
   const ethereum = marketData.assets.find((coin) => coin.id === "ethereum");
   const solana = marketData.assets.find((coin) => coin.id === "solana");
@@ -144,15 +168,30 @@ export default async function Home() {
             <Link href="/news">View all</Link>
           </div>
           <div className="news-grid">
-            {latestNews.map((article) => (
+            {homepageArticles.map((article) => (
               <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
+                {article.featuredImage ? (
+                  <div className="news-card-image">
+                    <img src={article.featuredImage} alt="" />
+                  </div>
+                ) : null}
                 <div className="card-meta">
                   <span>{article.category}</span>
-                  <span>{article.readingTime}</span>
+                  <span>{formatArticleDate(article.publishedDate)}</span>
                 </div>
                 <h3>{article.title}</h3>
                 <p>{article.excerpt}</p>
-                <span className="impact-pill">{article.impact}</span>
+                <div className="article-card-footer">
+                  <span>{article.author || article.sourceName}</span>
+                  <span>{article.readingTime}</span>
+                </div>
+                {article.isSponsored ? (
+                  <span className="impact-pill">
+                    Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
+                  </span>
+                ) : article.impact ? (
+                  <span className="impact-pill">{article.impact}</span>
+                ) : null}
               </Link>
             ))}
           </div>
