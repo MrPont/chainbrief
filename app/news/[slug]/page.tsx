@@ -161,75 +161,86 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="article-shell">
-        <header className="article-header">
-          <div className="article-kicker-row">
-            <span className="category-badge">{article.category}</span>
-            {article.isSponsored ? (
-              <span className="sponsored-label">
-                Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
-              </span>
-            ) : null}
-          </div>
-          <h1>{article.title}</h1>
-          <p className="article-excerpt">{article.excerpt}</p>
-          <dl className="article-meta" aria-label="Article metadata">
-            <div>
-              <dt>Author</dt>
-              <dd>{article.author}</dd>
+      <div className="article-layout">
+        <article className="article-shell">
+          <header className="article-header">
+            <div className="article-kicker-row">
+              <span className="category-badge">{article.category}</span>
+              {article.isSponsored ? (
+                <span className="sponsored-label">
+                  Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
+                </span>
+              ) : null}
             </div>
-            <div>
-              <dt>Source</dt>
-              <dd>{article.sourceName}</dd>
-            </div>
-            <div>
-              <dt>Published</dt>
-              <dd>{formatArticleDate(article.publishedDate)}</dd>
-            </div>
-            <div>
-              <dt>Read</dt>
-              <dd>{article.readingTime}</dd>
-            </div>
-          </dl>
-        </header>
+            <h1>{article.title}</h1>
+            <p className="article-excerpt">{article.excerpt}</p>
+            <dl className="article-meta" aria-label="Article metadata">
+              <div>
+                <dt>Author</dt>
+                <dd>{article.author}</dd>
+              </div>
+              <div>
+                <dt>Source</dt>
+                <dd>{article.sourceName}</dd>
+              </div>
+              <div>
+                <dt>Published</dt>
+                <dd>{formatArticleDate(article.publishedDate)}</dd>
+              </div>
+              <div>
+                <dt>Read</dt>
+                <dd>{article.readingTime}</dd>
+              </div>
+            </dl>
+          </header>
 
-        {article.featuredImage ? (
-          <figure className="article-featured-image">
-            <img src={article.featuredImage} alt="" />
-          </figure>
-        ) : null}
-
-        <section className="article-content">
-          <ArticleBody article={article} />
-        </section>
-
-        <footer className="article-footer-blocks">
-          {article.tags.length > 0 ? (
-            <section className="tag-list" aria-label="Article tags">
-              {article.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </section>
+          {article.featuredImage ? (
+            <figure className="article-featured-image">
+              <img src={article.featuredImage} alt="" />
+            </figure>
           ) : null}
 
-          {article.sourceUrl ? (
-            <section className="attribution-block">
-              <h2>Original Source Attribution</h2>
+          <section className="article-content">
+            <ArticleBody article={article} />
+          </section>
+
+          <footer className="article-footer-blocks">
+            {article.tags.length > 0 ? (
+              <section className="tag-list" aria-label="Article tags">
+                {article.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </section>
+            ) : null}
+
+            {article.sourceUrl ? (
+              <section className="attribution-block">
+                <h2>Original Source Attribution</h2>
+                <p>
+                  Source placeholder: <a href={article.sourceUrl}>{article.sourceUrl}</a>
+                </p>
+              </section>
+            ) : null}
+
+            <section className="disclaimer-block">
+              <h2>Disclaimer</h2>
               <p>
-                Source placeholder: <a href={article.sourceUrl}>{article.sourceUrl}</a>
+                This article is for informational purposes only and should not be
+                considered financial advice.
               </p>
             </section>
-          ) : null}
+          </footer>
+        </article>
 
-          <section className="disclaimer-block">
-            <h2>Disclaimer</h2>
-            <p>
-              This article is for informational purposes only and should not be
-              considered financial advice.
-            </p>
-          </section>
-        </footer>
-      </article>
+        <aside className="article-sidebar">
+          <BannerAd
+            placement="article_sidebar"
+            variant="box"
+            fallbackLabel="Article Sidebar Banner"
+            fallbackSize="300 x 250"
+          />
+        </aside>
+      </div>
 
       {relatedArticles.length > 0 ? (
         <section className="related-section">

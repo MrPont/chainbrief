@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import BannerAd from "../../components/BannerAd";
 import PageHero from "../../components/PageHero";
 import { sponsorPackages } from "../../lib/siteData";
 
@@ -42,6 +43,12 @@ export default function AdvertisePage() {
         eyebrow="Reach crypto readers"
         title="Advertise With ChainBrief"
         description="Advertise focuses on ChainBrief on-site media placements. For broader crypto marketing campaigns, visit ChainBrief Marketing."
+      />
+
+      <BannerAd
+        placement="leaderboard"
+        className="section-banner"
+        fallbackLabel="Leaderboard Banner"
       />
 
       <section className="cta-panel compact-cta-panel">

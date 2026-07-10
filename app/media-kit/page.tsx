@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import BannerAd from "../../components/BannerAd";
 
 export const metadata: Metadata = {
   title: "ChainBrief Media Kit",
@@ -71,6 +72,12 @@ export default function MediaKitPage() {
           influencers, AMAs and launch visibility packages.
         </p>
       </section>
+
+      <BannerAd
+        placement="leaderboard"
+        className="section-banner"
+        fallbackLabel="Leaderboard Banner"
+      />
 
       <section className="marketing-section">
         <div className="section-heading">

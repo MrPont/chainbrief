@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
+import BannerAd from "../../components/BannerAd";
 import PageHero from "../../components/PageHero";
 import { getPublicNewsArticles } from "../../lib/publicArticles";
 
@@ -57,6 +58,12 @@ export default async function NewsPage() {
         eyebrow="Latest coverage"
         title="Crypto News"
         description="Daily market updates, protocol news, regulation coverage, and Web3 trend tracking from the ChainBrief editorial desk."
+      />
+
+      <BannerAd
+        placement="leaderboard"
+        className="section-banner"
+        fallbackLabel="Leaderboard Banner"
       />
 
       <section className="toolbar" aria-label="News tools">

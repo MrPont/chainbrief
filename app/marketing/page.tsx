@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import BannerAd from "../../components/BannerAd";
 
 export const metadata: Metadata = {
   title: "Crypto Marketing Services | ChainBrief",
@@ -167,6 +168,12 @@ export default function MarketingPage() {
       </section>
 
       <section className="marketing-section">
+        <BannerAd
+          placement="leaderboard"
+          className="section-banner"
+          fallbackLabel="Leaderboard Banner"
+        />
+
         <div className="section-heading">
           <p className="eyebrow">Services</p>
           <h2>Visibility Channels for Web3 Teams</h2>

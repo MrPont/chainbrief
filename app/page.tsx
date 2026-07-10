@@ -167,6 +167,12 @@ export default function Home() {
       </section>
 
       <section className="market-section">
+        <BannerAd
+          placement="homepage_mid"
+          className="section-banner"
+          fallbackLabel="Homepage Mid Banner"
+        />
+
         <div className="section-heading">
           <p className="eyebrow">Live sample data</p>
           <h2>Market Movers</h2>
