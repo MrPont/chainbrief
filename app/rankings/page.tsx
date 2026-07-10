@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
+import BannerAd from "../../components/BannerAd";
 import PageHero from "../../components/PageHero";
 import { getRankedPublicProjects } from "../../lib/publicProjects";
 
@@ -37,6 +38,12 @@ export default async function RankingsPage() {
         eyebrow="Project research"
         title="Top Crypto Projects"
         description="Placeholder rankings for notable crypto projects based on market position, ecosystem growth, product maturity, and narrative strength."
+      />
+
+      <BannerAd
+        placement="leaderboard"
+        className="section-banner"
+        fallbackLabel="Leaderboard Banner"
       />
 
       <section className="project-grid wide-grid">

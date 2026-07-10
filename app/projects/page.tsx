@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Metadata } from "next";
+import BannerAd from "../../components/BannerAd";
 import PageHero from "../../components/PageHero";
 import { getPublicProjects } from "../../lib/publicProjects";
 
@@ -47,6 +48,12 @@ export default async function ProjectsPage() {
         eyebrow="Project research"
         title="Crypto Project Directory"
         description="Track infrastructure, DeFi, Web3, AI crypto, L1/L2 ecosystems, and the market narratives shaping digital asset project discovery."
+      />
+
+      <BannerAd
+        placement="leaderboard"
+        className="section-banner"
+        fallbackLabel="Leaderboard Banner"
       />
 
       <section className="toolbar" aria-label="Project directory tools">
