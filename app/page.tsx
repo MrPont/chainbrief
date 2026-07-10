@@ -176,6 +176,7 @@ export default async function Home() {
                 <ArticleCover
                   category={article.category}
                   imageUrl={article.featuredImage}
+                  isImported={article.isImported}
                   isSponsored={article.isSponsored}
                   title={article.title}
                 />

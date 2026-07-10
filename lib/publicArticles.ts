@@ -19,6 +19,7 @@ type SupabaseArticleRow = {
   source_url: string | null;
   featured_image: string | null;
   status: string;
+  is_imported: boolean | null;
   is_sponsored: boolean | null;
   sponsor_name: string | null;
   published_at: string | null;
@@ -41,6 +42,7 @@ export type PublicArticle = {
   sourceName: string;
   sourceUrl?: string;
   featuredImage?: string;
+  isImported: boolean;
   isSponsored: boolean;
   sponsorName?: string;
   publishedDate: string;
@@ -64,6 +66,7 @@ const articleColumns = `
   source_url,
   featured_image,
   status,
+  is_imported,
   is_sponsored,
   sponsor_name,
   published_at,
@@ -96,6 +99,7 @@ function mapStaticArticle(article: NewsArticle): PublicArticle {
     author: article.author,
     sourceName: article.sourceLabel,
     sourceUrl: article.originalSourceUrl,
+    isImported: false,
     isSponsored: article.isSponsored,
     sponsorName: article.sponsorName,
     publishedDate: article.publishedDate,
@@ -124,6 +128,7 @@ function mapSupabaseArticle(article: SupabaseArticleRow): PublicArticle {
     sourceName,
     sourceUrl: article.source_url?.trim() || undefined,
     featuredImage: article.featured_image?.trim() || undefined,
+    isImported: Boolean(article.is_imported),
     isSponsored: Boolean(article.is_sponsored),
     sponsorName: article.sponsor_name?.trim() || undefined,
     publishedDate: normalizeDate(

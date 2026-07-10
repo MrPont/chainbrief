@@ -198,6 +198,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             <ArticleCover
               category={article.category}
               imageUrl={article.featuredImage}
+              isImported={article.isImported}
               isSponsored={article.isSponsored}
               title={article.title}
               variant="hero"
@@ -263,6 +264,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
                 <ArticleCover
                   category={relatedArticle.category}
                   imageUrl={relatedArticle.featuredImage}
+                  isImported={relatedArticle.isImported}
                   isSponsored={relatedArticle.isSponsored}
                   title={relatedArticle.title}
                 />

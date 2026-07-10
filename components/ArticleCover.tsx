@@ -3,6 +3,7 @@ type ArticleCoverProps = {
   category: string;
   title: string;
   imageUrl?: string;
+  isImported?: boolean;
   isSponsored?: boolean;
   variant?: "card" | "hero";
 };
@@ -37,14 +38,50 @@ function getLabel(category: string, isSponsored?: boolean) {
   return category?.trim() || "Editorial Brief";
 }
 
+function isOwnedMediaUrl(imageUrl: string) {
+  const trimmedUrl = imageUrl.trim();
+
+  if (!trimmedUrl) {
+    return false;
+  }
+
+  if (trimmedUrl.startsWith("/")) {
+    return true;
+  }
+
+  try {
+    const parsedUrl = new URL(trimmedUrl);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET || "chainbrief-media";
+    const isSupabaseStoragePath = parsedUrl.pathname.includes(
+      `/storage/v1/object/public/${bucketName}/`,
+    );
+
+    if (!isSupabaseStoragePath) {
+      return false;
+    }
+
+    if (!supabaseUrl) {
+      return parsedUrl.hostname.endsWith(".supabase.co");
+    }
+
+    return parsedUrl.hostname === new URL(supabaseUrl).hostname;
+  } catch {
+    return false;
+  }
+}
+
 export default function ArticleCover({
   category,
   title,
   imageUrl,
+  isImported,
   isSponsored,
   variant = "card",
 }: ArticleCoverProps) {
-  if (imageUrl) {
+  const canShowImage = imageUrl && (!isImported || isOwnedMediaUrl(imageUrl));
+
+  if (canShowImage) {
     return (
       <div className={`article-cover article-cover-${variant} article-cover-uploaded`}>
         <img src={imageUrl} alt="" />

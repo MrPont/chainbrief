@@ -83,6 +83,7 @@ export default async function NewsPage() {
             <ArticleCover
               category={article.category}
               imageUrl={article.featuredImage}
+              isImported={article.isImported}
               isSponsored={article.isSponsored}
               title={article.title}
             />
