@@ -139,7 +139,7 @@ export default function FeaturedProjects({
               <span>{project.category}</span>
               {project.chain ? <span>{project.chain}</span> : null}
             </div>
-            <p>{project.shortDescription}</p>
+            <p className="featured-project-description">{project.shortDescription}</p>
             <div className="featured-project-footer">
               <span>{getProjectMetric(project)}</span>
               <strong>View Project</strong>
@@ -172,7 +172,7 @@ export default function FeaturedProjects({
                   <span key={item}>{item}</span>
                 ))}
               </div>
-              <p>{placement.text}</p>
+              <p className="featured-project-description">{placement.text}</p>
               <div className="featured-project-footer">
                 <span>Media kit on request</span>
                 <strong>{placement.cta}</strong>

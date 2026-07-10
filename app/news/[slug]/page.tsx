@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ArticleCover from "../../../components/ArticleCover";
 import BannerAd from "../../../components/BannerAd";
 import {
   getPublicArticleBySlug,
@@ -194,11 +194,15 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             </dl>
           </header>
 
-          {article.featuredImage ? (
-            <figure className="article-featured-image">
-              <img src={article.featuredImage} alt="" />
-            </figure>
-          ) : null}
+          <figure className="article-featured-image">
+            <ArticleCover
+              category={article.category}
+              imageUrl={article.featuredImage}
+              isSponsored={article.isSponsored}
+              title={article.title}
+              variant="hero"
+            />
+          </figure>
 
           <section className="article-content">
             <ArticleBody article={article} />
@@ -256,6 +260,12 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
                 href={`/news/${relatedArticle.slug}`}
                 key={relatedArticle.slug}
               >
+                <ArticleCover
+                  category={relatedArticle.category}
+                  imageUrl={relatedArticle.featuredImage}
+                  isSponsored={relatedArticle.isSponsored}
+                  title={relatedArticle.title}
+                />
                 <div className="card-meta">
                   <span>{relatedArticle.category}</span>
                   <span>{relatedArticle.readingTime}</span>

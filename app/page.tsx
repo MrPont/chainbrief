@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import ArticleCover from "../components/ArticleCover";
 import BannerAd from "../components/BannerAd";
 import FeaturedProjects from "../components/FeaturedProjects";
 import { getMarketData } from "../lib/marketData";
@@ -173,11 +173,12 @@ export default async function Home() {
           <div className="news-grid">
             {homepageArticles.map((article) => (
               <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
-                {article.featuredImage ? (
-                  <div className="news-card-image">
-                    <img src={article.featuredImage} alt="" />
-                  </div>
-                ) : null}
+                <ArticleCover
+                  category={article.category}
+                  imageUrl={article.featuredImage}
+                  isSponsored={article.isSponsored}
+                  title={article.title}
+                />
                 <div className="card-meta">
                   <span>{article.category}</span>
                   <span>{formatArticleDate(article.publishedDate)}</span>

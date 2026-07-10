@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ArticleCover from "../../components/ArticleCover";
 import PageHero from "../../components/PageHero";
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default function SponsoredPage() {
       <section className="news-grid">
         {sponsoredArticles.map((article) => (
           <article className="news-card sponsored-list-card" key={article.title}>
+            <ArticleCover category="Sponsored" isSponsored title={article.title} />
             <div className="card-meta">
               <span>Sponsored</span>
               <span>{article.partner}</span>

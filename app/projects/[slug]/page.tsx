@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ArticleCover from "../../../components/ArticleCover";
 import {
   getPublicProjectBySlug,
   type PublicProject,
@@ -256,6 +257,11 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
           <div className="news-grid">
             {relatedNews.map((article) => (
               <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
+                <ArticleCover
+                  category={article.category}
+                  isSponsored={article.isSponsored}
+                  title={article.title}
+                />
                 <div className="card-meta">
                   <span>{article.category}</span>
                   <span>{article.readingTime}</span>
