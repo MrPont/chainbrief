@@ -7,7 +7,7 @@ import { sponsorPackages } from "../../lib/siteData";
 export const metadata: Metadata = {
   title: "Advertise on ChainBrief",
   description:
-    "On-site ChainBrief advertising options including banners, sponsored articles, featured project cards and newsletter sponsorships.",
+    "Request ChainBrief advertising options for banners, sponsored articles, featured project cards and newsletter sponsorships.",
   alternates: {
     canonical: "/advertise",
   },
@@ -36,13 +36,21 @@ const placements = [
   "Newsletter sponsorship",
 ];
 
+const planningFactors = [
+  "placement and page context",
+  "campaign duration",
+  "creative format",
+  "sponsored content scope",
+  "distribution and visibility goals",
+];
+
 export default function AdvertisePage() {
   return (
     <>
       <PageHero
         eyebrow="Reach crypto readers"
         title="Advertise With ChainBrief"
-        description="Advertise focuses on ChainBrief on-site media placements. For broader crypto marketing campaigns, visit ChainBrief Marketing."
+        description="Tell us your campaign goals and we will suggest the right ChainBrief placement mix. Pricing is available on request and depends on placement, duration, format and distribution scope."
       />
 
       <BannerAd
@@ -58,18 +66,40 @@ export default function AdvertisePage() {
           Advertise is for ChainBrief placements such as banners, sponsored
           articles, featured project cards, and newsletter sponsorships.
           Marketing covers full crypto campaigns across PR, influencers, AMAs,
-          programmatic ads, partner media, and launch support.
+          programmatic ads, partner media, and launch support. Public fixed
+          pricing is not displayed; request the media kit or pricing details for
+          the current placement menu.
         </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/contact">
+            Request Media Kit
+          </Link>
+          <Link className="button button-secondary" href="/contact">
+            Request Pricing
+          </Link>
+        </div>
       </section>
 
       <section className="package-grid">
         {sponsorPackages.map((item) => (
           <article className="package-card" key={item.name}>
             <h2>{item.name}</h2>
-            <strong>{item.price}</strong>
+            <strong>{item.actionLabel}</strong>
             <p>{item.description}</p>
           </article>
         ))}
+      </section>
+
+      <section className="marketing-section">
+        <div className="section-heading">
+          <p className="eyebrow">Pricing approach</p>
+          <h2>Campaign Plans Are Scoped to Your Goals</h2>
+        </div>
+        <div className="use-case-grid">
+          {planningFactors.map((factor) => (
+            <span key={factor}>{factor}</span>
+          ))}
+        </div>
       </section>
 
       <section className="marketing-section">
@@ -89,11 +119,17 @@ export default function AdvertisePage() {
         <h2>Plan your next campaign with ChainBrief</h2>
         <p>
           Share your goals, target audience, and timeline. The advertising team
-          will prepare package options and sample placements.
+          will prepare package options, sample placements, and pricing details
+          based on the formats that fit your campaign.
         </p>
-        <Link className="button button-primary" href="/media-kit">
-          Request ChainBrief Ad Options
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/contact">
+            Request Media Kit
+          </Link>
+          <Link className="button button-secondary" href="/contact">
+            Request Pricing
+          </Link>
+        </div>
       </section>
 
       <section className="cta-panel compact-cta-panel">
@@ -103,9 +139,14 @@ export default function AdvertisePage() {
           Explore ChainBrief Marketing for PR, banners, listings, influencer
           outreach, AMAs, programmatic exposure, and launch support.
         </p>
-        <Link className="button button-secondary" href="/marketing">
-          Visit Marketing
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/contact">
+            Start a Campaign
+          </Link>
+          <Link className="button button-secondary" href="/marketing">
+            Visit Marketing
+          </Link>
+        </div>
       </section>
     </>
   );

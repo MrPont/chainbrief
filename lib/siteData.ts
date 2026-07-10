@@ -710,22 +710,26 @@ export function getRelatedProjectNews(project: CryptoProject, limit = 3) {
 export const sponsorPackages = [
   {
     name: "Homepage Leaderboard",
-    price: "Request media kit",
-    description: "Top-of-page visibility across the highest-intent ChainBrief entry point.",
+    actionLabel: "Pricing on request",
+    description:
+      "Top-of-page visibility across the highest-intent ChainBrief entry point. Plans depend on placement, duration, creative format, and campaign timing.",
   },
   {
     name: "Sponsored Article",
-    price: "Request media kit",
-    description: "Clearly labeled partner education written for crypto-native readers.",
+    actionLabel: "Request media kit",
+    description:
+      "Clearly labeled partner education written for crypto-native readers, with format and distribution details available in the media kit.",
   },
   {
     name: "Project Spotlight",
-    price: "Request media kit",
-    description: "Premium positioning inside rankings and project discovery modules.",
+    actionLabel: "Custom package",
+    description:
+      "Premium positioning inside rankings and project discovery modules, scoped around category, duration, and visibility goals.",
   },
   {
     name: "Newsletter Sponsorship",
-    price: "Request media kit",
-    description: "Dedicated placement in future market briefings and weekly recaps.",
+    actionLabel: "Request pricing",
+    description:
+      "Dedicated placement in future market briefings and weekly recaps, packaged around audience fit and campaign schedule.",
   },
 ];

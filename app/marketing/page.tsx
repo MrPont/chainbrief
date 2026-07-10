@@ -80,23 +80,23 @@ const packages = [
     name: "Starter Visibility",
     action: "Request media kit",
     description:
-      "For early projects that need credible first exposure. May include a sponsored article, starter banner placement, and basic project listing visibility.",
+      "For early projects that need credible first exposure. May include sponsored coverage, starter banner placement, and basic project listing visibility, scoped after review.",
   },
   {
     name: "Growth Campaign",
-    action: "Custom quote",
+    action: "Custom campaign package",
     description:
       "For teams expanding reach after product traction. May include ChainBrief placements, KOL coordination, newsletter visibility, and community campaign support.",
   },
   {
     name: "Launch Campaign",
-    action: "Custom quote",
+    action: "Pricing on request",
     description:
       "For token launches, product launches, exchange listings, or ecosystem announcements. May include PR, banners, AMAs, influencers, and launch-week distribution.",
   },
   {
     name: "Premium Visibility",
-    action: "Custom quote",
+    action: "Custom campaign package",
     description:
       "For projects that need broad market presence across multiple channels. May include premium media placement, programmatic reach, KOL waves, and strategic campaign planning.",
   },
@@ -142,14 +142,15 @@ export default function MarketingPage() {
             ChainBrief helps crypto and Web3 projects increase visibility through
             media placements, sponsored content, banner campaigns, project
             listings, influencer outreach, AMAs, programmatic advertising and
-            strategic launch support.
+            strategic launch support. Campaign plans are custom-scoped around
+            placement, duration, format, and distribution scope.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/media-kit">
+            <Link className="button button-primary" href="/contact">
               Request Media Kit
             </Link>
             <Link className="button button-secondary" href="/contact">
-              Book a Campaign
+              Start a Campaign
             </Link>
           </div>
         </div>
@@ -194,6 +195,12 @@ export default function MarketingPage() {
           <p className="eyebrow">Packages</p>
           <h2>Campaign Packages</h2>
         </div>
+        <p className="section-intro">
+          Packages are built around media visibility, sponsored coverage, launch
+          support, community visibility, partner placements, and project
+          discovery. Pricing is available on request after the campaign scope is
+          defined.
+        </p>
         <div className="package-grid">
           {packages.map((item) => (
             <article className="package-card" key={item.name}>
@@ -251,14 +258,16 @@ export default function MarketingPage() {
         <p>
           Request a media kit or campaign proposal and the ChainBrief team will
           suggest the best mix of PR, banners, listings, influencers, AMAs and
-          programmatic exposure.
+          programmatic exposure. No fixed public packages are shown because each
+          plan depends on placement mix, duration, creative format and
+          distribution scope.
         </p>
         <div className="hero-actions">
-          <Link className="button button-primary" href="/media-kit">
+          <Link className="button button-primary" href="/contact">
             Request Media Kit
           </Link>
           <Link className="button button-secondary" href="/contact">
-            Contact ChainBrief
+            Request Pricing
           </Link>
         </div>
       </section>

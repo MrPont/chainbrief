@@ -27,14 +27,24 @@ export const metadata: Metadata = {
 const mediaOptions = [
   "Sponsored Articles",
   "Press Releases",
-  "Homepage Banners",
-  "Article Banners",
-  "Featured Project Listings",
+  "Banner Placements",
+  "Project Listings",
   "Newsletter Sponsorship",
-  "Partner Media Placements",
-  "Influencer Campaigns",
-  "AMA Campaigns",
-  "Programmatic Ads",
+  "Influencer and KOL Campaigns",
+  "AMA and Community Campaigns",
+  "Exchange Listing Visibility",
+  "Launch Visibility Packages",
+  "Custom Web3 Campaign Support",
+];
+
+const mediaKitIncludes = [
+  "Available placements",
+  "Banner dimensions",
+  "Sponsored content options",
+  "Campaign formats",
+  "Audience and positioning summary",
+  "Pricing on request",
+  "Contact details",
 ];
 
 const packages = [
@@ -69,7 +79,9 @@ export default function MediaKitPage() {
         <p>
           Promote your crypto project through ChainBrief placements, sponsored
           articles, banner campaigns, project listings, partner media,
-          influencers, AMAs and launch visibility packages.
+          influencers, AMAs and launch visibility packages. The media kit is
+          available on request and includes current formats, placement options,
+          and pricing details.
         </p>
       </section>
 
@@ -100,9 +112,21 @@ export default function MediaKitPage() {
           {packages.map((item) => (
             <article className="package-card" key={item.name}>
               <h2>{item.name}</h2>
-              <strong>Request quote</strong>
+              <strong>Pricing on request</strong>
               <p>{item.description}</p>
             </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section">
+        <div className="section-heading">
+          <p className="eyebrow">Media Kit Includes</p>
+          <h2>Everything Needed to Scope a Campaign</h2>
+        </div>
+        <div className="use-case-grid">
+          {mediaKitIncludes.map((item) => (
+            <span key={item}>{item}</span>
           ))}
         </div>
       </section>
@@ -112,14 +136,15 @@ export default function MediaKitPage() {
         <h2>Request the Media Kit</h2>
         <p>
           Tell us what you are launching, who you need to reach, and when the
-          campaign should go live.
+          campaign should go live. ChainBrief will share relevant placement
+          options, campaign formats, and pricing details on request.
         </p>
         <div className="hero-actions">
-          <a className="button button-primary" href="mailto:ads@chainbrief.example">
+          <Link className="button button-primary" href="/contact">
             Request the Media Kit
-          </a>
+          </Link>
           <Link className="button button-secondary" href="/contact">
-            Contact ChainBrief
+            Request Pricing
           </Link>
         </div>
       </section>

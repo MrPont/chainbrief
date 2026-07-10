@@ -46,6 +46,9 @@ export default function ContactForm() {
             </option>
             <option value="Editorial">Editorial</option>
             <option value="Advertising">Advertising</option>
+            <option value="Media kit">Media kit</option>
+            <option value="Pricing request">Pricing request</option>
+            <option value="Campaign plan">Campaign plan</option>
             <option value="Project submission">Project submission</option>
             <option value="Partnership">Partnership</option>
           </select>
@@ -55,7 +58,7 @@ export default function ContactForm() {
           <textarea
             name="message"
             required
-            placeholder="Tell us what you need help with."
+            placeholder="Tell us your requested item, campaign type, project, timeline, budget range if useful, and goals."
           />
         </label>
       </div>

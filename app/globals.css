@@ -600,6 +600,13 @@ h1 {
   white-space: nowrap;
 }
 
+.section-intro {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: -8px 0 22px;
+  max-width: 820px;
+}
+
 .news-grid {
   display: grid;
   gap: 16px;

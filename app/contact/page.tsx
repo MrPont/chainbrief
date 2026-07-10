@@ -5,28 +5,28 @@ import PageHero from "../../components/PageHero";
 export const metadata: Metadata = {
   title: "Contact ChainBrief",
   description:
-    "Contact ChainBrief for editorial tips, advertising, project submissions and crypto media partnerships.",
+    "Contact ChainBrief for editorial tips, media kit requests, pricing details, project submissions and crypto media partnerships.",
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
     title: "Contact ChainBrief",
     description:
-      "Reach ChainBrief for editorial, advertising, project submissions and partnerships.",
+      "Reach ChainBrief for editorial, advertising, media kit requests, pricing details, project submissions and partnerships.",
     images: ["/chainbrief-market-intelligence.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Contact ChainBrief",
     description:
-      "Contact ChainBrief for crypto media, advertising and project visibility inquiries.",
+      "Contact ChainBrief for crypto media, advertising, pricing and project visibility inquiries.",
     images: ["/chainbrief-market-intelligence.png"],
   },
 };
 
 const contactCards = [
   { label: "Editorial tips", email: "editorial@chainbrief.example" },
-  { label: "Advertising", email: "ads@chainbrief.example" },
+  { label: "Media kit and pricing", email: "ads@chainbrief.example" },
   { label: "Project submissions", email: "projects@chainbrief.example" },
   { label: "Partnerships", email: "partners@chainbrief.example" },
 ];
@@ -37,7 +37,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Contact ChainBrief"
-        description="Use this page for editorial tips, advertising inquiries, partnership requests, and general questions."
+        description="Use this page for editorial tips, media kit requests, pricing details, campaign plan inquiries, partnership requests, and general questions."
       />
 
       <section className="package-grid contact-card-grid">
