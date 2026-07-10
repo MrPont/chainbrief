@@ -62,7 +62,7 @@ export default async function NewsPage() {
 
       <BannerAd
         placement="leaderboard"
-        className="section-banner"
+        className="section-placement"
         fallbackLabel="News Page Banner"
       />
 

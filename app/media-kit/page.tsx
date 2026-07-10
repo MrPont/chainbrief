@@ -75,7 +75,7 @@ export default function MediaKitPage() {
 
       <BannerAd
         placement="leaderboard"
-        className="section-banner"
+        className="section-placement"
         fallbackLabel="Leaderboard Banner"
       />
 

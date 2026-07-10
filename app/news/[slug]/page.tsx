@@ -62,7 +62,7 @@ function ArticleBody({ article }: { article: PublicArticle }) {
             {index === 0 ? (
               <BannerAd
                 placement="article_inline"
-                className="article-ad"
+                className="article-placement"
                 fallbackLabel="Article Inline Banner"
               />
             ) : null}
@@ -84,7 +84,7 @@ function ArticleBody({ article }: { article: PublicArticle }) {
         )}
         <BannerAd
           placement="article_inline"
-          className="article-ad"
+          className="article-placement"
           fallbackLabel="Article Inline Banner"
         />
       </section>

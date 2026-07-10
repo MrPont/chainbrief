@@ -47,7 +47,7 @@ export default function AdvertisePage() {
 
       <BannerAd
         placement="leaderboard"
-        className="section-banner"
+        className="section-placement"
         fallbackLabel="Leaderboard Banner"
       />
 

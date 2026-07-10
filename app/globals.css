@@ -143,7 +143,7 @@ a {
   color: var(--text);
 }
 
-.ad-banner {
+.promo-slot {
   align-items: center;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 8px;
@@ -154,7 +154,7 @@ a {
   background: rgba(11, 16, 24, 0.76);
 }
 
-.ad-fallback {
+.campaign-slot {
   align-items: center;
   color: var(--text);
   gap: 22px;
@@ -171,7 +171,7 @@ a {
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
 }
 
-.ad-fallback::before {
+.campaign-slot::before {
   background: linear-gradient(180deg, var(--blue), var(--violet), var(--green));
   content: "";
   inset: 0 auto 0 0;
@@ -179,7 +179,7 @@ a {
   width: 4px;
 }
 
-.ad-fallback::after {
+.campaign-slot::after {
   border: 1px solid rgba(56, 189, 248, 0.12);
   border-radius: 999px;
   content: "";
@@ -191,20 +191,20 @@ a {
   width: 148px;
 }
 
-.ad-fallback-copy,
-.ad-fallback-actions {
+.campaign-slot-copy,
+.campaign-slot-actions {
   position: relative;
   z-index: 1;
 }
 
-.ad-fallback-copy {
+.campaign-slot-copy {
   display: grid;
   gap: 8px;
   min-width: 0;
 }
 
-.ad-fallback-eyebrow,
-.ad-fallback-label {
+.campaign-slot-eyebrow,
+.campaign-slot-label {
   align-items: center;
   display: inline-flex;
   font-size: 0.72rem;
@@ -213,11 +213,11 @@ a {
   text-transform: uppercase;
 }
 
-.ad-fallback-eyebrow {
+.campaign-slot-eyebrow {
   color: var(--green);
 }
 
-.ad-fallback-label {
+.campaign-slot-label {
   border: 1px solid rgba(56, 189, 248, 0.24);
   border-radius: 999px;
   color: #bae6fd;
@@ -226,14 +226,14 @@ a {
   background: rgba(56, 189, 248, 0.08);
 }
 
-.ad-fallback h2 {
+.campaign-slot h2 {
   color: var(--text);
   font-size: clamp(1.15rem, 2vw, 1.65rem);
   line-height: 1.12;
   margin: 0;
 }
 
-.ad-fallback p {
+.campaign-slot p {
   color: #cbd5e1;
   font-size: 0.94rem;
   line-height: 1.55;
@@ -241,14 +241,14 @@ a {
   max-width: 680px;
 }
 
-.ad-fallback-size {
+.campaign-slot-size {
   color: var(--muted);
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.ad-fallback-actions {
+.campaign-slot-actions {
   align-items: center;
   display: flex;
   flex: 0 0 auto;
@@ -257,8 +257,8 @@ a {
   justify-content: flex-end;
 }
 
-.ad-fallback-button,
-.ad-fallback-link {
+.campaign-slot-button,
+.campaign-slot-link {
   border-radius: 8px;
   display: inline-flex;
   font-size: 0.86rem;
@@ -266,40 +266,40 @@ a {
   white-space: nowrap;
 }
 
-.ad-fallback-button {
+.campaign-slot-button {
   color: #020617;
   padding: 11px 14px;
   background: linear-gradient(135deg, var(--green), var(--blue));
 }
 
-.ad-fallback-link {
+.campaign-slot-link {
   border: 1px solid rgba(148, 163, 184, 0.24);
   color: var(--text);
   padding: 10px 12px;
   background: rgba(5, 7, 11, 0.52);
 }
 
-.ad-fallback-box {
+.campaign-slot-box {
   align-items: flex-start;
   flex-direction: column;
   min-height: 250px;
 }
 
-.ad-fallback-box .ad-fallback-actions {
+.campaign-slot-box .campaign-slot-actions {
   justify-content: flex-start;
   width: 100%;
 }
 
-.ad-fallback-box h2 {
+.campaign-slot-box h2 {
   font-size: clamp(1.25rem, 3vw, 1.75rem);
 }
 
-.banner-ad-live {
+.media-placement-live {
   overflow: hidden;
   padding: 0;
 }
 
-.banner-ad-live a {
+.media-placement-live a {
   align-items: center;
   color: inherit;
   display: flex;
@@ -310,14 +310,14 @@ a {
   width: 100%;
 }
 
-.banner-ad-live img {
+.media-placement-live img {
   display: block;
   max-height: 180px;
   object-fit: cover;
   width: 100%;
 }
 
-.banner-ad-live span {
+.media-placement-live span {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 800;
@@ -508,7 +508,7 @@ h1 {
 .project-card,
 .directory-card,
 .sponsored-card,
-.ad-box {
+.promo-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(11, 16, 24, 0.82);
@@ -692,7 +692,7 @@ h1 {
   gap: 18px;
 }
 
-.ad-box {
+.promo-panel {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -700,7 +700,7 @@ h1 {
   min-height: 250px;
 }
 
-.ad-box strong {
+.promo-panel strong {
   color: var(--text);
   margin-top: 8px;
 }
@@ -830,11 +830,11 @@ h1 {
   font-size: 1.35rem;
 }
 
-.bottom-banner {
+.bottom-placement {
   margin-top: 54px;
 }
 
-.section-banner {
+.section-placement {
   margin: 0 0 28px;
 }
 
@@ -1908,7 +1908,7 @@ tbody tr:last-child td {
   margin-top: 18px;
 }
 
-.article-ad {
+.article-placement {
   margin: 34px 0 0;
   min-height: 112px;
 }
@@ -2362,18 +2362,18 @@ tbody tr:last-child td {
     position: static;
   }
 
-  .ad-fallback {
+  .campaign-slot {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .ad-fallback-actions {
+  .campaign-slot-actions {
     justify-content: flex-start;
     width: 100%;
   }
 
-  .ad-fallback-button,
-  .ad-fallback-link {
+  .campaign-slot-button,
+  .campaign-slot-link {
     justify-content: center;
     width: 100%;
   }

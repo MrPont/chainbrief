@@ -52,7 +52,7 @@ export default async function ProjectsPage() {
 
       <BannerAd
         placement="leaderboard"
-        className="section-banner"
+        className="section-placement"
         fallbackLabel="Leaderboard Banner"
       />
 

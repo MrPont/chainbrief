@@ -65,7 +65,7 @@ export default function Home() {
     <>
       <BannerAd
         placement="homepage_top"
-        className="top-banner"
+        className="top-placement"
         fallbackLabel="Homepage Top Banner"
       />
 
@@ -169,7 +169,7 @@ export default function Home() {
       <section className="market-section">
         <BannerAd
           placement="homepage_mid"
-          className="section-banner"
+          className="section-placement"
           fallbackLabel="Homepage Mid Banner"
         />
 
@@ -276,7 +276,7 @@ export default function Home() {
 
       <BannerAd
         placement="leaderboard"
-        className="bottom-banner"
+        className="bottom-placement"
         fallbackLabel="Leaderboard Banner"
       />
     </>

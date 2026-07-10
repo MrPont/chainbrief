@@ -115,15 +115,15 @@ export default async function BannerAd({
 
   if (banner) {
     const activeClassName = [
-      variant === "box" ? "ad-box" : "ad-banner",
-      "banner-ad-live",
+      variant === "box" ? "promo-panel" : "promo-slot",
+      "media-placement-live",
       className,
     ]
       .filter(Boolean)
       .join(" ");
 
     return (
-      <aside className={activeClassName} aria-label={`Advertisement: ${banner.title}`}>
+      <aside className={activeClassName} aria-label={`Sponsored placement: ${banner.title}`}>
         <a href={banner.targetUrl}>
           {/* eslint-disable-next-line @next/next/no-img-element -- Ad creatives can come from arbitrary advertiser/CDN domains. */}
           <img src={banner.imageUrl} alt={banner.title} />
@@ -175,30 +175,30 @@ function FallbackBanner({
       ? copy.inventoryLabel
       : fallbackLabel;
   const wrapperClassName = [
-    variant === "box" ? "ad-box" : "ad-banner",
-    "ad-fallback",
-    variant === "box" ? "ad-fallback-box" : "ad-fallback-wide",
-    `ad-fallback-${placement.replace(/_/g, "-")}`,
+    variant === "box" ? "promo-panel" : "promo-slot",
+    "campaign-slot",
+    variant === "box" ? "campaign-slot-box" : "campaign-slot-wide",
+    `campaign-slot-${placement.replace(/_/g, "-")}`,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <section className={wrapperClassName} aria-label={`${copy.eyebrow} advertisement`}>
-      <div className="ad-fallback-copy">
-        <span className="ad-fallback-eyebrow">{copy.eyebrow}</span>
-        <span className="ad-fallback-label">{label}</span>
+    <section className={wrapperClassName} aria-label={`${copy.eyebrow} sponsored placement`}>
+      <div className="campaign-slot-copy">
+        <span className="campaign-slot-eyebrow">{copy.eyebrow}</span>
+        <span className="campaign-slot-label">{label}</span>
         <h2>{copy.heading}</h2>
         <p>{copy.text}</p>
-        {fallbackSize ? <strong className="ad-fallback-size">{fallbackSize}</strong> : null}
+        {fallbackSize ? <strong className="campaign-slot-size">{fallbackSize}</strong> : null}
       </div>
-      <div className="ad-fallback-actions">
-        <Link className="ad-fallback-button" href={copy.href}>
+      <div className="campaign-slot-actions">
+        <Link className="campaign-slot-button" href={copy.href}>
           {copy.cta}
         </Link>
         {copy.secondaryCta && copy.secondaryHref ? (
-          <Link className="ad-fallback-link" href={copy.secondaryHref}>
+          <Link className="campaign-slot-link" href={copy.secondaryHref}>
             {copy.secondaryCta}
           </Link>
         ) : null}

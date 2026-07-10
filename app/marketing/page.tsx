@@ -170,7 +170,7 @@ export default function MarketingPage() {
       <section className="marketing-section">
         <BannerAd
           placement="leaderboard"
-          className="section-banner"
+          className="section-placement"
           fallbackLabel="Leaderboard Banner"
         />
 

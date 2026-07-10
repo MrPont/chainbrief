@@ -42,7 +42,7 @@ export default async function RankingsPage() {
 
       <BannerAd
         placement="leaderboard"
-        className="section-banner"
+        className="section-placement"
         fallbackLabel="Leaderboard Banner"
       />
 

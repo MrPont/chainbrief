@@ -170,7 +170,7 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
           </dl>
         </header>
 
-        <aside className="ad-banner article-ad" aria-label="Advertisement">
+        <aside className="promo-slot article-placement" aria-label="Project profile placement">
           <span>Project Profile Banner Ad Placement</span>
         </aside>
 
