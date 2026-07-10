@@ -58,13 +58,33 @@ SITE_URL=https://your-domain.example
 SITE_NAME=ChainBrief
 ADMIN_PASSWORD=your-admin-password
 CRON_SECRET=your-random-cron-secret
+COINGECKO_API_KEY=your-coingecko-demo-api-key
 OPENAI_API_KEY=your-openai-api-key
 OPENAI_MODEL=gpt-5.4-mini
+AI_REWRITE_ENABLED=false
 ```
 
 10. Later, add the same values to Vercel Environment Variables before deploying Supabase-connected features.
 
 Important: keep `SUPABASE_SERVICE_ROLE_KEY` and `CRON_SECRET` private. They are only for server/admin code and must never be exposed in public client components.
+
+## CoinGecko Market Data Setup
+
+ChainBrief uses CoinGecko market data on `/markets` and the homepage market sections. The data is fetched server-side, cached for a few minutes, and never exposes the API key to browser components.
+
+Setup:
+
+1. Create a CoinGecko Demo API key.
+2. Add it to `.env.local`:
+
+```bash
+COINGECKO_API_KEY=your-coingecko-demo-api-key
+```
+
+3. Add the same `COINGECKO_API_KEY` to Vercel Environment Variables.
+4. Restart the local dev server after changing `.env.local`.
+
+If `COINGECKO_API_KEY` is missing, ChainBrief tries the public keyless CoinGecko endpoint. If CoinGecko is unavailable, rate-limited, or blocked, ChainBrief falls back to sample market data from `lib/siteData.ts`.
 
 ## Supabase Storage Setup
 

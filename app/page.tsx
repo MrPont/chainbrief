@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import BannerAd from "../components/BannerAd";
-import { latestNews, marketMovers, topProjects } from "../lib/siteData";
+import { getMarketData } from "../lib/marketData";
+import { latestNews, topProjects } from "../lib/siteData";
 
 export const metadata: Metadata = {
   title: "ChainBrief - Crypto News, Markets & Project Rankings",
@@ -60,7 +61,13 @@ const campaignChannels = [
   "Exchange Listing Visibility",
 ];
 
-export default function Home() {
+export default async function Home() {
+  const marketData = await getMarketData();
+  const marketCards = marketData.assets.slice(0, 4);
+  const bitcoin = marketData.assets.find((coin) => coin.id === "bitcoin");
+  const ethereum = marketData.assets.find((coin) => coin.id === "ethereum");
+  const solana = marketData.assets.find((coin) => coin.id === "solana");
+
   return (
     <>
       <BannerAd
@@ -112,14 +119,18 @@ export default function Home() {
           />
           <div className="visual-panel-copy">
             <span className="panel-label">Market Pulse</span>
-            <strong>Risk-on sentiment improves as majors reclaim momentum.</strong>
+            <strong>
+              {marketData.isLive
+                ? "Live crypto majors update every few minutes."
+                : "Sample market pulse shown while live data is unavailable."}
+            </strong>
             <div className="pulse-grid">
-              <span>BTC Dominance</span>
-              <strong>53.4%</strong>
-              <span>DeFi TVL</span>
-              <strong>$148B</strong>
-              <span>Fear & Greed</span>
-              <strong>72</strong>
+              <span>BTC</span>
+              <strong>{bitcoin?.formattedPrice || "N/A"}</strong>
+              <span>ETH</span>
+              <strong>{ethereum?.formattedPrice || "N/A"}</strong>
+              <span>SOL 24h</span>
+              <strong>{solana?.formattedChange24h || "N/A"}</strong>
             </div>
           </div>
         </aside>
@@ -179,12 +190,12 @@ export default function Home() {
           <Link href="/markets">Open markets</Link>
         </div>
         <div className="mover-grid">
-          {marketMovers.slice(0, 4).map((coin) => (
+          {marketCards.map((coin) => (
             <article className={`mover-card accent-${coin.accent}`} key={coin.symbol}>
               <div className="coin-symbol">{coin.symbol}</div>
               <p>{coin.name}</p>
-              <strong>{coin.price}</strong>
-              <span>{coin.change}</span>
+              <strong>{coin.formattedPrice}</strong>
+              <span>{coin.formattedChange24h}</span>
             </article>
           ))}
         </div>

@@ -937,9 +937,24 @@ h1 {
   overflow-x: auto;
 }
 
+.market-note {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+  font-weight: 700;
+  gap: 10px 16px;
+  margin: -8px 0 18px;
+}
+
+.market-note strong {
+  color: var(--green);
+}
+
 table {
   border-collapse: collapse;
-  min-width: 760px;
+  min-width: 980px;
   width: 100%;
 }
 
@@ -969,6 +984,18 @@ td span {
   color: var(--muted);
   font-size: 0.82rem;
   margin-top: 4px;
+}
+
+.market-asset-cell {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.market-asset-cell img {
+  border-radius: 999px;
+  height: 30px;
+  width: 30px;
 }
 
 tbody tr:last-child td {
