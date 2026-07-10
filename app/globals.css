@@ -803,6 +803,7 @@ h1 {
 
 .article-cover-grid,
 .article-cover-mark,
+.article-cover-motif,
 .article-cover-label,
 .article-cover strong,
 .article-cover-signal {
@@ -822,12 +823,12 @@ h1 {
 .article-cover-mark {
   border: 1px solid color-mix(in srgb, var(--cover-accent), transparent 48%);
   border-radius: 999px;
-  height: 104px;
+  height: 112px;
   opacity: 0.42;
   position: absolute;
   right: -22px;
   top: -22px;
-  width: 104px;
+  width: 112px;
 }
 
 .article-cover-mark::before,
@@ -850,6 +851,11 @@ h1 {
   right: 18px;
 }
 
+.article-cover-motif {
+  inset: 42px 18px 20px;
+  position: absolute;
+}
+
 .article-cover-label {
   border: 1px solid color-mix(in srgb, var(--cover-accent), transparent 56%);
   border-radius: 8px;
@@ -863,8 +869,9 @@ h1 {
 
 .article-cover strong {
   color: var(--text);
-  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+  font-size: clamp(0.98rem, 2.1vw, 1.55rem);
   font-weight: 950;
+  letter-spacing: 0.08em;
   margin-top: auto;
 }
 
@@ -926,6 +933,164 @@ h1 {
 .article-cover-sponsored {
   --cover-accent: #c084fc;
   --cover-accent-soft: rgba(192, 132, 252, 0.18);
+}
+
+.article-cover-markets .article-cover-motif {
+  background:
+    linear-gradient(90deg, transparent 8%, var(--cover-accent) 8% 10%, transparent 10% 28%, var(--cover-accent) 28% 31%, transparent 31% 50%, var(--cover-accent) 50% 53%, transparent 53% 71%, var(--cover-accent) 71% 74%, transparent 74%),
+    linear-gradient(180deg, transparent 16%, rgba(224, 242, 254, 0.24) 16% 18%, transparent 18% 50%, rgba(224, 242, 254, 0.16) 50% 52%, transparent 52%);
+  opacity: 0.74;
+}
+
+.article-cover-markets .article-cover-motif::before,
+.article-cover-markets .article-cover-motif::after {
+  background: linear-gradient(180deg, #e0f2fe, var(--cover-accent));
+  border-radius: 3px;
+  content: "";
+  height: 38px;
+  position: absolute;
+  top: 12px;
+  width: 9px;
+}
+
+.article-cover-markets .article-cover-motif::before {
+  left: 18%;
+}
+
+.article-cover-markets .article-cover-motif::after {
+  height: 54px;
+  left: 58%;
+  top: 0;
+}
+
+.article-cover-bitcoin .article-cover-mark {
+  align-items: center;
+  display: flex;
+  height: 122px;
+  justify-content: center;
+  opacity: 0.5;
+  width: 122px;
+}
+
+.article-cover-bitcoin .article-cover-mark::before {
+  background: transparent;
+  color: var(--cover-accent);
+  content: "B";
+  font-size: 2.9rem;
+  font-weight: 950;
+  height: auto;
+  left: auto;
+  position: static;
+  top: auto;
+  width: auto;
+}
+
+.article-cover-bitcoin .article-cover-mark::after {
+  display: none;
+}
+
+.article-cover-bitcoin .article-cover-motif {
+  background:
+    linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.28), transparent),
+    radial-gradient(circle at 18% 62%, rgba(251, 191, 36, 0.4) 0 4px, transparent 5px),
+    radial-gradient(circle at 48% 34%, rgba(224, 242, 254, 0.22) 0 3px, transparent 4px),
+    radial-gradient(circle at 78% 58%, rgba(251, 191, 36, 0.32) 0 4px, transparent 5px);
+}
+
+.article-cover-ethereum .article-cover-motif {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.18), rgba(224, 242, 254, 0.05));
+  clip-path: polygon(50% 0, 78% 44%, 50% 100%, 22% 44%);
+  height: 92px;
+  inset: auto 32px 14px auto;
+  width: 72px;
+}
+
+.article-cover-ethereum .article-cover-motif::before {
+  background: linear-gradient(180deg, rgba(224, 242, 254, 0.38), transparent);
+  clip-path: polygon(50% 0, 100% 44%, 50% 64%, 0 44%);
+  content: "";
+  inset: 12px;
+  position: absolute;
+}
+
+.article-cover-regulation .article-cover-motif {
+  border: 1px solid rgba(224, 242, 254, 0.18);
+  border-radius: 6px;
+  height: 78px;
+  inset: auto 24px 18px auto;
+  width: 64px;
+  background:
+    linear-gradient(180deg, rgba(167, 139, 250, 0.28), transparent 34%),
+    rgba(5, 7, 11, 0.52);
+}
+
+.article-cover-regulation .article-cover-motif::before,
+.article-cover-regulation .article-cover-motif::after {
+  background: rgba(224, 242, 254, 0.42);
+  border-radius: 999px;
+  content: "";
+  height: 3px;
+  left: 12px;
+  position: absolute;
+  width: 38px;
+}
+
+.article-cover-regulation .article-cover-motif::before {
+  top: 30px;
+}
+
+.article-cover-regulation .article-cover-motif::after {
+  top: 44px;
+}
+
+.article-cover-defi .article-cover-motif,
+.article-cover-infrastructure .article-cover-motif {
+  background:
+    radial-gradient(circle at 12% 24%, var(--cover-accent) 0 5px, transparent 6px),
+    radial-gradient(circle at 52% 12%, rgba(224, 242, 254, 0.65) 0 4px, transparent 5px),
+    radial-gradient(circle at 78% 58%, var(--cover-accent) 0 5px, transparent 6px),
+    radial-gradient(circle at 28% 76%, rgba(224, 242, 254, 0.45) 0 4px, transparent 5px),
+    linear-gradient(145deg, transparent 10%, color-mix(in srgb, var(--cover-accent), transparent 70%) 10% 12%, transparent 12% 50%, color-mix(in srgb, var(--cover-accent), transparent 76%) 50% 52%, transparent 52%);
+}
+
+.article-cover-infrastructure .article-cover-motif {
+  background:
+    linear-gradient(90deg, rgba(45, 212, 191, 0.2) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(45, 212, 191, 0.16) 1px, transparent 1px),
+    radial-gradient(circle at 24% 30%, var(--cover-accent) 0 4px, transparent 5px),
+    radial-gradient(circle at 62% 54%, rgba(224, 242, 254, 0.48) 0 4px, transparent 5px);
+  background-size: 18px 18px, 18px 18px, auto, auto;
+}
+
+.article-cover-sponsored .article-cover-motif {
+  border: 1px solid rgba(192, 132, 252, 0.34);
+  border-radius: 8px;
+  inset: auto 22px 18px auto;
+  height: 58px;
+  width: 92px;
+  background:
+    linear-gradient(135deg, rgba(192, 132, 252, 0.22), rgba(56, 189, 248, 0.1)),
+    rgba(5, 7, 11, 0.48);
+}
+
+.article-cover-sponsored .article-cover-motif::before {
+  color: #e9d5ff;
+  content: "SP";
+  font-size: 1.2rem;
+  font-weight: 950;
+  inset: 17px auto auto 18px;
+  letter-spacing: 0.08em;
+  position: absolute;
+}
+
+.article-cover-default .article-cover-motif {
+  border-left: 3px solid var(--cover-accent);
+  inset: auto 26px 22px auto;
+  height: 70px;
+  width: 82px;
+  background:
+    linear-gradient(180deg, rgba(224, 242, 254, 0.2) 0 3px, transparent 3px 16px, rgba(224, 242, 254, 0.16) 16px 19px, transparent 19px 32px, rgba(224, 242, 254, 0.12) 32px 35px, transparent 35px),
+    rgba(5, 7, 11, 0.34);
 }
 
 .card-meta {

@@ -32,10 +32,25 @@ function getTone(category: string, title: string, isSponsored?: boolean) {
 
 function getLabel(category: string, isSponsored?: boolean) {
   if (isSponsored) {
-    return "Sponsored Brief";
+    return "SPONSORED";
   }
 
-  return category?.trim() || "Editorial Brief";
+  return category?.trim().toUpperCase() || "CHAINBRIEF BRIEF";
+}
+
+function getCoverTitle(tone: string) {
+  const titles: Record<string, string> = {
+    bitcoin: "BITCOIN",
+    ethereum: "ETHEREUM",
+    defi: "DEFI",
+    regulation: "REGULATION",
+    infrastructure: "INFRASTRUCTURE",
+    markets: "MARKETS",
+    sponsored: "SPONSORED BRIEF",
+    default: "CHAINBRIEF BRIEF",
+  };
+
+  return titles[tone] || titles.default;
 }
 
 function isOwnedMediaUrl(imageUrl: string) {
@@ -90,6 +105,7 @@ export default function ArticleCover({
   }
 
   const tone = getTone(category, title, isSponsored);
+  const coverTitle = getCoverTitle(tone);
 
   return (
     <div
@@ -99,8 +115,9 @@ export default function ArticleCover({
     >
       <span className="article-cover-grid" />
       <span className="article-cover-mark" />
+      <span className="article-cover-motif" aria-hidden="true" />
       <span className="article-cover-label">{getLabel(category, isSponsored)}</span>
-      <strong>ChainBrief</strong>
+      <strong>{coverTitle}</strong>
       <span className="article-cover-signal" aria-hidden="true">
         <i />
         <i />
