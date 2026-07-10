@@ -28,6 +28,7 @@ const mediaOptions = [
   "Sponsored Articles",
   "Press Releases",
   "Banner Placements",
+  "Featured Project Placement",
   "Project Listings",
   "Newsletter Sponsorship",
   "Influencer and KOL Campaigns",
@@ -100,6 +101,24 @@ export default function MediaKitPage() {
           {mediaOptions.map((option) => (
             <span key={option}>{option}</span>
           ))}
+        </div>
+      </section>
+
+      <section className="cta-panel compact-cta-panel">
+        <p className="eyebrow">Featured Project Placement</p>
+        <h2>Homepage and directory project visibility</h2>
+        <p>
+          Place your project inside ChainBrief&apos;s project discovery and
+          homepage visibility modules. Media kit and pricing available on
+          request for featured, sponsored and promoted project placements.
+        </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/contact">
+            Request Media Kit
+          </Link>
+          <Link className="button button-secondary" href="/advertise">
+            View Ad Options
+          </Link>
         </div>
       </section>
 

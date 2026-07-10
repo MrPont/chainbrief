@@ -19,47 +19,55 @@ function LogoMark() {
       viewBox="0 0 64 64"
     >
       <defs>
-        <linearGradient id="chainbrief-mark-gradient" x1="8" x2="56" y1="8" y2="58">
+        <linearGradient id="chainbrief-frame-gradient" x1="8" x2="56" y1="8" y2="56">
           <stop offset="0" stopColor="#38bdf8" />
-          <stop offset="0.5" stopColor="#34d399" />
-          <stop offset="1" stopColor="#a78bfa" />
+          <stop offset="1" stopColor="#2563eb" />
+        </linearGradient>
+        <linearGradient id="chainbrief-tile-gradient" x1="8" x2="56" y1="8" y2="56">
+          <stop offset="0" stopColor="#0f172a" />
+          <stop offset="1" stopColor="#07111d" />
+        </linearGradient>
+        <linearGradient id="chainbrief-letter-gradient" x1="15" x2="50" y1="17" y2="44">
+          <stop offset="0" stopColor="#f8fafc" />
+          <stop offset="0.48" stopColor="#e0f2fe" />
+          <stop offset="1" stopColor="#67e8f9" />
         </linearGradient>
       </defs>
-      <rect height="64" rx="15" width="64" fill="#05070b" />
+      <rect
+        height="64"
+        rx="14"
+        width="64"
+        fill="url(#chainbrief-tile-gradient)"
+      />
       <rect
         height="54"
-        rx="13"
+        rx="12"
         width="54"
         x="5"
         y="5"
         fill="none"
-        stroke="url(#chainbrief-mark-gradient)"
-        strokeOpacity="0.95"
+        stroke="url(#chainbrief-frame-gradient)"
         strokeWidth="3"
       />
-      <g
-        fill="none"
-        stroke="url(#chainbrief-mark-gradient)"
-        strokeLinecap="round"
-        strokeWidth="7"
+      <text
+        fill="url(#chainbrief-letter-gradient)"
+        fontFamily="Inter, Arial, sans-serif"
+        fontSize="28"
+        fontWeight="900"
+        letterSpacing="-1.6"
+        x="11"
+        y="41"
       >
-        <path d="M18 28c0-5.5 4.5-10 10-10h8" />
-        <path d="M46 36c0 5.5-4.5 10-10 10h-8" />
-      </g>
+        CB
+      </text>
       <path
-        d="M24 15h18l8 8v26H24V15Z"
-        fill="#0b1422"
-        stroke="#f8fafc"
-        strokeLinejoin="round"
-        strokeWidth="3"
+        d="M16 48h32"
+        fill="none"
+        stroke="#38bdf8"
+        strokeLinecap="round"
+        strokeOpacity="0.55"
+        strokeWidth="2.5"
       />
-      <path d="M42 15v9h8" fill="none" stroke="#38bdf8" strokeLinejoin="round" strokeWidth="3" />
-      <g fill="url(#chainbrief-mark-gradient)">
-        <rect height="10" rx="2" width="5" x="30" y="34" />
-        <rect height="16" rx="2" width="5" x="38" y="28" />
-        <rect height="22" rx="2" width="5" x="46" y="22" />
-      </g>
-      <path d="M30 24h9M30 29h10" stroke="#dbeafe" strokeLinecap="round" strokeWidth="2.6" />
     </svg>
   );
 }

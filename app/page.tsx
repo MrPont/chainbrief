@@ -3,8 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import BannerAd from "../components/BannerAd";
+import FeaturedProjects from "../components/FeaturedProjects";
 import { getMarketData } from "../lib/marketData";
 import { getPublicNewsArticles } from "../lib/publicArticles";
+import { getPublicProjects } from "../lib/publicProjects";
 import { topProjects } from "../lib/siteData";
 
 export const metadata: Metadata = {
@@ -82,9 +84,10 @@ function formatArticleDate(date: string) {
 }
 
 export default async function Home() {
-  const [marketData, publicArticles] = await Promise.all([
+  const [marketData, publicArticles, publicProjects] = await Promise.all([
     getMarketData(),
     getPublicNewsArticles(),
+    getPublicProjects(),
   ]);
   const marketCards = marketData.assets.slice(0, 4);
   const homepageArticles = publicArticles.slice(0, 4);
@@ -239,6 +242,8 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <FeaturedProjects projects={publicProjects} />
 
       <section className="projects-section">
         <div className="section-heading">

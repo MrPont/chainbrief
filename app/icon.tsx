@@ -14,72 +14,54 @@ export default function Icon() {
       <div
         style={{
           alignItems: "center",
-          background: "#05070b",
+          background: "#07111d",
           border: "2px solid #38bdf8",
           borderRadius: "8px",
           display: "flex",
           height: "32px",
           justifyContent: "center",
+          overflow: "hidden",
           position: "relative",
           width: "32px",
         }}
       >
         <div
           style={{
-            border: "3px solid #34d399",
-            borderBottomColor: "transparent",
-            borderRadius: "10px",
-            height: "16px",
-            left: "5px",
+            color: "#f8fafc",
+            fontFamily: "Arial, sans-serif",
+            fontSize: "17px",
+            fontWeight: 900,
+            left: "4px",
+            lineHeight: 1,
             position: "absolute",
-            top: "8px",
-            transform: "rotate(-25deg)",
-            width: "18px",
+            top: "9px",
           }}
-        />
+        >
+          C
+        </div>
         <div
           style={{
-            background: "#0b1422",
-            border: "2px solid #f8fafc",
-            borderRadius: "3px",
-            height: "19px",
-            left: "12px",
+            color: "#38bdf8",
+            fontFamily: "Arial, sans-serif",
+            fontSize: "17px",
+            fontWeight: 900,
+            left: "15px",
+            lineHeight: 1,
             position: "absolute",
-            top: "6px",
-            width: "13px",
+            top: "9px",
           }}
-        />
+        >
+          B
+        </div>
         <div
           style={{
             background: "#38bdf8",
-            borderRadius: "1px",
-            bottom: "8px",
-            height: "7px",
-            left: "16px",
+            borderRadius: "999px",
+            bottom: "5px",
+            height: "2px",
+            left: "8px",
             position: "absolute",
-            width: "2px",
-          }}
-        />
-        <div
-          style={{
-            background: "#34d399",
-            borderRadius: "1px",
-            bottom: "8px",
-            height: "10px",
-            left: "20px",
-            position: "absolute",
-            width: "2px",
-          }}
-        />
-        <div
-          style={{
-            background: "#a78bfa",
-            borderRadius: "1px",
-            bottom: "8px",
-            height: "13px",
-            left: "24px",
-            position: "absolute",
-            width: "2px",
+            width: "16px",
           }}
         />
       </div>

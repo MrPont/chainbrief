@@ -2,6 +2,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BannerAd from "../../components/BannerAd";
+import FeaturedProjects from "../../components/FeaturedProjects";
 import PageHero from "../../components/PageHero";
 import { getPublicProjects } from "../../lib/publicProjects";
 
@@ -54,6 +55,16 @@ export default async function ProjectsPage() {
         placement="leaderboard"
         className="section-placement"
         fallbackLabel="Leaderboard Banner"
+      />
+
+      <FeaturedProjects
+        projects={projects}
+        title="Project Spotlight"
+        subtitle="Featured discovery slots for crypto teams, ecosystem narratives and launch visibility."
+        eyebrow="Featured Projects"
+        limit={4}
+        showDirectoryLink={false}
+        className="project-spotlight-section"
       />
 
       <section className="toolbar" aria-label="Project directory tools">

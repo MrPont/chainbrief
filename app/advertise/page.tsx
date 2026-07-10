@@ -102,6 +102,24 @@ export default function AdvertisePage() {
         </div>
       </section>
 
+      <section className="cta-panel compact-cta-panel">
+        <p className="eyebrow">Featured Project Placement</p>
+        <h2>Put your project inside ChainBrief discovery modules</h2>
+        <p>
+          Place your project inside ChainBrief&apos;s homepage and project
+          directory visibility modules. Media kit and pricing available on
+          request, based on placement, duration, format and campaign scope.
+        </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/contact">
+            Request Media Kit
+          </Link>
+          <Link className="button button-secondary" href="/projects">
+            View Project Directory
+          </Link>
+        </div>
+      </section>
+
       <section className="marketing-section">
         <div className="section-heading">
           <p className="eyebrow">Placements</p>

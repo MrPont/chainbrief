@@ -38,8 +38,8 @@ export default function BrandPage() {
         <p className="eyebrow">Brand system</p>
         <h1>ChainBrief Logo</h1>
         <p>
-          A geometric crypto media mark combining a chain link, brief/news
-          document, and market signal bars for a premium editorial finance feel.
+          A text-first crypto media wordmark with a compact CB monogram for
+          favicon, social avatar, admin and small-space usage.
         </p>
       </section>
 
@@ -101,9 +101,9 @@ export default function BrandPage() {
       <section className="text-panel brand-description-panel">
         <p>
           The ChainBrief mark is built to work across the header, favicon, social
-          avatar, footer, and campaign materials. The chain element signals
-          crypto infrastructure, the document shape signals news and research,
-          and the rising bars signal market intelligence.
+          avatar, footer, and campaign materials. The wordmark carries the main
+          publication identity, while the compact CB tile gives the brand a
+          recognizable shorthand for small surfaces.
         </p>
       </section>
 
@@ -126,7 +126,7 @@ export default function BrandPage() {
             <h3>Use the mark for favicons and social avatars</h3>
             <p>
               The simplified symbol stays readable at small sizes and preserves
-              the chain, brief and market signal concept.
+              the CB monogram without extra chart, circuit, or decorative detail.
             </p>
           </article>
           <article className="marketing-card">
@@ -141,8 +141,8 @@ export default function BrandPage() {
             <span>Spacing</span>
             <h3>Keep the icon clear of dense UI</h3>
             <p>
-              Allow breathing room around the mark so the document and signal
-              bars remain visible.
+              Allow breathing room around the mark so the monogram stays crisp
+              and the wordmark remains the primary identity.
             </p>
           </article>
         </div>

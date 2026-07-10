@@ -141,7 +141,13 @@ export const fetchSupabaseProjects = cache(async () => {
       return [];
     }
 
-    return ((data ?? []) as SupabaseProjectRow[]).map(mapSupabaseProject);
+    return ((data ?? []) as SupabaseProjectRow[])
+      .filter((project) => {
+        const status = project.status?.trim().toLowerCase();
+
+        return !status || ["published", "active"].includes(status);
+      })
+      .map(mapSupabaseProject);
   } catch (error) {
     console.error("Failed to fetch Supabase crypto projects:", error);
     return [];
