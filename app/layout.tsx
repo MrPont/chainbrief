@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chainbrief.example"),
+  metadataBase: new URL("https://chainbrief.net"),
   title: {
     default: "ChainBrief - Crypto News, Markets & Project Rankings",
     template: "%s | ChainBrief",

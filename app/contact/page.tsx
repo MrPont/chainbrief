@@ -25,10 +25,10 @@ export const metadata: Metadata = {
 };
 
 const contactCards = [
-  { label: "Editorial tips", email: "editorial@chainbrief.example" },
-  { label: "Media kit and pricing", email: "ads@chainbrief.example" },
-  { label: "Project submissions", email: "projects@chainbrief.example" },
-  { label: "Partnerships", email: "partners@chainbrief.example" },
+  { label: "Editorial tips", email: "editorial@chainbrief.net" },
+  { label: "Media kit and pricing", email: "ads@chainbrief.net" },
+  { label: "Project submissions", email: "projects@chainbrief.net" },
+  { label: "Partnerships", email: "partners@chainbrief.net" },
 ];
 
 export default function ContactPage() {

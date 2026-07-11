@@ -1,4 +1,4 @@
-export const SITE_URL = "https://chainbrief.example";
+export const SITE_URL = "https://chainbrief.net";
 
 export type NewsArticle = {
   slug: string;
