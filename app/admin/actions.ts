@@ -440,12 +440,28 @@ export async function fetchBannerAdById(id: string) {
 export async function fetchContactRequests() {
   await requireAdmin();
 
-  const { data, error } = await supabaseAdmin
+  const columns =
+    "id,name,email,company_project,inquiry_type,messenger_contact,message,status,created_at,updated_at";
+  const fallbackColumns =
+    "id,name,email,company_project,inquiry_type,message,status,created_at,updated_at";
+  let { data, error } = await supabaseAdmin
     .from("contact_requests")
-    .select(
-      "id,name,email,company_project,inquiry_type,message,status,created_at,updated_at",
-    )
+    .select(columns)
     .order("created_at", { ascending: false });
+
+  if (error && error.message.toLowerCase().includes("messenger_contact")) {
+    const fallbackResult = await supabaseAdmin
+      .from("contact_requests")
+      .select(fallbackColumns)
+      .order("created_at", { ascending: false });
+
+    data =
+      fallbackResult.data?.map((request) => ({
+        ...request,
+        messenger_contact: null,
+      })) || null;
+    error = fallbackResult.error;
+  }
 
   if (error) {
     throw new Error(error.message);

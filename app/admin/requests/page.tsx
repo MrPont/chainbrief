@@ -85,6 +85,9 @@ export default async function AdminRequestsPage() {
               <div key={request.id}>
                 <strong>{request.name || "Unknown sender"}</strong>
                 <span>{request.email}</span>
+                {request.messenger_contact ? (
+                  <span>Telegram / WhatsApp: {request.messenger_contact}</span>
+                ) : null}
                 <p>{preview(request.message)}</p>
                 <small>{formatDate(request.created_at)}</small>
               </div>

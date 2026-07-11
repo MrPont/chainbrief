@@ -152,6 +152,7 @@ create table if not exists contact_requests (
   email text not null,
   company_project text,
   inquiry_type text,
+  messenger_contact text,
   message text,
   status text not null default 'new' check (status in ('new', 'in_review', 'closed')),
   created_at timestamptz not null default now(),

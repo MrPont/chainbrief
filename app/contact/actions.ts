@@ -34,6 +34,7 @@ export async function submitContactRequest(
   const message = getString(formData, "message");
   const companyProject = getNullableString(formData, "company_or_project");
   const inquiryType = getNullableString(formData, "inquiry_type");
+  const messengerContact = getNullableString(formData, "messenger_contact");
 
   if (!name || !email || !message) {
     return {
@@ -43,15 +44,32 @@ export async function submitContactRequest(
   }
 
   const submittedAt = new Date().toISOString();
-  const { error } = await supabaseAdmin.from("contact_requests").insert({
+  const payload = {
     name,
     email,
     company_project: companyProject,
     inquiry_type: inquiryType,
+    messenger_contact: messengerContact,
     message,
     status: "new",
     updated_at: submittedAt,
-  });
+  };
+  let { error } = await supabaseAdmin.from("contact_requests").insert(payload);
+
+  if (error && error.message.toLowerCase().includes("messenger_contact")) {
+    const legacyPayload = {
+      name,
+      email,
+      company_project: companyProject,
+      inquiry_type: inquiryType,
+      message,
+      status: "new",
+      updated_at: submittedAt,
+    };
+    const retryResult = await supabaseAdmin.from("contact_requests").insert(legacyPayload);
+
+    error = retryResult.error;
+  }
 
   if (error) {
     return {
@@ -70,6 +88,7 @@ export async function submitContactRequest(
       email,
       companyProject,
       inquiryType,
+      messengerContact,
       message,
       submittedAt,
     });

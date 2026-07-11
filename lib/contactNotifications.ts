@@ -7,6 +7,7 @@ type ContactNotification = {
   email: string;
   companyProject: string | null;
   inquiryType: string | null;
+  messengerContact: string | null;
   message: string;
   submittedAt: string;
 };
@@ -54,6 +55,7 @@ export async function sendContactNotificationEmail(
   const fromEmail = process.env.CONTACT_FROM_EMAIL || notificationEmail;
   const inquiryType = formatValue(notification.inquiryType);
   const companyProject = formatValue(notification.companyProject);
+  const messengerContact = formatValue(notification.messengerContact);
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -77,6 +79,7 @@ export async function sendContactNotificationEmail(
       `Email: ${notification.email}`,
       `Company/project: ${companyProject}`,
       `Inquiry type: ${inquiryType}`,
+      `Telegram / WhatsApp: ${messengerContact}`,
       `Submitted: ${notification.submittedAt}`,
       "",
       "Message:",

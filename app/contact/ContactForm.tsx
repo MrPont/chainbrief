@@ -53,6 +53,14 @@ export default function ContactForm() {
             <option value="Partnership">Partnership</option>
           </select>
         </label>
+        <label>
+          Telegram / WhatsApp
+          <input
+            name="messenger_contact"
+            type="text"
+            placeholder="@username, t.me/username, or WhatsApp number"
+          />
+        </label>
         <label className="form-wide">
           Message
           <textarea

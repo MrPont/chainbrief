@@ -58,6 +58,7 @@ export default async function AdminContactRequestsPage() {
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>Telegram / WhatsApp</th>
               <th>Company/project</th>
               <th>Inquiry type</th>
               <th>Message preview</th>
@@ -71,6 +72,7 @@ export default async function AdminContactRequestsPage() {
                   <strong>{request.name || "Unknown sender"}</strong>
                 </td>
                 <td>{request.email}</td>
+                <td>{request.messenger_contact || "Not provided"}</td>
                 <td>{request.company_project || "Not provided"}</td>
                 <td>{request.inquiry_type || "General"}</td>
                 <td>{preview(request.message)}</td>
@@ -79,7 +81,7 @@ export default async function AdminContactRequestsPage() {
             ))}
             {contactRequests.length === 0 ? (
               <tr>
-                <td colSpan={6}>No contact requests yet.</td>
+                <td colSpan={7}>No contact requests yet.</td>
               </tr>
             ) : null}
           </tbody>
