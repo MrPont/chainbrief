@@ -33,6 +33,14 @@ function preview(value?: string | null) {
   return value.length > 140 ? `${value.slice(0, 140)}...` : value;
 }
 
+function getWebsiteHref(value?: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+}
+
 export default async function AdminContactRequestsPage() {
   if (!(await isAdminAuthenticated())) {
     return <AdminLogin error="session" />;
@@ -58,6 +66,7 @@ export default async function AdminContactRequestsPage() {
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>Project website</th>
               <th>Telegram / WhatsApp</th>
               <th>Company/project</th>
               <th>Inquiry type</th>
@@ -72,6 +81,15 @@ export default async function AdminContactRequestsPage() {
                   <strong>{request.name || "Unknown sender"}</strong>
                 </td>
                 <td>{request.email}</td>
+                <td>
+                  {getWebsiteHref(request.project_website) ? (
+                    <a href={getWebsiteHref(request.project_website) || ""}>
+                      {request.project_website}
+                    </a>
+                  ) : (
+                    "Not provided"
+                  )}
+                </td>
                 <td>{request.messenger_contact || "Not provided"}</td>
                 <td>{request.company_project || "Not provided"}</td>
                 <td>{request.inquiry_type || "General"}</td>
@@ -81,7 +99,7 @@ export default async function AdminContactRequestsPage() {
             ))}
             {contactRequests.length === 0 ? (
               <tr>
-                <td colSpan={7}>No contact requests yet.</td>
+                <td colSpan={8}>No contact requests yet.</td>
               </tr>
             ) : null}
           </tbody>

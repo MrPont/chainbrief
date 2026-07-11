@@ -37,6 +37,14 @@ function preview(value?: string | null, limit = 120) {
   return value.length > limit ? `${value.slice(0, limit)}...` : value;
 }
 
+function getWebsiteHref(value?: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+}
+
 export default async function AdminRequestsPage() {
   if (!(await isAdminAuthenticated())) {
     return <AdminLogin error="session" />;
@@ -85,6 +93,11 @@ export default async function AdminRequestsPage() {
               <div key={request.id}>
                 <strong>{request.name || "Unknown sender"}</strong>
                 <span>{request.email}</span>
+                {getWebsiteHref(request.project_website) ? (
+                  <a href={getWebsiteHref(request.project_website) || ""}>
+                    {request.project_website}
+                  </a>
+                ) : null}
                 {request.messenger_contact ? (
                   <span>Telegram / WhatsApp: {request.messenger_contact}</span>
                 ) : null}

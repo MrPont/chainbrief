@@ -24,7 +24,7 @@ export default function ContactForm() {
       <div className="form-grid">
         <label>
           Name
-          <input name="name" required type="text" placeholder="Your name" />
+          <input name="name" minLength={2} required type="text" placeholder="Your name" />
         </label>
         <label>
           Email
@@ -34,13 +34,24 @@ export default function ContactForm() {
           Company/project
           <input
             name="company_or_project"
+            minLength={2}
+            required
             type="text"
             placeholder="Company or project name"
           />
         </label>
         <label>
+          Project website
+          <input
+            name="project_website"
+            required
+            type="text"
+            placeholder="https://example.com"
+          />
+        </label>
+        <label>
           Inquiry type
-          <select name="inquiry_type" defaultValue="">
+          <select name="inquiry_type" defaultValue="" required>
             <option value="" disabled>
               Select inquiry type
             </option>
@@ -65,11 +76,25 @@ export default function ContactForm() {
           Message
           <textarea
             name="message"
+            minLength={30}
             required
             placeholder="Tell us your requested item, campaign type, project, timeline, budget range if useful, and goals."
           />
         </label>
       </div>
+
+      <label
+        aria-hidden="true"
+        style={{ display: "none" }}
+      >
+        Website URL confirm
+        <input
+          autoComplete="off"
+          name="website_url_confirm"
+          tabIndex={-1}
+          type="text"
+        />
+      </label>
 
       <p className="form-note">
         ChainBrief stores this request securely in Supabase for admin review.

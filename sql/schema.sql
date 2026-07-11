@@ -151,6 +151,7 @@ create table if not exists contact_requests (
   name text,
   email text not null,
   company_project text,
+  project_website text,
   inquiry_type text,
   messenger_contact text,
   message text,

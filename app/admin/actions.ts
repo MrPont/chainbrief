@@ -441,7 +441,7 @@ export async function fetchContactRequests() {
   await requireAdmin();
 
   const columns =
-    "id,name,email,company_project,inquiry_type,messenger_contact,message,status,created_at,updated_at";
+    "id,name,email,company_project,project_website,inquiry_type,messenger_contact,message,status,created_at,updated_at";
   const fallbackColumns =
     "id,name,email,company_project,inquiry_type,message,status,created_at,updated_at";
   let { data, error } = await supabaseAdmin
@@ -458,6 +458,7 @@ export async function fetchContactRequests() {
     data =
       fallbackResult.data?.map((request) => ({
         ...request,
+        project_website: null,
         messenger_contact: null,
       })) || null;
     error = fallbackResult.error;
