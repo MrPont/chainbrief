@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { sendContactNotificationEmail } from "../../lib/contactNotifications";
 import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 export type ContactFormState = {
@@ -31,6 +32,8 @@ export async function submitContactRequest(
   const name = getString(formData, "name");
   const email = getString(formData, "email");
   const message = getString(formData, "message");
+  const companyProject = getNullableString(formData, "company_or_project");
+  const inquiryType = getNullableString(formData, "inquiry_type");
 
   if (!name || !email || !message) {
     return {
@@ -39,14 +42,15 @@ export async function submitContactRequest(
     };
   }
 
+  const submittedAt = new Date().toISOString();
   const { error } = await supabaseAdmin.from("contact_requests").insert({
     name,
     email,
-    company_project: getNullableString(formData, "company_or_project"),
-    inquiry_type: getNullableString(formData, "inquiry_type"),
+    company_project: companyProject,
+    inquiry_type: inquiryType,
     message,
     status: "new",
-    updated_at: new Date().toISOString(),
+    updated_at: submittedAt,
   });
 
   if (error) {
@@ -59,6 +63,19 @@ export async function submitContactRequest(
   revalidatePath("/admin");
   revalidatePath("/admin/requests");
   revalidatePath("/admin/requests/contact");
+
+  try {
+    await sendContactNotificationEmail({
+      name,
+      email,
+      companyProject,
+      inquiryType,
+      message,
+      submittedAt,
+    });
+  } catch (emailError) {
+    console.error("Failed to send contact notification email:", emailError);
+  }
 
   return {
     status: "success",
