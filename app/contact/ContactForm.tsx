@@ -28,7 +28,7 @@ export default function ContactForm() {
         </label>
         <label>
           Email
-          <input name="email" required type="email" placeholder="you@example.com" />
+          <input name="email" required type="email" placeholder="Your email address" />
         </label>
         <label>
           Company/project

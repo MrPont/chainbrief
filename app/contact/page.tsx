@@ -25,10 +25,10 @@ export const metadata: Metadata = {
 };
 
 const contactCards = [
-  { label: "Editorial tips", email: "editorial@chainbrief.net" },
-  { label: "Media kit and pricing", email: "ads@chainbrief.net" },
-  { label: "Project submissions", email: "projects@chainbrief.net" },
-  { label: "Partnerships", email: "partners@chainbrief.net" },
+  { label: "Editorial tips", email: "media@chainbrief.net" },
+  { label: "Media kit and pricing", email: "media@chainbrief.net" },
+  { label: "Project submissions", email: "media@chainbrief.net" },
+  { label: "Partnerships", email: "media@chainbrief.net" },
 ];
 
 export default function ContactPage() {
@@ -42,9 +42,9 @@ export default function ContactPage() {
 
       <section className="package-grid contact-card-grid">
         {contactCards.map((card) => (
-          <article className="package-card" key={card.email}>
+          <article className="package-card" key={card.label}>
             <h2>{card.label}</h2>
-            <strong>{card.email}</strong>
+            <a href={`mailto:${card.email}`}>{card.email}</a>
             <p>Use this inbox for focused ChainBrief communication.</p>
           </article>
         ))}

@@ -66,7 +66,7 @@ export default function SubmitProjectForm() {
             name="contact_email"
             required
             type="email"
-            placeholder="team@example.com"
+            placeholder="Team contact email"
           />
         </label>
         <label>
