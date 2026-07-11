@@ -10,7 +10,7 @@ import {
 type SupabaseArticleRow = {
   id: string;
   title: string;
-  slug: string;
+  slug: string | null;
   excerpt: string | null;
   content: string | null;
   category: string | null;
@@ -87,6 +87,26 @@ function normalizeDate(...dates: Array<string | null | undefined>) {
   return dates.find((date) => Boolean(date)) ?? "";
 }
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
+}
+
+function normalizeArticleSlug(slug: string | null | undefined, title: string) {
+  const savedSlug = slug?.trim() || "";
+
+  if (savedSlug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(savedSlug)) {
+    return savedSlug;
+  }
+
+  return slugify(savedSlug || title) || "article";
+}
+
 function mapStaticArticle(article: NewsArticle): PublicArticle {
   return {
     source: "static",
@@ -114,11 +134,12 @@ function mapSupabaseArticle(article: SupabaseArticleRow): PublicArticle {
   const content = article.content?.trim() || article.excerpt?.trim() || "";
   const category = article.category?.trim() || "News";
   const sourceName = article.source_name?.trim() || "ChainBrief";
+  const slug = normalizeArticleSlug(article.slug, article.title);
 
   return {
     source: "supabase",
     id: article.id,
-    slug: article.slug,
+    slug,
     title: article.title,
     excerpt: article.excerpt?.trim() || content.slice(0, 180),
     content,
@@ -175,6 +196,8 @@ export async function getPublicNewsArticles() {
 }
 
 export const getPublicArticleBySlug = cache(async (slug: string) => {
+  const normalizedSlug = normalizeArticleSlug(slug, slug);
+
   try {
     const { data, error } = await supabaseAdmin
       .from("articles")
@@ -190,7 +213,15 @@ export const getPublicArticleBySlug = cache(async (slug: string) => {
     console.error(`Failed to fetch Supabase article "${slug}":`, error);
   }
 
-  const staticArticle = getArticleBySlug(slug);
+  const supabaseArticle = (await fetchPublishedSupabaseArticles()).find(
+    (article) => article.slug === normalizedSlug,
+  );
+
+  if (supabaseArticle) {
+    return supabaseArticle;
+  }
+
+  const staticArticle = getArticleBySlug(normalizedSlug) || getArticleBySlug(slug);
 
   return staticArticle ? mapStaticArticle(staticArticle) : null;
 });
