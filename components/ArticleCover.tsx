@@ -10,10 +10,14 @@ type ArticleCoverProps = {
 
 const toneMatchers = [
   { tone: "bitcoin", terms: ["bitcoin", "btc"] },
-  { tone: "ethereum", terms: ["ethereum", "eth"] },
-  { tone: "defi", terms: ["defi", "lending", "liquidity", "dex"] },
-  { tone: "regulation", terms: ["regulation", "policy", "stablecoin", "legal"] },
-  { tone: "infrastructure", terms: ["infrastructure", "ai", "data", "node", "wallet"] },
+  { tone: "ethereum", terms: ["ethereum", "eth", "ether"] },
+  { tone: "xrp", terms: ["xrp", "ripple"] },
+  { tone: "regulation", terms: ["regulation", "policy", "sec", "government", "legal"] },
+  { tone: "defi", terms: ["defi", "lending", "liquidity", "dex", "protocol", "yield"] },
+  {
+    tone: "infrastructure",
+    terms: ["infrastructure", "ai", "data", "node", "wallet", "rollup", "scaling", "network"],
+  },
   { tone: "markets", terms: ["market", "markets", "exchange", "trading", "unlock"] },
 ];
 
@@ -22,35 +26,28 @@ function getTone(category: string, title: string, isSponsored?: boolean) {
     return "sponsored";
   }
 
-  const searchable = `${category} ${title}`.toLowerCase();
+  const searchable = `${title} ${category}`.toLowerCase();
   const match = toneMatchers.find((matcher) =>
-    matcher.terms.some((term) => searchable.includes(term)),
+    matcher.terms.some((term) => new RegExp(`(^|[^a-z0-9])${term}([^a-z0-9]|$)`).test(searchable)),
   );
 
   return match?.tone || "default";
 }
 
-function getLabel(category: string, isSponsored?: boolean) {
-  if (isSponsored) {
-    return "SPONSORED";
-  }
-
-  return category?.trim().toUpperCase() || "CHAINBRIEF BRIEF";
-}
-
-function getCoverTitle(tone: string) {
-  const titles: Record<string, string> = {
-    bitcoin: "BITCOIN",
-    ethereum: "ETHEREUM",
-    defi: "DEFI",
-    regulation: "REGULATION",
-    infrastructure: "INFRASTRUCTURE",
-    markets: "MARKETS",
-    sponsored: "SPONSORED BRIEF",
-    default: "CHAINBRIEF BRIEF",
+function getCoverCopy(tone: string) {
+  const coverCopy: Record<string, { label: string; headline: string }> = {
+    bitcoin: { label: "BITCOIN", headline: "Market Pulse" },
+    ethereum: { label: "ETHEREUM", headline: "Network Brief" },
+    xrp: { label: "XRP", headline: "Liquidity Watch" },
+    defi: { label: "DEFI", headline: "Protocol Brief" },
+    regulation: { label: "POLICY", headline: "Regulation Watch" },
+    infrastructure: { label: "INFRASTRUCTURE", headline: "Data Layer" },
+    markets: { label: "MARKETS", headline: "Market Signal" },
+    sponsored: { label: "SPONSORED", headline: "Partner Brief" },
+    default: { label: "CHAINBRIEF BRIEF", headline: "Editorial Brief" },
   };
 
-  return titles[tone] || titles.default;
+  return coverCopy[tone] || coverCopy.default;
 }
 
 function isOwnedMediaUrl(imageUrl: string) {
@@ -105,19 +102,19 @@ export default function ArticleCover({
   }
 
   const tone = getTone(category, title, isSponsored);
-  const coverTitle = getCoverTitle(tone);
+  const coverCopy = getCoverCopy(tone);
 
   return (
     <div
       className={`article-cover article-cover-${variant} article-cover-fallback article-cover-${tone}`}
-      aria-label={`${getLabel(category, isSponsored)} visual cover`}
+      aria-label={`${coverCopy.label} visual cover`}
       role="img"
     >
       <span className="article-cover-grid" />
       <span className="article-cover-mark" />
       <span className="article-cover-motif" aria-hidden="true" />
-      <span className="article-cover-label">{getLabel(category, isSponsored)}</span>
-      <strong>{coverTitle}</strong>
+      <span className="article-cover-label">{coverCopy.label}</span>
+      <strong>{coverCopy.headline}</strong>
       <span className="article-cover-signal" aria-hidden="true">
         <i />
         <i />
