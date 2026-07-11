@@ -34,7 +34,6 @@ type ArticleFormProps = {
   articleId?: string;
   showAiAssistant?: boolean;
   highlightAiAssistant?: boolean;
-  aiRewriteEnabled?: boolean;
 };
 
 function dateTimeLocalValue(value?: string | null) {
@@ -58,13 +57,12 @@ export default function ArticleForm({
   articleId,
   showAiAssistant = false,
   highlightAiAssistant = false,
-  aiRewriteEnabled = false,
 }: ArticleFormProps) {
-  const status = article?.status || "draft";
   const [isAiPending, startAiTransition] = useTransition();
   const [featuredImage, setFeaturedImage] = useState(article?.featured_image || "");
   const [title, setTitle] = useState(article?.title || "");
   const [slug, setSlug] = useState(article?.slug || "");
+  const [status, setStatus] = useState(article?.status || "draft");
   const [excerpt, setExcerpt] = useState(article?.excerpt || "");
   const [content, setContent] = useState(article?.content || "");
   const [seoTitle, setSeoTitle] = useState(article?.seo_title || "");
@@ -77,11 +75,6 @@ export default function ArticleForm({
   const [aiStatus, setAiStatus] = useState(article?.ai_status || "");
 
   function generateRewrite() {
-    if (!aiRewriteEnabled) {
-      setAiError("AI rewrite is currently disabled. Manual editorial review is active.");
-      return;
-    }
-
     if (!articleId) {
       setAiError("Article must be saved before AI rewrite can run.");
       return;
@@ -107,8 +100,11 @@ export default function ArticleForm({
       setAiNotes(result.data.ai_notes);
       setAiModel(result.model);
       setAiStatus("generated");
+      setStatus("draft");
       setNeedsReview(true);
-      setAiMessage("AI rewrite generated. Review the fields, edit as needed, then save.");
+      setAiMessage(
+        "AI rewrite generated and saved as a draft. Review the fields before publishing.",
+      );
     });
   }
 
@@ -146,20 +142,14 @@ export default function ArticleForm({
             ) : null}
             {aiNotes ? <p className="admin-muted-line">AI notes: {aiNotes}</p> : null}
           </div>
-          {aiRewriteEnabled ? (
-            <button
-              className="button button-primary"
-              disabled={isAiPending}
-              onClick={generateRewrite}
-              type="button"
-            >
-              {isAiPending ? "Generating..." : "Generate AI Rewrite"}
-            </button>
-          ) : (
-            <p className="admin-disabled-notice">
-              AI rewrite is currently disabled. Manual editorial review is active.
-            </p>
-          )}
+          <button
+            className="button button-primary"
+            disabled={isAiPending}
+            onClick={generateRewrite}
+            type="button"
+          >
+            {isAiPending ? "Generating..." : "Generate AI Rewrite"}
+          </button>
           {aiMessage ? <p className="form-success">{aiMessage}</p> : null}
           {aiError ? <p className="form-error">{aiError}</p> : null}
         </section>
@@ -238,7 +228,11 @@ export default function ArticleForm({
         </div>
         <label>
           Status
-          <select name="status" defaultValue={status}>
+          <select
+            name="status"
+            onChange={(event) => setStatus(event.target.value)}
+            value={status}
+          >
             <option value="draft">Draft</option>
             <option value="pending">Pending</option>
             <option value="published">Published</option>

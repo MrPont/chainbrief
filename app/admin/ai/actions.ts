@@ -71,6 +71,32 @@ function parseAiJson(content: string) {
   };
 }
 
+async function makeUniqueArticleSlug(baseSlug: string, articleId: string) {
+  const fallbackSlug = baseSlug || "chainbrief-draft";
+  let candidate = fallbackSlug;
+  let suffix = 2;
+
+  while (true) {
+    const { data, error } = await supabaseAdmin
+      .from("articles")
+      .select("id")
+      .eq("slug", candidate)
+      .neq("id", articleId)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data) {
+      return candidate;
+    }
+
+    candidate = `${fallbackSlug}-${suffix}`;
+    suffix += 1;
+  }
+}
+
 function buildRewritePrompt(article: {
   title?: string | null;
   excerpt?: string | null;
@@ -134,13 +160,6 @@ Content length:
 export async function generateArticleAiRewrite(articleId: string): Promise<AiRewriteResult> {
   await requireAdmin();
 
-  if (process.env.AI_REWRITE_ENABLED !== "true") {
-    return {
-      ok: false,
-      error: "AI rewrite is currently disabled. Manual editorial review is active.",
-    };
-  }
-
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL || "gpt-5.4-mini";
 
@@ -154,7 +173,7 @@ export async function generateArticleAiRewrite(articleId: string): Promise<AiRew
   const { data: article, error } = await supabaseAdmin
     .from("articles")
     .select(
-      "id,title,excerpt,source_name,source_url,original_source_url,category,published_at",
+      "id,title,excerpt,source_name,source_url,original_source_url,category,published_at,is_imported",
     )
     .eq("id", articleId)
     .single();
@@ -163,6 +182,13 @@ export async function generateArticleAiRewrite(articleId: string): Promise<AiRew
     return {
       ok: false,
       error: error?.message || "Article not found.",
+    };
+  }
+
+  if (!article.is_imported) {
+    return {
+      ok: false,
+      error: "AI rewrite is only available for imported RSS articles.",
     };
   }
 
@@ -193,10 +219,22 @@ export async function generateArticleAiRewrite(articleId: string): Promise<AiRew
     }
 
     const data = parseAiJson(content);
+    const slug = await makeUniqueArticleSlug(data.slug, articleId);
+    const normalizedData = {
+      ...data,
+      slug,
+    };
     const aiNotes = data.ai_notes;
     const { error: updateError } = await supabaseAdmin
       .from("articles")
       .update({
+        title: normalizedData.title,
+        slug: normalizedData.slug,
+        excerpt: normalizedData.excerpt,
+        content: normalizedData.content,
+        seo_title: normalizedData.seo_title,
+        seo_description: normalizedData.seo_description,
+        status: "draft",
         ai_rewritten_at: new Date().toISOString(),
         ai_model: model,
         ai_status: "generated",
@@ -219,7 +257,7 @@ export async function generateArticleAiRewrite(articleId: string): Promise<AiRew
 
     return {
       ok: true,
-      data,
+      data: normalizedData,
       model,
     };
   } catch (rewriteError) {
