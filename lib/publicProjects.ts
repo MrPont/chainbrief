@@ -128,6 +128,12 @@ function mapSupabaseProject(project: SupabaseProjectRow): PublicProject {
   };
 }
 
+function isPublicProjectStatus(statusValue?: string | null) {
+  const status = statusValue?.trim().toLowerCase();
+
+  return !status || ["published", "active"].includes(status);
+}
+
 export const fetchSupabaseProjects = cache(async () => {
   try {
     const { data, error } = await supabaseAdmin
@@ -142,11 +148,7 @@ export const fetchSupabaseProjects = cache(async () => {
     }
 
     return ((data ?? []) as SupabaseProjectRow[])
-      .filter((project) => {
-        const status = project.status?.trim().toLowerCase();
-
-        return !status || ["published", "active"].includes(status);
-      })
+      .filter((project) => isPublicProjectStatus(project.status))
       .map(mapSupabaseProject);
   } catch (error) {
     console.error("Failed to fetch Supabase crypto projects:", error);
@@ -179,7 +181,11 @@ export const getPublicProjectBySlug = cache(async (slug: string) => {
       .maybeSingle();
 
     if (!error && data) {
-      return mapSupabaseProject(data as SupabaseProjectRow);
+      const project = data as SupabaseProjectRow;
+
+      if (isPublicProjectStatus(project.status)) {
+        return mapSupabaseProject(project);
+      }
     }
   } catch (error) {
     console.error(`Failed to fetch Supabase project "${slug}":`, error);

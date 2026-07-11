@@ -3,6 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  projectImportSources,
+  runProjectImport,
+} from "../../lib/projectImport/importProjects";
+import type {
+  ProjectImportResult,
+  ProjectImportSourceId,
+} from "../../lib/projectImport/types";
 import { runRssImport, type RssImportResult } from "../../lib/rssImport";
 import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
@@ -70,8 +78,13 @@ type ProjectPayload = {
   risks: string[];
   is_sponsored: boolean;
   sponsor_label: string | null;
-  status: "published";
+  status: "draft" | "pending" | "published" | "rejected";
+  review_status: string | null;
   updated_at: string;
+};
+
+type ProjectSavePayload = ProjectPayload & {
+  created_at?: string;
 };
 
 type SourcePayload = {
@@ -181,6 +194,15 @@ function getBannerPayload(formData: FormData): BannerPayload {
 
 function getProjectPayload(formData: FormData): ProjectPayload {
   const isSponsored = formData.get("is_sponsored") === "on";
+  const status = getString(formData, "status");
+  const normalizedStatus: ProjectPayload["status"] = [
+    "draft",
+    "pending",
+    "published",
+    "rejected",
+  ].includes(status)
+    ? (status as ProjectPayload["status"])
+    : "draft";
 
   return {
     name: getString(formData, "name"),
@@ -201,7 +223,11 @@ function getProjectPayload(formData: FormData): ProjectPayload {
     risks: getTextArray(formData, "risks"),
     is_sponsored: isSponsored,
     sponsor_label: isSponsored ? getNullableString(formData, "sponsor_label") : null,
-    status: "published",
+    status: normalizedStatus,
+    review_status:
+      normalizedStatus === "published"
+        ? getNullableString(formData, "review_status") || "approved"
+        : getNullableString(formData, "review_status") || "needs_review",
     updated_at: new Date().toISOString(),
   };
 }
@@ -336,6 +362,15 @@ export async function fetchBannerAds() {
     .order("created_at", { ascending: false });
 
   if (error) {
+    if (
+      error.message.toLowerCase().includes("review_status") ||
+      error.message.toLowerCase().includes("source_name") ||
+      error.message.toLowerCase().includes("source_url") ||
+      error.message.toLowerCase().includes("imported_at")
+    ) {
+      return [];
+    }
+
     throw new Error(error.message);
   }
 
@@ -355,6 +390,44 @@ export async function fetchCryptoProjects() {
   }
 
   return data || [];
+}
+
+export async function fetchImportedProjectDrafts() {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("crypto_projects")
+    .select(
+      "id,name,slug,symbol,category,status,review_status,source_name,source_url,imported_at,created_at",
+    )
+    .not("imported_at", "is", null)
+    .order("imported_at", { ascending: false })
+    .limit(25);
+
+  if (error) {
+    if (
+      error.message.toLowerCase().includes("review_status") ||
+      error.message.toLowerCase().includes("source_name") ||
+      error.message.toLowerCase().includes("source_url") ||
+      error.message.toLowerCase().includes("imported_at")
+    ) {
+      return [];
+    }
+
+    throw new Error(error.message);
+  }
+
+  return data || [];
+}
+
+export async function getProjectImportSources() {
+  await requireAdmin();
+
+  return projectImportSources.map(({ id, name, description }) => ({
+    id,
+    name,
+    description,
+  }));
 }
 
 export async function fetchSources() {
@@ -592,7 +665,7 @@ export async function createBannerAd(formData: FormData) {
 export async function createCryptoProject(formData: FormData) {
   await requireAdmin();
 
-  const payload = {
+  const payload: ProjectSavePayload = {
     ...getProjectPayload(formData),
     created_at: new Date().toISOString(),
   };
@@ -601,7 +674,13 @@ export async function createCryptoProject(formData: FormData) {
     redirect("/admin/projects/new?error=missing");
   }
 
-  const { error } = await supabaseAdmin.from("crypto_projects").insert(payload);
+  let { error } = await supabaseAdmin.from("crypto_projects").insert(payload);
+
+  if (error && error.message.toLowerCase().includes("review_status")) {
+    delete (payload as Partial<ProjectSavePayload>).review_status;
+    const retryResult = await supabaseAdmin.from("crypto_projects").insert(payload);
+    error = retryResult.error;
+  }
 
   if (error) {
     redirect(`/admin/projects/new?error=${encodeURIComponent(error.message)}`);
@@ -683,16 +762,25 @@ export async function updateBannerAd(id: string, formData: FormData) {
 export async function updateCryptoProject(id: string, formData: FormData) {
   await requireAdmin();
 
-  const payload = getProjectPayload(formData);
+  const payload: ProjectSavePayload = getProjectPayload(formData);
 
   if (!payload.name || !payload.slug) {
     redirect(`/admin/projects/${id}?error=missing`);
   }
 
-  const { error } = await supabaseAdmin
+  let { error } = await supabaseAdmin
     .from("crypto_projects")
     .update(payload)
     .eq("id", id);
+
+  if (error && error.message.toLowerCase().includes("review_status")) {
+    delete (payload as Partial<ProjectSavePayload>).review_status;
+    const retryResult = await supabaseAdmin
+      .from("crypto_projects")
+      .update(payload)
+      .eq("id", id);
+    error = retryResult.error;
+  }
 
   if (error) {
     redirect(`/admin/projects/${id}?error=${encodeURIComponent(error.message)}`);
@@ -805,6 +893,21 @@ export async function importLatestNews(): Promise<RssImportResult> {
   revalidatePath("/admin");
   revalidatePath("/admin/articles");
   revalidatePath("/admin/import");
+
+  return result;
+}
+
+export async function importFreshProjects(
+  formData: FormData,
+): Promise<ProjectImportResult> {
+  await requireAdmin();
+
+  const sourceId = getString(formData, "source") as ProjectImportSourceId;
+  const result = await runProjectImport(sourceId);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin/projects/import");
 
   return result;
 }

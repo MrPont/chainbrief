@@ -108,6 +108,10 @@ create table if not exists crypto_projects (
   risks text[] not null default '{}',
   is_sponsored boolean not null default false,
   sponsor_label text,
+  source_name text,
+  source_url text,
+  imported_at timestamptz,
+  review_status text not null default 'approved',
   status text not null default 'draft' check (status in ('draft', 'pending', 'published', 'rejected')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -189,4 +193,7 @@ create index if not exists sources_active_idx on sources (is_active);
 create index if not exists banner_ads_placement_active_idx on banner_ads (placement, is_active);
 create index if not exists crypto_projects_slug_idx on crypto_projects (slug);
 create index if not exists crypto_projects_rank_idx on crypto_projects (rank);
+create index if not exists crypto_projects_imported_at_idx on crypto_projects (imported_at desc);
+create index if not exists crypto_projects_review_status_idx on crypto_projects (review_status);
+create index if not exists crypto_projects_source_url_idx on crypto_projects (source_url);
 create index if not exists project_submissions_status_idx on project_submissions (status, created_at desc);

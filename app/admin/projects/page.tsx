@@ -12,6 +12,21 @@ export const metadata: Metadata = {
   title: "Admin Projects",
 };
 
+function formatDate(value?: string | null) {
+  if (!value) {
+    return "Not imported";
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat("en", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(date);
+}
+
 type AdminProjectsPageProps = {
   searchParams: Promise<{
     created?: string;
@@ -38,9 +53,14 @@ export default async function AdminProjectsPage({
         <p className="eyebrow">Directory</p>
         <h1>Crypto Projects</h1>
         <p>Review, create, edit, and delete Supabase-backed project profiles.</p>
-        <Link className="button button-primary" href="/admin/projects/new">
-          New Project
-        </Link>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/admin/projects/new">
+            New Project
+          </Link>
+          <Link className="button button-secondary" href="/admin/projects/import">
+            Import Fresh Projects
+          </Link>
+        </div>
       </section>
 
       {params.created ? <p className="form-success">Project created.</p> : null}
@@ -58,6 +78,9 @@ export default async function AdminProjectsPage({
               <th>Chain</th>
               <th>Rank</th>
               <th>Score</th>
+              <th>Status</th>
+              <th>Review</th>
+              <th>Source</th>
               <th>Sponsored</th>
               <th>Actions</th>
             </tr>
@@ -74,6 +97,29 @@ export default async function AdminProjectsPage({
                 <td>{project.chain || "Not set"}</td>
                 <td>{project.rank ?? "Unranked"}</td>
                 <td>{project.score ?? "No score"}</td>
+                <td>
+                  <span className={`admin-status-badge status-${project.status || "draft"}`}>
+                    {project.status || "draft"}
+                  </span>
+                </td>
+                <td>{project.review_status || "Not set"}</td>
+                <td>
+                  {project.source_name ? (
+                    <>
+                      <strong>{project.source_name}</strong>
+                      {project.source_url ? (
+                        <a className="admin-muted-line" href={project.source_url}>
+                          Source URL
+                        </a>
+                      ) : null}
+                      <span className="admin-muted-line">
+                        {formatDate(project.imported_at)}
+                      </span>
+                    </>
+                  ) : (
+                    "Manual"
+                  )}
+                </td>
                 <td>{project.is_sponsored ? "Yes" : "No"}</td>
                 <td>
                   <div className="admin-table-actions">
@@ -88,7 +134,7 @@ export default async function AdminProjectsPage({
             ))}
             {projects.length === 0 ? (
               <tr>
-                <td colSpan={9}>No projects yet.</td>
+                <td colSpan={12}>No projects yet.</td>
               </tr>
             ) : null}
           </tbody>

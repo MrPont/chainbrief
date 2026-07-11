@@ -2617,6 +2617,33 @@ tbody tr:hover {
   background: rgba(5, 7, 11, 0.78);
 }
 
+.admin-inline-form {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.admin-inline-form label {
+  color: var(--text);
+  display: grid;
+  font-size: 0.86rem;
+  font-weight: 800;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.admin-inline-form select {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 14px;
+  background: rgba(5, 7, 11, 0.78);
+}
+
 .admin-table-card {
   overflow-x: auto;
 }

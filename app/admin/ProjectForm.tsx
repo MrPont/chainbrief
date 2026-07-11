@@ -24,6 +24,11 @@ type ProjectFormProps = {
     risks?: string[] | null;
     is_sponsored?: boolean | null;
     sponsor_label?: string | null;
+    status?: string | null;
+    review_status?: string | null;
+    source_name?: string | null;
+    source_url?: string | null;
+    imported_at?: string | null;
   };
   submitLabel: string;
 };
@@ -103,6 +108,24 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
             defaultValue={project?.sponsor_label || ""}
           />
         </label>
+        <label>
+          Status
+          <select name="status" defaultValue={project?.status || "draft"}>
+            <option value="draft">Draft</option>
+            <option value="pending">Pending</option>
+            <option value="published">Published</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </label>
+        <label>
+          Review status
+          <select name="review_status" defaultValue={project?.review_status || "needs_review"}>
+            <option value="needs_review">Needs review</option>
+            <option value="in_review">In review</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </label>
         <label className="form-wide">
           Short description
           <textarea
@@ -135,6 +158,25 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
         />
         Sponsored project
       </label>
+      {project?.source_name || project?.source_url || project?.imported_at ? (
+        <section className="admin-review-warning">
+          <p className="eyebrow">Imported project</p>
+          <h2>Source Attribution</h2>
+          <p>
+            Imported from {project.source_name || "external source"}
+            {project.imported_at ? ` on ${new Date(project.imported_at).toLocaleString()}` : ""}.
+          </p>
+          {project.source_url ? (
+            <p>
+              Source URL: <a href={project.source_url}>{project.source_url}</a>
+            </p>
+          ) : null}
+          <p>
+            Review factual metadata, write an original ChainBrief description, and
+            publish only after editorial approval.
+          </p>
+        </section>
+      ) : null}
       <button className="button button-primary" type="submit">
         {submitLabel}
       </button>
