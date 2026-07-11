@@ -79,13 +79,15 @@ function isGenericMessengerContact(value?: string | null) {
 }
 
 function isLikelySpam(request: Awaited<ReturnType<typeof fetchContactRequests>>[number]) {
+  const hasMissingWebsite = !request.project_website;
+  const hasWeakMessage = isVeryShortMessage(request.message);
+
   return (
     isOnlyNumbers(request.message) ||
     !request.company_project ||
-    !request.project_website ||
     isGenericMessengerContact(request.messenger_contact) ||
-    isVeryShortMessage(request.message) ||
-    Boolean(request.company_project && isValidEmail(request.company_project))
+    Boolean(request.company_project && isValidEmail(request.company_project)) ||
+    (hasMissingWebsite && hasWeakMessage)
   );
 }
 

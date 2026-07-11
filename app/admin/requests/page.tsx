@@ -97,7 +97,9 @@ export default async function AdminRequestsPage() {
                   <a href={getWebsiteHref(request.project_website) || ""}>
                     {request.project_website}
                   </a>
-                ) : null}
+                ) : (
+                  <span>Project website: Not provided</span>
+                )}
                 {request.messenger_contact ? (
                   <span>Telegram / WhatsApp: {request.messenger_contact}</span>
                 ) : null}

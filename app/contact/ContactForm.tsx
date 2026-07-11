@@ -41,12 +41,14 @@ export default function ContactForm() {
           />
         </label>
         <label>
-          Project website
+          Project website (optional)
           <input
+            autoCapitalize="none"
+            autoComplete="url"
+            inputMode="url"
             name="project_website"
-            required
             type="text"
-            placeholder="https://example.com"
+            placeholder="https://project.com or project.com"
           />
         </label>
         <label>

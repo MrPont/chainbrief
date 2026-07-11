@@ -148,7 +148,9 @@ export async function submitContactRequest(
   const inquiryType = getNullableString(formData, "inquiry_type");
   const messengerContact = getNullableString(formData, "messenger_contact");
   const projectWebsiteInput = getString(formData, "project_website");
-  const projectWebsite = normalizeProjectWebsite(projectWebsiteInput);
+  const projectWebsite = projectWebsiteInput
+    ? normalizeProjectWebsite(projectWebsiteInput)
+    : null;
 
   if (await isRateLimited()) {
     return {
@@ -185,10 +187,11 @@ export async function submitContactRequest(
     };
   }
 
-  if (!projectWebsite) {
+  if (projectWebsiteInput && !projectWebsite) {
     return {
       status: "error",
-      message: "Please enter a valid project website, such as project.com.",
+      message:
+        "Please enter a valid project website, such as project.com, or leave it blank.",
     };
   }
 

@@ -6,7 +6,7 @@ type ContactNotification = {
   name: string;
   email: string;
   companyProject: string | null;
-  projectWebsite: string;
+  projectWebsite: string | null;
   inquiryType: string | null;
   messengerContact: string | null;
   message: string;
