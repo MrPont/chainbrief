@@ -449,7 +449,11 @@ export async function fetchContactRequests() {
     .select(columns)
     .order("created_at", { ascending: false });
 
-  if (error && error.message.toLowerCase().includes("messenger_contact")) {
+  if (
+    error &&
+    (error.message.toLowerCase().includes("messenger_contact") ||
+      error.message.toLowerCase().includes("project_website"))
+  ) {
     const fallbackResult = await supabaseAdmin
       .from("contact_requests")
       .select(fallbackColumns)
@@ -469,6 +473,40 @@ export async function fetchContactRequests() {
   }
 
   return data || [];
+}
+
+export async function deleteContactRequests(formData: FormData) {
+  await requireAdmin();
+
+  const ids = formData
+    .getAll("ids")
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    .map((value) => value.trim());
+  const returnTo = getString(formData, "return_to");
+  const safeReturnTo = returnTo.startsWith("/admin/requests/contact")
+    ? returnTo
+    : "/admin/requests/contact";
+
+  if (ids.length === 0) {
+    redirect(`${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=missing-id`);
+  }
+
+  const { error } = await supabaseAdmin.from("contact_requests").delete().in("id", ids);
+
+  if (error) {
+    redirect(
+      `${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}error=${encodeURIComponent(
+        error.message,
+      )}`,
+    );
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/requests");
+  revalidatePath("/admin/requests/contact");
+  redirect(
+    `${safeReturnTo}${safeReturnTo.includes("?") ? "&" : "?"}deleted=${ids.length}`,
+  );
 }
 
 export async function fetchProjectSubmissions() {
