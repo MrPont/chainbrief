@@ -24,84 +24,95 @@ const fallbackCopy: Record<
 > = {
   header: {
     eyebrow: "Header Banner",
-    inventoryLabel: "Premium Placement",
-    heading: "Your Ad Could Be Here",
-    text: "Promote your crypto project, exchange, token, app or campaign to the ChainBrief audience.",
-    cta: "Advertise with ChainBrief",
-    href: "/advertise",
-    secondaryCta: "Get Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "",
+    heading: "",
+    text: "",
+    cta: "",
+    href: "/contact",
   },
   homepage_top: {
     eyebrow: "Homepage Top Banner",
-    inventoryLabel: "Premium Placement",
-    heading: "Your Ad Could Be Here",
-    text: "Promote your crypto project, exchange, token, app or campaign to the ChainBrief audience.",
-    cta: "Advertise with ChainBrief",
-    href: "/advertise",
-    secondaryCta: "Get Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "",
+    heading: "",
+    text: "",
+    cta: "",
+    href: "/contact",
   },
   homepage_mid: {
     eyebrow: "Homepage Mid Banner",
-    inventoryLabel: "Campaign Slot",
-    heading: "Reach Crypto Readers, Traders and Web3 Projects",
-    text: "Put your brand inside ChainBrief market coverage, project rankings and editorial discovery.",
-    cta: "View Ad Options",
-    href: "/advertise",
+    inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
+    heading: "Project Visibility on ChainBrief",
+    text: "Sponsored coverage and project placements for Web3 teams.",
+    cta: "Request Placement",
+    href: "/contact",
     secondaryCta: "Media Kit",
     secondaryHref: "/media-kit",
   },
   article_inline: {
     eyebrow: "Article Inline Banner",
-    inventoryLabel: "Sponsored Placement",
-    heading: "Sponsor This Article Area",
-    text: "Show your project to readers already engaged with crypto news and market content.",
-    cta: "Get Media Kit",
-    href: "/media-kit",
-    secondaryCta: "Advertise",
-    secondaryHref: "/advertise",
+    inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
+    heading: "Project Visibility on ChainBrief",
+    text: "Sponsored coverage and project placements for Web3 teams.",
+    cta: "Request Placement",
+    href: "/contact",
+    secondaryCta: "Media Kit",
+    secondaryHref: "/media-kit",
   },
   article_sidebar: {
     eyebrow: "Article Sidebar Banner",
-    inventoryLabel: "Sidebar Ad",
-    heading: "Reach Active Crypto Readers",
-    text: "Place your brand next to market coverage, project rankings and editorial content.",
-    cta: "View Ad Options",
-    href: "/advertise",
-    secondaryCta: "Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "PARTNER PLACEMENT",
+    heading: "Reach Crypto Readers",
+    text: "Campaign options and media placements are available on request.",
+    cta: "Media Kit",
+    href: "/media-kit",
+    secondaryCta: "Contact Us",
+    secondaryHref: "/contact",
   },
   sidebar: {
     eyebrow: "Sidebar Banner",
-    inventoryLabel: "Sidebar Ad",
-    heading: "Reach Active Crypto Readers",
-    text: "Place your brand next to market coverage, project rankings and editorial content.",
-    cta: "View Ad Options",
-    href: "/advertise",
-    secondaryCta: "Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "PARTNER PLACEMENT",
+    heading: "Reach Crypto Readers",
+    text: "Campaign options and media placements are available on request.",
+    cta: "Media Kit",
+    href: "/media-kit",
+    secondaryCta: "Contact Us",
+    secondaryHref: "/contact",
   },
   footer: {
     eyebrow: "Footer Banner",
-    inventoryLabel: "Always-On Placement",
-    heading: "Advertise on ChainBrief",
-    text: "Keep your project visible across crypto news, rankings and marketing service pages.",
-    cta: "Advertise with ChainBrief",
-    href: "/advertise",
-    secondaryCta: "Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "CAMPAIGN OPTIONS",
+    heading: "Work With ChainBrief",
+    text: "Media kit, sponsored articles and campaign options available on request.",
+    cta: "Contact Us",
+    href: "/contact",
+    secondaryCta: "View Options",
+    secondaryHref: "/advertise",
   },
   leaderboard: {
     eyebrow: "Leaderboard Banner",
-    inventoryLabel: "Leaderboard",
-    heading: "This Space Is Available for Advertising",
-    text: "Banner campaigns, sponsored coverage, listings and launch visibility for Web3 brands.",
-    cta: "Start a Campaign",
-    href: "/advertise",
-    secondaryCta: "Get Media Kit",
-    secondaryHref: "/media-kit",
+    inventoryLabel: "",
+    heading: "",
+    text: "",
+    cta: "",
+    href: "/contact",
   },
+};
+
+const hiddenFallbackPlacements = new Set<BannerPlacement>([
+  "header",
+  "homepage_top",
+  "leaderboard",
+]);
+
+const placementTone: Record<BannerPlacement, string> = {
+  header: "media-kit",
+  homepage_top: "media-kit",
+  homepage_mid: "spotlight",
+  article_inline: "spotlight",
+  article_sidebar: "partner",
+  sidebar: "partner",
+  footer: "options",
+  leaderboard: "media-kit",
 };
 
 export default async function BannerAd({
@@ -131,6 +142,10 @@ export default async function BannerAd({
         </a>
       </aside>
     );
+  }
+
+  if (hiddenFallbackPlacements.has(placement)) {
+    return null;
   }
 
   if (variant === "box") {
@@ -170,25 +185,26 @@ function FallbackBanner({
   variant: "banner" | "box";
 }) {
   const copy = fallbackCopy[placement];
-  const label =
+  const eyebrow =
     !fallbackLabel || fallbackLabel === "Available placement"
-      ? copy.inventoryLabel
+      ? copy.eyebrow
       : fallbackLabel;
   const wrapperClassName = [
     variant === "box" ? "promo-panel" : "promo-slot",
     "campaign-slot",
     variant === "box" ? "campaign-slot-box" : "campaign-slot-wide",
     `campaign-slot-${placement.replace(/_/g, "-")}`,
+    `campaign-slot-tone-${placementTone[placement]}`,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <section className={wrapperClassName} aria-label={`${copy.eyebrow} sponsored placement`}>
+    <section className={wrapperClassName} aria-label={`${eyebrow} sponsored placement`}>
       <div className="campaign-slot-copy">
-        <span className="campaign-slot-eyebrow">{copy.eyebrow}</span>
-        <span className="campaign-slot-label">{label}</span>
+        <span className="campaign-slot-eyebrow">{eyebrow}</span>
+        <span className="campaign-slot-label">{copy.inventoryLabel}</span>
         <h2>{copy.heading}</h2>
         <p>{copy.text}</p>
         {fallbackSize ? <strong className="campaign-slot-size">{fallbackSize}</strong> : null}
