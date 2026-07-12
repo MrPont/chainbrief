@@ -1,10 +1,21 @@
-export type ProjectImportSourceId = "coingecko";
+export type ProjectImportSourceId = "coingecko" | "coingecko_recently_added";
 
 export type ImportedProjectCandidate = {
   name: string;
   ticker: string | null;
   category: string | null;
   websiteUrl: string | null;
+  twitterUrl?: string | null;
+  telegramUrl?: string | null;
+  discordUrl?: string | null;
+  githubUrl?: string | null;
+  whitepaperUrl?: string | null;
+  explorerUrl?: string | null;
+  contractAddress?: string | null;
+  chain?: string | null;
+  importedDescription?: string | null;
+  importedLinksJson?: Record<string, unknown> | null;
+  detailWarning?: string | null;
   shortDescription: string | null;
   sourceName: string;
   sourceUrl: string;
@@ -33,6 +44,7 @@ export type ProjectImportResult = {
   sourceName: string;
   imported: number;
   skipped: number;
+  failed: number;
   errors: string[];
   results: ProjectImportItemResult[];
 };

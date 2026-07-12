@@ -3,6 +3,7 @@ import "server-only";
 import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../supabaseAdmin";
 import { coinGeckoProjectSource } from "./sources/coingecko";
+import { coinGeckoRecentlyAddedProjectSource } from "./sources/coingeckoRecentlyAdded";
 import type {
   ImportedProjectCandidate,
   ProjectImportResult,
@@ -10,7 +11,10 @@ import type {
   ProjectImportSourceId,
 } from "./types";
 
-export const projectImportSources: ProjectImportSource[] = [coinGeckoProjectSource];
+export const projectImportSources: ProjectImportSource[] = [
+  coinGeckoProjectSource,
+  coinGeckoRecentlyAddedProjectSource,
+];
 
 function slugify(value: string) {
   return value
@@ -43,13 +47,73 @@ function sourceById(sourceId: string): ProjectImportSource | null {
   return projectImportSources.find((source) => source.id === sourceId) || null;
 }
 
-async function projectExists(candidate: ImportedProjectCandidate, slug: string) {
+function hasNoStoredValue(value: unknown) {
+  if (value === null || value === undefined) {
+    return true;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length === 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+
+  if (typeof value === "object") {
+    return Object.keys(value).length === 0;
+  }
+
+  return false;
+}
+
+function isUniqueProjectSourceUrl(candidate: ImportedProjectCandidate) {
+  return Boolean(
+    candidate.sourceUrl &&
+      (candidate.externalId ||
+        !candidate.sourceUrl.includes("coingecko.com/en/new-cryptocurrencies")),
+  );
+}
+
+async function findExistingProject(candidate: ImportedProjectCandidate, slug: string) {
   const websiteUrl = normalizeUrl(candidate.websiteUrl);
+  const columns = `
+    id,
+    status,
+    imported_at,
+    website_url,
+    twitter_url,
+    telegram_url,
+    discord_url,
+    github_url,
+    whitepaper_url,
+    explorer_url,
+    contract_address,
+    chain,
+    imported_description,
+    imported_links_json
+  `;
+
+  if (isUniqueProjectSourceUrl(candidate)) {
+    const { data, error } = await supabaseAdmin
+      .from("crypto_projects")
+      .select(columns)
+      .eq("source_url", candidate.sourceUrl)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (data) {
+      return data;
+    }
+  }
 
   if (websiteUrl) {
     const { data, error } = await supabaseAdmin
       .from("crypto_projects")
-      .select("id")
+      .select(columns)
       .eq("website_url", websiteUrl)
       .maybeSingle();
 
@@ -58,13 +122,13 @@ async function projectExists(candidate: ImportedProjectCandidate, slug: string) 
     }
 
     if (data) {
-      return true;
+      return data;
     }
   }
 
   const bySlug = await supabaseAdmin
     .from("crypto_projects")
-    .select("id")
+    .select(columns)
     .eq("slug", slug)
     .maybeSingle();
 
@@ -73,16 +137,16 @@ async function projectExists(candidate: ImportedProjectCandidate, slug: string) 
   }
 
   if (bySlug.data) {
-    return true;
+    return bySlug.data;
   }
 
   if (!candidate.ticker) {
-    return false;
+    return null;
   }
 
   const byNameAndTicker = await supabaseAdmin
     .from("crypto_projects")
-    .select("id")
+    .select(columns)
     .ilike("name", candidate.name)
     .ilike("symbol", candidate.ticker)
     .maybeSingle();
@@ -91,7 +155,57 @@ async function projectExists(candidate: ImportedProjectCandidate, slug: string) 
     throw new Error(byNameAndTicker.error.message);
   }
 
-  return Boolean(byNameAndTicker.data);
+  return byNameAndTicker.data || null;
+}
+
+async function updateMissingProjectMetadata(
+  existingProject: Record<string, unknown>,
+  candidate: ImportedProjectCandidate,
+) {
+  const isImportedDraft =
+    existingProject.status === "draft" && Boolean(existingProject.imported_at);
+
+  if (!isImportedDraft || typeof existingProject.id !== "string") {
+    return false;
+  }
+
+  const metadataUpdates: Record<string, unknown> = {};
+  const candidateFields = {
+    website_url: normalizeUrl(candidate.websiteUrl),
+    twitter_url: normalizeUrl(candidate.twitterUrl || null),
+    telegram_url: normalizeUrl(candidate.telegramUrl || null),
+    discord_url: normalizeUrl(candidate.discordUrl || null),
+    github_url: normalizeUrl(candidate.githubUrl || null),
+    whitepaper_url: normalizeUrl(candidate.whitepaperUrl || null),
+    explorer_url: normalizeUrl(candidate.explorerUrl || null),
+    contract_address: candidate.contractAddress || null,
+    chain: candidate.chain || null,
+    imported_description: candidate.importedDescription || null,
+    imported_links_json: candidate.importedLinksJson || null,
+  };
+
+  for (const [column, value] of Object.entries(candidateFields)) {
+    if (value && hasNoStoredValue(existingProject[column])) {
+      metadataUpdates[column] = value;
+    }
+  }
+
+  if (Object.keys(metadataUpdates).length === 0) {
+    return false;
+  }
+
+  metadataUpdates.updated_at = new Date().toISOString();
+
+  const { error } = await supabaseAdmin
+    .from("crypto_projects")
+    .update(metadataUpdates)
+    .eq("id", existingProject.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return true;
 }
 
 async function makeUniqueProjectSlug(name: string) {
@@ -129,6 +243,7 @@ export async function runProjectImport(
       sourceName: "Unknown source",
       imported: 0,
       skipped: 0,
+      failed: 1,
       errors: [`Unsupported project import source: ${sourceId}`],
       results: [],
     };
@@ -138,6 +253,7 @@ export async function runProjectImport(
     sourceName: source.name,
     imported: 0,
     skipped: 0,
+    failed: 0,
     errors: [],
     results: [],
   };
@@ -151,6 +267,7 @@ export async function runProjectImport(
 
     return {
       ...result,
+      failed: 1,
       errors: [`${source.name}: ${message}`],
     };
   }
@@ -159,7 +276,18 @@ export async function runProjectImport(
     const slug = await makeUniqueProjectSlug(candidate.name);
 
     try {
-      if (await projectExists(candidate, slugify(candidate.name))) {
+      if (candidate.detailWarning) {
+        result.errors.push(`${candidate.name}: ${candidate.detailWarning}`);
+      }
+
+      const existingProject = await findExistingProject(candidate, slugify(candidate.name));
+
+      if (existingProject) {
+        const updatedMetadata = await updateMissingProjectMetadata(
+          existingProject as Record<string, unknown>,
+          candidate,
+        );
+
         result.skipped += 1;
         result.results.push({
           name: candidate.name,
@@ -168,7 +296,9 @@ export async function runProjectImport(
           sourceName: candidate.sourceName,
           sourceUrl: candidate.sourceUrl,
           status: "skipped",
-          reason: "Already exists",
+          reason: updatedMetadata
+            ? "Already exists; missing review metadata updated"
+            : "Already exists",
         });
         continue;
       }
@@ -181,10 +311,17 @@ export async function runProjectImport(
         category: candidate.category,
         short_description: candidate.shortDescription,
         full_description: null,
-        chain: null,
+        chain: candidate.chain || null,
         website_url: normalizeUrl(candidate.websiteUrl),
-        twitter_url: null,
-        telegram_url: null,
+        twitter_url: normalizeUrl(candidate.twitterUrl || null),
+        telegram_url: normalizeUrl(candidate.telegramUrl || null),
+        discord_url: normalizeUrl(candidate.discordUrl || null),
+        github_url: normalizeUrl(candidate.githubUrl || null),
+        whitepaper_url: normalizeUrl(candidate.whitepaperUrl || null),
+        explorer_url: normalizeUrl(candidate.explorerUrl || null),
+        contract_address: candidate.contractAddress || null,
+        imported_description: candidate.importedDescription || null,
+        imported_links_json: candidate.importedLinksJson || null,
         logo_url: null,
         rank: null,
         score: null,
@@ -223,6 +360,7 @@ export async function runProjectImport(
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown import error";
+      result.failed += 1;
       result.errors.push(`${candidate.name}: ${message}`);
       result.results.push({
         name: candidate.name,

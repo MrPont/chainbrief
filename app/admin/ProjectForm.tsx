@@ -16,6 +16,13 @@ type ProjectFormProps = {
     website_url?: string | null;
     twitter_url?: string | null;
     telegram_url?: string | null;
+    discord_url?: string | null;
+    github_url?: string | null;
+    whitepaper_url?: string | null;
+    explorer_url?: string | null;
+    contract_address?: string | null;
+    imported_description?: string | null;
+    imported_links_json?: Record<string, unknown> | null;
     logo_url?: string | null;
     rank?: number | null;
     score?: number | null;
@@ -35,6 +42,10 @@ type ProjectFormProps = {
 
 function arrayValue(value?: string[] | null) {
   return value?.join(", ") || "";
+}
+
+function jsonValue(value?: Record<string, unknown> | null) {
+  return value ? JSON.stringify(value, null, 2) : "";
 }
 
 export default function ProjectForm({ action, project, submitLabel }: ProjectFormProps) {
@@ -74,6 +85,38 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
         <label>
           Telegram URL
           <input name="telegram_url" type="url" defaultValue={project?.telegram_url || ""} />
+        </label>
+        <label>
+          Discord URL
+          <input name="discord_url" type="url" defaultValue={project?.discord_url || ""} />
+        </label>
+        <label>
+          GitHub URL
+          <input name="github_url" type="url" defaultValue={project?.github_url || ""} />
+        </label>
+        <label>
+          Whitepaper URL
+          <input
+            name="whitepaper_url"
+            type="url"
+            defaultValue={project?.whitepaper_url || ""}
+          />
+        </label>
+        <label>
+          Explorer URL
+          <input
+            name="explorer_url"
+            type="url"
+            defaultValue={project?.explorer_url || ""}
+          />
+        </label>
+        <label className="form-wide">
+          Contract address
+          <input
+            name="contract_address"
+            type="text"
+            defaultValue={project?.contract_address || ""}
+          />
         </label>
         <div className="form-wide">
           <ImageUploadField
@@ -138,6 +181,23 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
           <textarea name="full_description" defaultValue={project?.full_description || ""} />
         </label>
         <label className="form-wide">
+          Imported description for review only
+          <textarea
+            name="imported_description"
+            defaultValue={project?.imported_description || ""}
+          />
+          <span className="field-help">
+            Rewrite before publishing. Do not publish third-party descriptions unchanged.
+          </span>
+        </label>
+        <label className="form-wide">
+          Imported links JSON
+          <textarea
+            name="imported_links_json"
+            defaultValue={jsonValue(project?.imported_links_json)}
+          />
+        </label>
+        <label className="form-wide">
           Tags
           <textarea name="tags" defaultValue={arrayValue(project?.tags)} />
         </label>
@@ -174,6 +234,10 @@ export default function ProjectForm({ action, project, submitLabel }: ProjectFor
           <p>
             Review factual metadata, write an original ChainBrief description, and
             publish only after editorial approval.
+          </p>
+          <p>
+            Imported descriptions and links are stored for review only. Use the
+            approved public description fields above for anything shown publicly.
           </p>
         </section>
       ) : null}

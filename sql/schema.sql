@@ -100,6 +100,13 @@ create table if not exists crypto_projects (
   website_url text,
   twitter_url text,
   telegram_url text,
+  discord_url text,
+  github_url text,
+  whitepaper_url text,
+  explorer_url text,
+  contract_address text,
+  imported_description text,
+  imported_links_json jsonb,
   logo_url text,
   rank integer,
   score integer,
@@ -196,4 +203,7 @@ create index if not exists crypto_projects_rank_idx on crypto_projects (rank);
 create index if not exists crypto_projects_imported_at_idx on crypto_projects (imported_at desc);
 create index if not exists crypto_projects_review_status_idx on crypto_projects (review_status);
 create index if not exists crypto_projects_source_url_idx on crypto_projects (source_url);
+create index if not exists crypto_projects_contract_address_idx
+  on crypto_projects (contract_address)
+  where contract_address is not null;
 create index if not exists project_submissions_status_idx on project_submissions (status, created_at desc);

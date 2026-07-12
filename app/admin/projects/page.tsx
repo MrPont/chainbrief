@@ -27,6 +27,22 @@ function formatDate(value?: string | null) {
       }).format(date);
 }
 
+function hasWebsiteOrSocials(project: {
+  website_url?: string | null;
+  twitter_url?: string | null;
+  telegram_url?: string | null;
+  discord_url?: string | null;
+  github_url?: string | null;
+}) {
+  return Boolean(
+    project.website_url ||
+      project.twitter_url ||
+      project.telegram_url ||
+      project.discord_url ||
+      project.github_url,
+  );
+}
+
 type AdminProjectsPageProps = {
   searchParams: Promise<{
     created?: string;
@@ -114,6 +130,11 @@ export default async function AdminProjectsPage({
                       ) : null}
                       <span className="admin-muted-line">
                         {formatDate(project.imported_at)}
+                      </span>
+                      <span className="admin-muted-line">
+                        {hasWebsiteOrSocials(project)
+                          ? "Has website/socials"
+                          : "Needs website/social review"}
                       </span>
                     </>
                   ) : (

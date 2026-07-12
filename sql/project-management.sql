@@ -2,8 +2,18 @@
 -- created before admin project management was added.
 
 alter table crypto_projects
+  add column if not exists website_url text,
+  add column if not exists twitter_url text,
   add column if not exists telegram_url text,
+  add column if not exists chain text,
   add column if not exists logo_url text,
+  add column if not exists discord_url text,
+  add column if not exists github_url text,
+  add column if not exists whitepaper_url text,
+  add column if not exists explorer_url text,
+  add column if not exists contract_address text,
+  add column if not exists imported_description text,
+  add column if not exists imported_links_json jsonb,
   add column if not exists rank integer,
   add column if not exists score integer,
   add column if not exists highlights text[] not null default '{}',
@@ -17,3 +27,6 @@ create index if not exists crypto_projects_rank_idx on crypto_projects (rank);
 create index if not exists crypto_projects_imported_at_idx on crypto_projects (imported_at desc);
 create index if not exists crypto_projects_review_status_idx on crypto_projects (review_status);
 create index if not exists crypto_projects_source_url_idx on crypto_projects (source_url);
+create index if not exists crypto_projects_contract_address_idx
+  on crypto_projects (contract_address)
+  where contract_address is not null;

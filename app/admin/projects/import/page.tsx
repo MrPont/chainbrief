@@ -18,9 +18,18 @@ type ImportProjectsPageProps = {
   searchParams: Promise<{
     imported?: string;
     skipped?: string;
+    failed?: string;
     source?: string;
     errors?: string;
+    items?: string;
   }>;
+};
+
+type ImportResultItem = {
+  name: string;
+  ticker: string | null;
+  status: "imported" | "skipped" | "error";
+  reason?: string;
 };
 
 function decodeErrors(value?: string) {
@@ -32,6 +41,26 @@ function decodeErrors(value?: string) {
     .split("|")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function decodeResultItems(value?: string): ImportResultItem[] {
+  if (!value) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value) as ImportResultItem[];
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    try {
+      const parsed = JSON.parse(decodeURIComponent(value)) as ImportResultItem[];
+
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
 }
 
 function formatDate(value?: string | null) {
@@ -54,11 +83,23 @@ async function runImport(formData: FormData) {
 
   const result = await importFreshProjects(formData);
   const errors = encodeURIComponent(result.errors.join("|"));
+  const items = encodeURIComponent(
+    JSON.stringify(
+      result.results.slice(0, 25).map(({ name, ticker, status, reason }) => ({
+        name,
+        ticker,
+        status,
+        reason,
+      })),
+    ),
+  );
 
   redirect(
     `/admin/projects/import?source=${encodeURIComponent(
       result.sourceName,
-    )}&imported=${result.imported}&skipped=${result.skipped}&errors=${errors}`,
+    )}&imported=${result.imported}&skipped=${result.skipped}&failed=${
+      result.failed
+    }&errors=${errors}&items=${items}`,
   );
 }
 
@@ -76,6 +117,7 @@ export default async function ImportProjectsPage({
     fetchImportedProjectDrafts(),
   ]);
   const errors = decodeErrors(params.errors);
+  const resultItems = decodeResultItems(params.items);
 
   return (
     <>
@@ -110,8 +152,25 @@ export default async function ImportProjectsPage({
           <p>
             Source: {params.source || "Unknown source"}. Imported{" "}
             {params.imported || "0"} draft projects and skipped{" "}
-            {params.skipped || "0"} duplicate or incomplete projects.
+            {params.skipped || "0"} duplicate or incomplete projects. Failed{" "}
+            {params.failed || "0"} projects.
           </p>
+          {resultItems.length > 0 ? (
+            <ul className="admin-result-list">
+              {resultItems.map((item, index) => (
+                <li key={`${item.name}-${item.status}-${index}`}>
+                  <span className={`admin-status-badge status-${item.status}`}>
+                    {item.status}
+                  </span>
+                  <strong>{item.name}</strong>
+                  {item.ticker ? <span>({item.ticker})</span> : null}
+                  {item.reason ? (
+                    <span className="admin-muted-line">{item.reason}</span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {errors.length > 0 ? (
             <div className="form-error">
               <strong>Errors</strong>
@@ -219,6 +278,15 @@ export default async function ImportProjectsPage({
                       Source URL
                     </a>
                   ) : null}
+                  <span className="admin-muted-line">
+                    {project.website_url ||
+                    project.twitter_url ||
+                    project.telegram_url ||
+                    project.discord_url ||
+                    project.github_url
+                      ? "Has website/socials"
+                      : "Needs website/social review"}
+                  </span>
                 </td>
                 <td>{formatDate(project.imported_at)}</td>
                 <td>

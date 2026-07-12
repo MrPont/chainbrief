@@ -70,6 +70,13 @@ type ProjectPayload = {
   website_url: string | null;
   twitter_url: string | null;
   telegram_url: string | null;
+  discord_url: string | null;
+  github_url: string | null;
+  whitepaper_url: string | null;
+  explorer_url: string | null;
+  contract_address: string | null;
+  imported_description: string | null;
+  imported_links_json: Record<string, unknown> | null;
   logo_url: string | null;
   rank: number | null;
   score: number | null;
@@ -141,6 +148,24 @@ function getTextArray(formData: FormData, key: string) {
     .split(/,|\n/)
     .map((value) => value.trim())
     .filter(Boolean);
+}
+
+function getJsonRecord(formData: FormData, key: string) {
+  const value = getString(formData, key);
+
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 function getArticlePayload(formData: FormData): ArticlePayload {
@@ -215,6 +240,13 @@ function getProjectPayload(formData: FormData): ProjectPayload {
     website_url: getNullableString(formData, "website_url"),
     twitter_url: getNullableString(formData, "twitter_url"),
     telegram_url: getNullableString(formData, "telegram_url"),
+    discord_url: getNullableString(formData, "discord_url"),
+    github_url: getNullableString(formData, "github_url"),
+    whitepaper_url: getNullableString(formData, "whitepaper_url"),
+    explorer_url: getNullableString(formData, "explorer_url"),
+    contract_address: getNullableString(formData, "contract_address"),
+    imported_description: getNullableString(formData, "imported_description"),
+    imported_links_json: getJsonRecord(formData, "imported_links_json"),
     logo_url: getNullableString(formData, "logo_url"),
     rank: getNullableNumber(formData, "rank"),
     score: getNullableNumber(formData, "score"),
@@ -398,7 +430,7 @@ export async function fetchImportedProjectDrafts() {
   const { data, error } = await supabaseAdmin
     .from("crypto_projects")
     .select(
-      "id,name,slug,symbol,category,status,review_status,source_name,source_url,imported_at,created_at",
+      "id,name,slug,symbol,category,status,review_status,source_name,source_url,imported_at,website_url,twitter_url,telegram_url,discord_url,github_url,created_at",
     )
     .not("imported_at", "is", null)
     .order("imported_at", { ascending: false })

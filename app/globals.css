@@ -2709,6 +2709,14 @@ tbody tr:hover {
   overflow-wrap: anywhere;
 }
 
+.field-help {
+  color: var(--muted);
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
 .admin-badge-row {
   align-items: center;
   display: flex;
@@ -2739,12 +2747,18 @@ tbody tr:hover {
   color: var(--blue);
 }
 
+.status-skipped {
+  border-color: rgba(148, 163, 184, 0.28);
+  color: var(--muted);
+}
+
 .status-draft {
   border-color: rgba(167, 139, 250, 0.32);
   color: var(--violet);
 }
 
-.status-rejected {
+.status-rejected,
+.status-error {
   border-color: rgba(248, 113, 113, 0.32);
   color: var(--red);
 }
@@ -2752,6 +2766,25 @@ tbody tr:hover {
 .status-sponsored {
   border-color: rgba(45, 212, 191, 0.32);
   color: var(--teal);
+}
+
+.admin-result-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.admin-result-list li {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px;
 }
 
 .admin-pagination {

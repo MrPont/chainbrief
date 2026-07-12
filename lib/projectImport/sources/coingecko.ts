@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { ImportedProjectCandidate, ProjectImportSource } from "../types";
+import { fetchCoinGeckoProjectDetails } from "./coingeckoDetails";
 
 type CoinGeckoTrendingResponse = {
   coins?: Array<{
@@ -47,7 +48,7 @@ async function fetchCoinGeckoTrendingProjects(): Promise<ImportedProjectCandidat
 
   const payload = (await response.json()) as CoinGeckoTrendingResponse;
 
-  return (payload.coins || [])
+  const baseProjects = (payload.coins || [])
     .map((coin) => coin.item)
     .filter((item): item is NonNullable<typeof item> => Boolean(item?.id && item.name))
     .slice(0, 15)
@@ -62,6 +63,34 @@ async function fetchCoinGeckoTrendingProjects(): Promise<ImportedProjectCandidat
       externalId: item.id || null,
     }))
     .filter((project) => project.name.length > 0);
+
+  return Promise.all(
+    baseProjects.map(async (project) => {
+      if (!project.externalId) {
+        return project;
+      }
+
+      const details = await fetchCoinGeckoProjectDetails(project.externalId);
+
+      return {
+        ...project,
+        websiteUrl: details.websiteUrl,
+        twitterUrl: details.twitterUrl,
+        telegramUrl: details.telegramUrl,
+        discordUrl: details.discordUrl,
+        githubUrl: details.githubUrl,
+        whitepaperUrl: details.whitepaperUrl,
+        explorerUrl: details.explorerUrl,
+        contractAddress: details.contractAddress,
+        chain: details.chain,
+        importedDescription: details.importedDescription,
+        importedLinksJson: details.importedLinksJson,
+        detailWarning: details.warning,
+        shortDescription:
+          "Imported from CoinGecko. Review website, socials, category and description before publishing.",
+      };
+    }),
+  );
 }
 
 export const coinGeckoProjectSource: ProjectImportSource = {
