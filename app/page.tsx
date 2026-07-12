@@ -63,6 +63,25 @@ const campaignChannels = [
   "Exchange Listing Visibility",
 ];
 
+const coverageFocus = [
+  {
+    title: "Market News",
+    description: "Fast crypto market context",
+  },
+  {
+    title: "Project Discovery",
+    description: "Emerging Web3 projects",
+  },
+  {
+    title: "Sponsored Coverage",
+    description: "Media visibility options",
+  },
+  {
+    title: "Web3 Campaigns",
+    description: "Placement options for teams",
+  },
+];
+
 function formatArticleDate(date: string) {
   if (!date) {
     return "Draft date";
@@ -139,6 +158,17 @@ export default async function Home() {
             <span>Project Rankings</span>
             <span>Sponsored Coverage</span>
             <span>Fast Editorial Format</span>
+          </div>
+          <div className="coverage-focus" aria-label="Coverage focus">
+            <p className="panel-label">Coverage Focus</p>
+            <div className="coverage-focus-grid">
+              {coverageFocus.map((item) => (
+                <article key={item.title}>
+                  <strong>{item.title}</strong>
+                  <span>{item.description}</span>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
         <aside className="hero-panel hero-dashboard" aria-label="Market briefing">
