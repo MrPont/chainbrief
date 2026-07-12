@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import ArticleCover from "../components/ArticleCover";
@@ -90,9 +89,11 @@ export default async function Home() {
   ]);
   const marketCards = marketData.assets.slice(0, 4);
   const homepageArticles = publicArticles.slice(0, 4);
-  const bitcoin = marketData.assets.find((coin) => coin.id === "bitcoin");
-  const ethereum = marketData.assets.find((coin) => coin.id === "ethereum");
-  const solana = marketData.assets.find((coin) => coin.id === "solana");
+  const heroHeadlines = publicArticles.slice(0, 3);
+  const heroMarketPulse = ["bitcoin", "ethereum", "solana", "ripple"]
+    .map((id) => marketData.assets.find((coin) => coin.id === id))
+    .filter((coin): coin is NonNullable<typeof coin> => Boolean(coin))
+    .slice(0, 4);
   const topRankedProjects = publicProjects
     .filter((project) => project.source === "supabase")
     .sort((first, second) => {
@@ -114,60 +115,77 @@ export default async function Home() {
 
       <section className="hero-section">
         <div className="hero-content">
-          <p className="eyebrow">Crypto intelligence for a faster market</p>
-          <h1>ChainBrief tracks the stories moving digital assets</h1>
+          <p className="eyebrow">Crypto media and market intelligence</p>
+          <h1 className="hero-title">
+            Crypto news, market signals, and project visibility in one place.
+          </h1>
           <p className="hero-subheadline">
-            Static-first crypto news, market snapshots, project rankings, and
-            sponsored placements for investors, builders, and operators who
-            need fast context without the noise.
+            ChainBrief delivers fast crypto coverage, market snapshots, project
+            discovery, and sponsored visibility options for Web3 teams.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" href="/news">
               Latest News
             </Link>
+            <Link className="button button-secondary" href="/rankings">
+              View Rankings
+            </Link>
             <Link className="button button-secondary" href="/advertise">
-              Advertise With Us
+              Advertise
             </Link>
           </div>
-          <dl className="hero-stats" aria-label="ChainBrief coverage stats">
-            <div>
-              <dt>6</dt>
-              <dd>Coverage desks</dd>
-            </div>
-            <div>
-              <dt>24/7</dt>
-              <dd>Market watch</dd>
-            </div>
-            <div>
-              <dt>100%</dt>
-              <dd>Static MVP</dd>
-            </div>
-          </dl>
+          <div className="hero-feature-chips" aria-label="ChainBrief features">
+            <span>24/7 Market Watch</span>
+            <span>Project Rankings</span>
+            <span>Sponsored Coverage</span>
+            <span>Fast Editorial Format</span>
+          </div>
         </div>
-        <aside className="hero-panel visual-panel" aria-label="Market briefing">
-          <Image
-            alt="Abstract ChainBrief market intelligence dashboard"
-            height={916}
-            loading="eager"
-            src="/chainbrief-market-intelligence.png"
-            unoptimized
-            width={1717}
-          />
-          <div className="visual-panel-copy">
-            <span className="panel-label">Market Pulse</span>
-            <strong>
-              {marketData.isLive
-                ? "Live crypto majors update every few minutes."
-                : "Sample market pulse shown while live data is unavailable."}
-            </strong>
-            <div className="pulse-grid">
-              <span>BTC</span>
-              <strong>{bitcoin?.formattedPrice || "N/A"}</strong>
-              <span>ETH</span>
-              <strong>{ethereum?.formattedPrice || "N/A"}</strong>
-              <span>SOL 24h</span>
-              <strong>{solana?.formattedChange24h || "N/A"}</strong>
+        <aside className="hero-panel hero-dashboard" aria-label="Market briefing">
+          <div className="hero-dashboard-card hero-market-card">
+            <div className="hero-dashboard-heading">
+              <span className="panel-label">Market Pulse</span>
+              <small>{marketData.isLive ? "Live via CoinGecko" : "Sample data"}</small>
             </div>
+            <div className="hero-market-list">
+              {heroMarketPulse.map((coin) => (
+                <Link href="/markets" className="hero-market-row" key={coin.id}>
+                  <span>
+                    <strong>{coin.symbol}</strong>
+                    <small>{coin.name}</small>
+                  </span>
+                  <span>{coin.formattedPrice}</span>
+                  <em className={coin.priceChangePercentage24h && coin.priceChangePercentage24h < 0 ? "is-negative" : "is-positive"}>
+                    {coin.formattedChange24h}
+                  </em>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="hero-dashboard-card hero-headlines-card">
+            <div className="hero-dashboard-heading">
+              <span className="panel-label">Trending Now</span>
+              <Link href="/news">All news</Link>
+            </div>
+            <div className="hero-headline-list">
+              {heroHeadlines.map((article) => (
+                <Link href={`/news/${article.slug}`} key={article.slug}>
+                  <span>{article.category}</span>
+                  <strong>{article.title}</strong>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="hero-dashboard-cta">
+            <div>
+              <span className="panel-label">For Web3 teams</span>
+              <strong>Promote your project on ChainBrief.</strong>
+            </div>
+            <Link className="button button-secondary" href="/submit-project">
+              Submit Project
+            </Link>
           </div>
         </aside>
       </section>
