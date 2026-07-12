@@ -22,6 +22,8 @@ const COINGECKO_RECENTLY_ADDED_URL =
   "https://pro-api.coingecko.com/api/v3/coins/list/new";
 const COINGECKO_NEW_COINS_PAGE =
   "https://www.coingecko.com/en/new-cryptocurrencies";
+const PLAN_RESTRICTED_MESSAGE =
+  "CoinGecko Recently Added requires Analyst plan or above. Use Trending or Manual CoinGecko ID import on the current plan.";
 
 function getCoinGeckoProApiKey() {
   const apiKey = process.env.COINGECKO_API_KEY?.trim();
@@ -63,6 +65,10 @@ async function fetchCoinGeckoRecentlyAddedProjects(): Promise<
   });
 
   if (!response.ok) {
+    if (response.status === 400 || response.status === 403) {
+      throw new Error(PLAN_RESTRICTED_MESSAGE);
+    }
+
     throw new Error(`CoinGecko Recently Added request failed with status ${response.status}`);
   }
 
@@ -121,6 +127,6 @@ export const coinGeckoRecentlyAddedProjectSource: ProjectImportSource = {
   id: "coingecko_recently_added",
   name: "CoinGecko Recently Added",
   description:
-    "Imports recently added CoinGecko projects as draft profiles for manual review. Requires COINGECKO_API_KEY.",
+    "Imports recently added CoinGecko projects as draft profiles for manual review. Requires CoinGecko Analyst plan or above.",
   fetchProjects: fetchCoinGeckoRecentlyAddedProjects,
 };

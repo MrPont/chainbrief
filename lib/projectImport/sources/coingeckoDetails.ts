@@ -2,6 +2,8 @@ import "server-only";
 
 type CoinGeckoDetailsResponse = {
   id?: string;
+  name?: string;
+  symbol?: string;
   description?: {
     en?: string;
   };
@@ -30,6 +32,9 @@ type CoinGeckoDetailsResponse = {
 };
 
 export type CoinGeckoProjectDetails = {
+  id: string | null;
+  name: string | null;
+  ticker: string | null;
   websiteUrl: string | null;
   twitterUrl: string | null;
   telegramUrl: string | null;
@@ -44,7 +49,7 @@ export type CoinGeckoProjectDetails = {
   warning: string | null;
 };
 
-const COINGECKO_COIN_URL = "https://pro-api.coingecko.com/api/v3/coins";
+const COINGECKO_COIN_URL = "https://api.coingecko.com/api/v3/coins";
 
 function firstUrl(values?: string[]) {
   return values?.find((value) => value.trim().length > 0)?.trim() || null;
@@ -112,6 +117,9 @@ function getPrimaryPlatform(payload: CoinGeckoDetailsResponse) {
 
 function emptyDetails(warning: string | null): CoinGeckoProjectDetails {
   return {
+    id: null,
+    name: null,
+    ticker: null,
     websiteUrl: null,
     twitterUrl: null,
     telegramUrl: null,
@@ -131,11 +139,12 @@ export async function fetchCoinGeckoProjectDetails(
   coinId: string,
 ): Promise<CoinGeckoProjectDetails> {
   const apiKey = process.env.COINGECKO_API_KEY?.trim();
+  const headers: Record<string, string> = {
+    accept: "application/json",
+  };
 
-  if (!apiKey) {
-    return emptyDetails(
-      "CoinGecko API key is missing. Imported basic metadata only.",
-    );
+  if (apiKey) {
+    headers["x-cg-demo-api-key"] = apiKey;
   }
 
   const controller = new AbortController();
@@ -143,10 +152,7 @@ export async function fetchCoinGeckoProjectDetails(
 
   try {
     const response = await fetch(`${COINGECKO_COIN_URL}/${coinId}`, {
-      headers: {
-        accept: "application/json",
-        "x-cg-pro-api-key": apiKey,
-      },
+      headers,
       signal: controller.signal,
       next: { revalidate: 300 },
     });
@@ -173,6 +179,9 @@ export async function fetchCoinGeckoProjectDetails(
     };
 
     return {
+      id: payload.id?.trim() || coinId,
+      name: payload.name?.trim() || null,
+      ticker: payload.symbol?.trim().toUpperCase() || null,
       websiteUrl: firstUrl(links.homepage),
       twitterUrl: buildTwitterUrl(links.twitter_screen_name),
       telegramUrl:

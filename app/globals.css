@@ -2634,7 +2634,8 @@ tbody tr:hover {
   min-width: 220px;
 }
 
-.admin-inline-form select {
+.admin-inline-form select,
+.admin-inline-form textarea {
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 8px;
   color: var(--text);
@@ -2642,6 +2643,17 @@ tbody tr:hover {
   min-height: 44px;
   padding: 0 14px;
   background: rgba(5, 7, 11, 0.78);
+}
+
+.admin-inline-form textarea {
+  min-height: 96px;
+  min-width: min(420px, 100%);
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+.admin-import-manual-field {
+  flex: 1 1 360px;
 }
 
 .admin-table-card {
@@ -2745,6 +2757,11 @@ tbody tr:hover {
 .status-imported {
   border-color: rgba(56, 189, 248, 0.32);
   color: var(--blue);
+}
+
+.status-updated {
+  border-color: rgba(45, 212, 191, 0.32);
+  color: var(--teal);
 }
 
 .status-skipped {

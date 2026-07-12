@@ -2,10 +2,12 @@ import "server-only";
 
 import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../supabaseAdmin";
+import { coinGeckoManualProjectSource } from "./sources/coingeckoManual";
 import { coinGeckoProjectSource } from "./sources/coingecko";
 import { coinGeckoRecentlyAddedProjectSource } from "./sources/coingeckoRecentlyAdded";
 import type {
   ImportedProjectCandidate,
+  ProjectImportOptions,
   ProjectImportResult,
   ProjectImportSource,
   ProjectImportSourceId,
@@ -14,6 +16,7 @@ import type {
 export const projectImportSources: ProjectImportSource[] = [
   coinGeckoProjectSource,
   coinGeckoRecentlyAddedProjectSource,
+  coinGeckoManualProjectSource,
 ];
 
 function slugify(value: string) {
@@ -80,6 +83,7 @@ async function findExistingProject(candidate: ImportedProjectCandidate, slug: st
   const columns = `
     id,
     status,
+    review_status,
     imported_at,
     website_url,
     twitter_url,
@@ -115,6 +119,22 @@ async function findExistingProject(candidate: ImportedProjectCandidate, slug: st
       .from("crypto_projects")
       .select(columns)
       .eq("website_url", websiteUrl)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (data) {
+      return data;
+    }
+  }
+
+  if (candidate.contractAddress) {
+    const { data, error } = await supabaseAdmin
+      .from("crypto_projects")
+      .select(columns)
+      .eq("contract_address", candidate.contractAddress)
       .maybeSingle();
 
     if (error) {
@@ -163,7 +183,8 @@ async function updateMissingProjectMetadata(
   candidate: ImportedProjectCandidate,
 ) {
   const isImportedDraft =
-    existingProject.status === "draft" && Boolean(existingProject.imported_at);
+    existingProject.status === "draft" &&
+    (existingProject.review_status === "needs_review" || !existingProject.review_status);
 
   if (!isImportedDraft || typeof existingProject.id !== "string") {
     return false;
@@ -235,6 +256,7 @@ async function makeUniqueProjectSlug(name: string) {
 
 export async function runProjectImport(
   sourceId: ProjectImportSourceId,
+  options?: ProjectImportOptions,
 ): Promise<ProjectImportResult> {
   const source = sourceById(sourceId);
 
@@ -242,6 +264,7 @@ export async function runProjectImport(
     return {
       sourceName: "Unknown source",
       imported: 0,
+      updated: 0,
       skipped: 0,
       failed: 1,
       errors: [`Unsupported project import source: ${sourceId}`],
@@ -252,6 +275,7 @@ export async function runProjectImport(
   const result: ProjectImportResult = {
     sourceName: source.name,
     imported: 0,
+    updated: 0,
     skipped: 0,
     failed: 0,
     errors: [],
@@ -261,7 +285,7 @@ export async function runProjectImport(
   let candidates: ImportedProjectCandidate[] = [];
 
   try {
-    candidates = await source.fetchProjects();
+    candidates = await source.fetchProjects(options);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown source error";
 
@@ -276,6 +300,21 @@ export async function runProjectImport(
     const slug = await makeUniqueProjectSlug(candidate.name);
 
     try {
+      if (candidate.importError) {
+        result.failed += 1;
+        result.errors.push(`${candidate.name}: ${candidate.importError}`);
+        result.results.push({
+          name: candidate.name,
+          ticker: candidate.ticker,
+          slug: slugify(candidate.name),
+          sourceName: candidate.sourceName,
+          sourceUrl: candidate.sourceUrl,
+          status: "error",
+          reason: candidate.importError,
+        });
+        continue;
+      }
+
       if (candidate.detailWarning) {
         result.errors.push(`${candidate.name}: ${candidate.detailWarning}`);
       }
@@ -288,14 +327,19 @@ export async function runProjectImport(
           candidate,
         );
 
-        result.skipped += 1;
+        if (updatedMetadata) {
+          result.updated += 1;
+        } else {
+          result.skipped += 1;
+        }
+
         result.results.push({
           name: candidate.name,
           ticker: candidate.ticker,
           slug: slugify(candidate.name),
           sourceName: candidate.sourceName,
           sourceUrl: candidate.sourceUrl,
-          status: "skipped",
+          status: updatedMetadata ? "updated" : "skipped",
           reason: updatedMetadata
             ? "Already exists; missing review metadata updated"
             : "Already exists",

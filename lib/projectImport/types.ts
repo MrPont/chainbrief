@@ -1,4 +1,11 @@
-export type ProjectImportSourceId = "coingecko" | "coingecko_recently_added";
+export type ProjectImportSourceId =
+  | "coingecko"
+  | "coingecko_recently_added"
+  | "coingecko_manual_ids";
+
+export type ProjectImportOptions = {
+  manualCoinGeckoIds?: string;
+};
 
 export type ImportedProjectCandidate = {
   name: string;
@@ -16,6 +23,7 @@ export type ImportedProjectCandidate = {
   importedDescription?: string | null;
   importedLinksJson?: Record<string, unknown> | null;
   detailWarning?: string | null;
+  importError?: string | null;
   shortDescription: string | null;
   sourceName: string;
   sourceUrl: string;
@@ -26,7 +34,7 @@ export type ProjectImportSource = {
   id: ProjectImportSourceId;
   name: string;
   description: string;
-  fetchProjects: () => Promise<ImportedProjectCandidate[]>;
+  fetchProjects: (options?: ProjectImportOptions) => Promise<ImportedProjectCandidate[]>;
 };
 
 export type ProjectImportItemResult = {
@@ -35,7 +43,7 @@ export type ProjectImportItemResult = {
   slug: string;
   sourceName: string;
   sourceUrl: string;
-  status: "imported" | "skipped" | "error";
+  status: "imported" | "updated" | "skipped" | "error";
   reason?: string;
   projectId?: string;
 };
@@ -43,6 +51,7 @@ export type ProjectImportItemResult = {
 export type ProjectImportResult = {
   sourceName: string;
   imported: number;
+  updated: number;
   skipped: number;
   failed: number;
   errors: string[];

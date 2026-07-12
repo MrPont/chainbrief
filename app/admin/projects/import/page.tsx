@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 type ImportProjectsPageProps = {
   searchParams: Promise<{
     imported?: string;
+    updated?: string;
     skipped?: string;
     failed?: string;
     source?: string;
@@ -28,7 +29,7 @@ type ImportProjectsPageProps = {
 type ImportResultItem = {
   name: string;
   ticker: string | null;
-  status: "imported" | "skipped" | "error";
+  status: "imported" | "updated" | "skipped" | "error";
   reason?: string;
 };
 
@@ -97,9 +98,9 @@ async function runImport(formData: FormData) {
   redirect(
     `/admin/projects/import?source=${encodeURIComponent(
       result.sourceName,
-    )}&imported=${result.imported}&skipped=${result.skipped}&failed=${
-      result.failed
-    }&errors=${errors}&items=${items}`,
+    )}&imported=${result.imported}&updated=${result.updated}&skipped=${
+      result.skipped
+    }&failed=${result.failed}&errors=${errors}&items=${items}`,
   );
 }
 
@@ -145,14 +146,15 @@ export default async function ImportProjectsPage({
         </p>
       </section>
 
-      {params.imported || params.skipped ? (
+      {params.imported || params.updated || params.skipped || params.failed ? (
         <section className="text-panel">
           <p className="eyebrow">Result</p>
           <h2>Import Summary</h2>
           <p>
             Source: {params.source || "Unknown source"}. Imported{" "}
-            {params.imported || "0"} draft projects and skipped{" "}
-            {params.skipped || "0"} duplicate or incomplete projects. Failed{" "}
+            {params.imported || "0"} draft projects, updated{" "}
+            {params.updated || "0"} existing drafts, and skipped{" "}
+            {params.skipped || "0"} unchanged duplicates. Failed{" "}
             {params.failed || "0"} projects.
           </p>
           {resultItems.length > 0 ? (
@@ -200,6 +202,19 @@ export default async function ImportProjectsPage({
                   </option>
                 ))}
               </select>
+            </label>
+            <label className="admin-import-manual-field">
+              CoinGecko IDs or URLs
+              <textarea
+                name="manual_coin_gecko_ids"
+                placeholder={
+                  "bitcoin, ethereum, sui\nhttps://www.coingecko.com/en/coins/solana"
+                }
+              />
+              <span className="field-help">
+                Manual source only. Enter one CoinGecko coin ID or URL per line,
+                or comma-separated IDs.
+              </span>
             </label>
             <button
               className="button button-primary"

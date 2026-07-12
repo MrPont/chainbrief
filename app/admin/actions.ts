@@ -935,7 +935,9 @@ export async function importFreshProjects(
   await requireAdmin();
 
   const sourceId = getString(formData, "source") as ProjectImportSourceId;
-  const result = await runProjectImport(sourceId);
+  const result = await runProjectImport(sourceId, {
+    manualCoinGeckoIds: getString(formData, "manual_coin_gecko_ids"),
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/projects");
