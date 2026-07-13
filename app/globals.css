@@ -398,7 +398,7 @@ a {
 }
 
 .hero-section {
-  align-items: stretch;
+  align-items: start;
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
@@ -633,6 +633,51 @@ h1 {
   line-height: 1.35;
 }
 
+.hero-web3-cta {
+  align-items: center;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 14px;
+  width: 100%;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(45, 212, 191, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(167, 139, 250, 0.05)),
+    rgba(5, 7, 11, 0.32);
+}
+
+.hero-web3-cta strong {
+  color: var(--text);
+  display: block;
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-bottom: 5px;
+}
+
+.hero-web3-cta p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 440px;
+}
+
+.hero-web3-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.hero-web3-actions .button {
+  min-width: 124px;
+  padding: 10px 12px;
+}
+
 .button {
   border: 0;
   border-radius: 8px;
@@ -706,6 +751,7 @@ h1 {
   gap: 12px;
   justify-content: stretch;
   padding: 14px;
+  width: 100%;
 }
 
 .hero-dashboard-card,
@@ -3671,6 +3717,16 @@ tbody tr:hover {
 
   .coverage-focus-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-web3-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-web3-actions {
+    justify-content: flex-start;
+    width: 100%;
   }
 
   .hero-dashboard-cta {

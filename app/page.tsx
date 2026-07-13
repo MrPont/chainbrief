@@ -170,6 +170,24 @@ export default async function Home() {
               ))}
             </div>
           </div>
+          <div className="hero-web3-cta">
+            <div>
+              <span className="panel-label">For Web3 teams</span>
+              <strong>Promote your project on ChainBrief.</strong>
+              <p>
+                Submit your project for review or explore visibility options
+                across ChainBrief.
+              </p>
+            </div>
+            <div className="hero-web3-actions">
+              <Link className="button button-primary" href="/submit-project">
+                Submit Project
+              </Link>
+              <Link className="button button-secondary" href="/advertise">
+                Advertise
+              </Link>
+            </div>
+          </div>
         </div>
         <aside className="hero-panel hero-dashboard" aria-label="Market briefing">
           <div className="hero-dashboard-card hero-market-card">
@@ -206,16 +224,6 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
-          </div>
-
-          <div className="hero-dashboard-cta">
-            <div>
-              <span className="panel-label">For Web3 teams</span>
-              <strong>Promote your project on ChainBrief.</strong>
-            </div>
-            <Link className="button button-secondary" href="/submit-project">
-              Submit Project
-            </Link>
           </div>
         </aside>
       </section>
