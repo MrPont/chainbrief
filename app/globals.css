@@ -1520,6 +1520,8 @@ h1 {
   background:
     linear-gradient(145deg, rgba(167, 139, 250, 0.18), transparent 55%),
     rgba(11, 16, 24, 0.9);
+  color: inherit;
+  display: block;
   padding: 22px;
 }
 
@@ -1528,6 +1530,41 @@ h1 {
   display: inline-flex;
   font-weight: 800;
   margin-top: 16px;
+}
+
+.sponsored-article-card {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.sponsored-article-card:hover {
+  border-color: rgba(167, 139, 250, 0.46);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(167, 139, 250, 0.1) inset;
+  transform: translateY(-2px);
+}
+
+.sponsored-partner,
+.sponsored-card-link {
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-top: 14px;
+}
+
+.sponsored-partner {
+  color: #ddd6fe;
+}
+
+.sponsored-card-link {
+  color: var(--blue);
+}
+
+.sponsored-empty-card h2 {
+  font-size: 1.2rem;
 }
 
 .market-section,
@@ -2074,6 +2111,28 @@ tbody tr:hover {
   background:
     linear-gradient(145deg, rgba(167, 139, 250, 0.12), transparent 55%),
     rgba(11, 16, 24, 0.86);
+}
+
+.sponsored-article-grid {
+  margin-top: 34px;
+}
+
+.sponsored-empty-state {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(167, 139, 250, 0.12), transparent 58%),
+    rgba(11, 16, 24, 0.9);
+  margin-top: 34px;
+  max-width: 760px;
+  padding: 28px;
+}
+
+.sponsored-empty-state p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
 }
 
 .package-grid {

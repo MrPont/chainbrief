@@ -185,6 +185,38 @@ export const fetchPublishedSupabaseArticles = cache(async () => {
   }
 });
 
+export const fetchPublishedSponsoredSupabaseArticles = cache(async (limit?: number) => {
+  try {
+    let query = supabaseAdmin
+      .from("articles")
+      .select(articleColumns)
+      .eq("status", "published")
+      .eq("is_sponsored", true)
+      .not("slug", "is", null)
+      .lte("published_at", new Date().toISOString())
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false });
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Failed to fetch published sponsored Supabase articles:", error);
+      return [];
+    }
+
+    return ((data ?? []) as SupabaseArticleRow[])
+      .map(mapSupabaseArticle)
+      .filter((article) => article.slug && article.slug !== "article");
+  } catch (error) {
+    console.error("Failed to fetch published sponsored Supabase articles:", error);
+    return [];
+  }
+});
+
 export async function getPublicNewsArticles() {
   const supabaseArticles = await fetchPublishedSupabaseArticles();
 

@@ -6,7 +6,10 @@ import FeaturedProjects from "../components/FeaturedProjects";
 import { getMarketData } from "../lib/marketData";
 import { getActiveNewsFallbackImages } from "../lib/news-fallback-images";
 import { resolveArticleImage } from "../lib/news-image-resolver";
-import { getPublicNewsArticles } from "../lib/publicArticles";
+import {
+  fetchPublishedSponsoredSupabaseArticles,
+  getPublicNewsArticles,
+} from "../lib/publicArticles";
 import { getPublicProjects } from "../lib/publicProjects";
 
 export const metadata: Metadata = {
@@ -103,13 +106,15 @@ function formatArticleDate(date: string) {
 }
 
 export default async function Home() {
-  const [marketData, publicArticles, publicProjects] = await Promise.all([
+  const [marketData, publicArticles, publicProjects, sponsoredArticles] = await Promise.all([
     getMarketData(),
     getPublicNewsArticles(),
     getPublicProjects(),
+    fetchPublishedSponsoredSupabaseArticles(1),
   ]);
   const marketCards = marketData.assets.slice(0, 4);
   const homepageArticles = publicArticles.slice(0, 4);
+  const homepageSponsoredArticle = sponsoredArticles[0];
   const fallbackImages = getActiveNewsFallbackImages();
   const heroHeadlines = publicArticles.slice(0, 3);
   const heroMarketPulse = ["bitcoin", "ethereum", "solana", "ripple"]
@@ -290,15 +295,39 @@ export default async function Home() {
             fallbackLabel="Sidebar Banner"
             fallbackSize="300 x 250"
           />
-          <section className="sponsored-card">
-            <p className="eyebrow">Sponsored Article</p>
-            <h2>How Infrastructure Teams Are Scaling Onchain Data Products</h2>
-            <p>
-              A partner briefing on analytics, indexing, and the next wave of
-              real-time Web3 application tooling.
-            </p>
-            <Link href="/sponsored">Read Sponsored Brief</Link>
-          </section>
+          {homepageSponsoredArticle ? (
+            <Link
+              className="sponsored-card sponsored-article-card"
+              href={`/news/${homepageSponsoredArticle.slug}`}
+            >
+              <ArticleCover
+                category={homepageSponsoredArticle.category}
+                imageUrl={homepageSponsoredArticle.featuredImage}
+                isImported={homepageSponsoredArticle.isImported}
+                isSponsored={homepageSponsoredArticle.isSponsored}
+                title={homepageSponsoredArticle.title}
+              />
+              <p className="eyebrow">Sponsored Article</p>
+              <h2>{homepageSponsoredArticle.title}</h2>
+              <p>{homepageSponsoredArticle.excerpt}</p>
+              {homepageSponsoredArticle.sponsorName ? (
+                <span className="sponsored-partner">
+                  Sponsored by {homepageSponsoredArticle.sponsorName}
+                </span>
+              ) : null}
+              <span className="sponsored-card-link">Read Sponsored Brief</span>
+            </Link>
+          ) : (
+            <section className="sponsored-card sponsored-empty-card">
+              <p className="eyebrow">Sponsored Article</p>
+              <h2>Sponsored coverage is available on request.</h2>
+              <p>
+                Publish clearly labeled partner content for crypto readers,
+                traders, and Web3 project teams.
+              </p>
+              <Link href="/contact">Request Media Kit</Link>
+            </section>
+          )}
         </aside>
       </section>
 
