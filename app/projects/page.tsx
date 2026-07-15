@@ -40,6 +40,20 @@ const projectCategories = [
 
 export const dynamic = "force-dynamic";
 
+function getProjectInitials(name: string, symbol: string) {
+  return (symbol && symbol !== "N/A" ? symbol : name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 4)
+    .toUpperCase();
+}
+
+function hasRank(rank: number) {
+  return Number.isFinite(rank) && rank > 0 && rank < 999;
+}
+
 export default async function ProjectsPage() {
   const projects = await getPublicProjects();
 
@@ -84,19 +98,26 @@ export default async function ProjectsPage() {
             <div className="directory-card-header">
               <div>
                 <span className="category-badge">{project.category}</span>
+                {project.chain ? (
+                  <span className="category-badge project-chain-badge">
+                    {project.chain}
+                  </span>
+                ) : null}
                 {project.isSponsored ? (
                   <span className="sponsored-label">
                     {project.sponsorLabel || "Sponsored"}
                   </span>
                 ) : null}
               </div>
-              <strong>#{project.rank}</strong>
+              {hasRank(project.rank) ? <strong>#{project.rank}</strong> : null}
             </div>
-            {project.logoUrl ? (
-              <div className="project-logo-row">
+            <div className="project-logo-row">
+              {project.logoUrl ? (
                 <img src={project.logoUrl} alt="" />
-              </div>
-            ) : null}
+              ) : (
+                <span>{getProjectInitials(project.name, project.symbol)}</span>
+              )}
+            </div>
             <h2>
               {project.name} <span>{project.symbol}</span>
             </h2>

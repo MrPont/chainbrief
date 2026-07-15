@@ -18,6 +18,11 @@ type SupabaseProjectRow = {
   website_url: string | null;
   twitter_url: string | null;
   telegram_url: string | null;
+  discord_url: string | null;
+  github_url: string | null;
+  whitepaper_url: string | null;
+  explorer_url: string | null;
+  contract_address: string | null;
   logo_url: string | null;
   rank: number | null;
   score: number | null;
@@ -44,12 +49,18 @@ export type PublicProject = {
   websiteUrl: string;
   twitterUrl: string;
   telegramUrl?: string;
+  discordUrl?: string;
+  githubUrl?: string;
+  whitepaperUrl?: string;
+  explorerUrl?: string;
+  contractAddress?: string;
   logoUrl?: string;
   tags: string[];
   highlights: string[];
   risks: string[];
   isSponsored: boolean;
   sponsorLabel?: string;
+  status?: string;
   keyMetrics?: CryptoProject["keyMetrics"];
 };
 
@@ -65,6 +76,11 @@ const projectColumns = `
   website_url,
   twitter_url,
   telegram_url,
+  discord_url,
+  github_url,
+  whitepaper_url,
+  explorer_url,
+  contract_address,
   logo_url,
   rank,
   score,
@@ -95,6 +111,7 @@ function mapStaticProject(project: CryptoProject): PublicProject {
     risks: project.risks,
     isSponsored: project.isSponsored,
     sponsorLabel: project.sponsorLabel,
+    status: "Published",
     keyMetrics: project.keyMetrics,
   };
 }
@@ -115,16 +132,22 @@ function mapSupabaseProject(project: SupabaseProjectRow): PublicProject {
       "No full project overview has been added yet.",
     rank: project.rank ?? 999,
     score: project.score ?? 0,
-    chain: project.chain?.trim() || "Multi-chain",
+    chain: project.chain?.trim() || "",
     websiteUrl: project.website_url?.trim() || "#",
     twitterUrl: project.twitter_url?.trim() || "#",
     telegramUrl: project.telegram_url?.trim() || undefined,
+    discordUrl: project.discord_url?.trim() || undefined,
+    githubUrl: project.github_url?.trim() || undefined,
+    whitepaperUrl: project.whitepaper_url?.trim() || undefined,
+    explorerUrl: project.explorer_url?.trim() || undefined,
+    contractAddress: project.contract_address?.trim() || undefined,
     logoUrl: project.logo_url?.trim() || undefined,
     tags: project.tags ?? [],
     highlights: project.highlights ?? [],
     risks: project.risks ?? [],
     isSponsored: Boolean(project.is_sponsored),
     sponsorLabel: project.sponsor_label?.trim() || undefined,
+    status: project.status?.trim() || "published",
   };
 }
 

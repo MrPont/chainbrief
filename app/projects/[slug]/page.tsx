@@ -25,6 +25,176 @@ function getProjectUrl(slug: string) {
   return new URL(`/projects/${slug}`, getSiteUrl()).toString();
 }
 
+function hasUsableUrl(url?: string) {
+  return Boolean(url && url !== "#");
+}
+
+function formatStatus(status?: string) {
+  if (!status) {
+    return "Published";
+  }
+
+  return status
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function hasRank(project: PublicProject) {
+  return Number.isFinite(project.rank) && project.rank > 0 && project.rank < 999;
+}
+
+function hasScore(project: PublicProject) {
+  return Number.isFinite(project.score) && project.score > 0;
+}
+
+function shortenAddress(address: string) {
+  if (address.length <= 18) {
+    return address;
+  }
+
+  return `${address.slice(0, 6)}...${address.slice(-5)}`;
+}
+
+function getProjectInitials(project: PublicProject) {
+  const symbol = project.symbol && project.symbol !== "N/A" ? project.symbol : "";
+
+  return (symbol || project.name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 4)
+    .toUpperCase();
+}
+
+function ProjectLogo({ project }: { project: PublicProject }) {
+  if (project.logoUrl) {
+    return (
+      <div className="project-profile-logo">
+        <img src={project.logoUrl} alt={`${project.name} logo`} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="project-profile-logo project-logo-fallback" aria-hidden="true">
+      {getProjectInitials(project)}
+    </div>
+  );
+}
+
+function ProjectLinks({
+  className = "",
+  compact = false,
+  project,
+}: {
+  className?: string;
+  compact?: boolean;
+  project: PublicProject;
+}) {
+  const links = [
+    { label: "Website", url: project.websiteUrl },
+    { label: "Twitter/X", url: project.twitterUrl },
+    { label: "Telegram", url: project.telegramUrl },
+    { label: "Discord", url: project.discordUrl },
+    { label: "GitHub", url: project.githubUrl },
+    { label: "Whitepaper", url: project.whitepaperUrl },
+    { label: "Explorer", url: project.explorerUrl },
+  ].filter((link) => hasUsableUrl(link.url));
+
+  if (links.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`project-link-row ${compact ? "project-link-row-compact" : ""} ${className}`}>
+      {links.map((link) => (
+        <a href={link.url} key={link.label} rel="noreferrer" target="_blank">
+          {link.label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function hasExternalProjectLinks(project: PublicProject) {
+  return [
+    project.websiteUrl,
+    project.twitterUrl,
+    project.telegramUrl,
+    project.discordUrl,
+    project.githubUrl,
+    project.whitepaperUrl,
+    project.explorerUrl,
+  ].some(hasUsableUrl);
+}
+
+function DetailGrid({ project }: { project: PublicProject }) {
+  const details = [
+    { label: "Chain", value: project.chain },
+    { label: "Contract", value: project.contractAddress ? shortenAddress(project.contractAddress) : "" },
+    { label: "Category", value: project.category },
+    { label: "Rank", value: hasRank(project) ? `#${project.rank}` : "" },
+    { label: "Score", value: hasScore(project) ? String(project.score) : "" },
+    { label: "Status", value: formatStatus(project.status) },
+  ].filter((item) => item.value && item.value !== "Multi-chain");
+
+  if (details.length === 0) {
+    return null;
+  }
+
+  return (
+    <section>
+      <h2>Project Details</h2>
+      <div className="project-detail-grid">
+        {details.map((detail) => (
+          <article key={detail.label}>
+            <span>{detail.label}</span>
+            <strong>{detail.value}</strong>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TechnicalInfo({ project }: { project: PublicProject }) {
+  if (!project.chain && !project.explorerUrl && !project.contractAddress) {
+    return null;
+  }
+
+  return (
+    <section className="technical-panel">
+      <h2>Technical Information</h2>
+      <div className="technical-list">
+        {project.chain ? (
+          <div>
+            <span>Chain</span>
+            <strong>{project.chain}</strong>
+          </div>
+        ) : null}
+        {hasUsableUrl(project.explorerUrl) ? (
+          <div>
+            <span>Explorer</span>
+            <a href={project.explorerUrl} rel="noreferrer" target="_blank">
+              Open explorer
+            </a>
+          </div>
+        ) : null}
+        {project.contractAddress ? (
+          <div className="technical-address-row">
+            <span>Contract Address</span>
+            <strong>{shortenAddress(project.contractAddress)}</strong>
+            <code>{project.contractAddress}</code>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 function ProjectLists({ project }: { project: PublicProject }) {
   const hasHighlights = project.highlights.length > 0;
   const hasRisks = project.risks.length > 0;
@@ -47,7 +217,7 @@ function ProjectLists({ project }: { project: PublicProject }) {
       ) : null}
       {hasRisks ? (
         <div>
-          <h2>Risks</h2>
+          <h2>Risk Notes</h2>
           <ul>
             {project.risks.map((risk) => (
               <li key={risk}>{risk}</li>
@@ -73,6 +243,7 @@ export async function generateMetadata({
 
   const canonicalUrl = getProjectUrl(project.slug);
   const title = `${project.name} (${project.symbol}) Project Profile`;
+  const image = project.logoUrl || "/chainbrief-market-intelligence.png";
 
   return {
     title,
@@ -85,7 +256,7 @@ export async function generateMetadata({
       description: project.shortDescription,
       type: "article",
       url: canonicalUrl,
-      images: ["/chainbrief-market-intelligence.png"],
+      images: [image],
     },
   };
 }
@@ -121,9 +292,13 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
       "@type": "Organization",
       name: project.name,
       alternateName: project.symbol,
-      url: project.websiteUrl,
+      url: hasUsableUrl(project.websiteUrl) ? project.websiteUrl : projectUrl,
     },
   };
+  const overview =
+    project.fullDescription?.trim() ||
+    project.shortDescription?.trim() ||
+    "This project profile is being prepared by the ChainBrief research desk.";
 
   return (
     <>
@@ -133,42 +308,38 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
       />
 
       <article className="project-profile-shell">
-        <header className="article-header project-profile-header">
-          <div className="article-kicker-row">
-            <span className="category-badge">{project.category}</span>
-            {project.isSponsored ? (
-              <span className="sponsored-label">
-                {project.sponsorLabel || "Sponsored profile"}
-              </span>
-            ) : null}
+        <header className="article-header project-profile-header rich-project-header">
+          <div className="project-hero-main">
+            <ProjectLogo project={project} />
+            <div>
+              <div className="article-kicker-row">
+                <span className="category-badge">{project.category}</span>
+                {project.symbol && project.symbol !== "N/A" ? (
+                  <span className="category-badge project-symbol-badge">
+                    {project.symbol}
+                  </span>
+                ) : null}
+                {project.chain ? (
+                  <span className="category-badge project-chain-badge">
+                    {project.chain}
+                  </span>
+                ) : null}
+                {project.isSponsored ? (
+                  <span className="sponsored-label">
+                    {project.sponsorLabel || "Sponsored profile"}
+                  </span>
+                ) : null}
+              </div>
+              <h1>
+                {project.name}
+                {project.symbol && project.symbol !== "N/A" ? (
+                  <span>{project.symbol}</span>
+                ) : null}
+              </h1>
+              <p className="article-excerpt">{project.shortDescription}</p>
+            </div>
           </div>
-          <h1>
-            {project.name} <span>{project.symbol}</span>
-          </h1>
-          {project.logoUrl ? (
-            <div className="project-profile-logo">
-              <img src={project.logoUrl} alt="" />
-            </div>
-          ) : null}
-          <p className="article-excerpt">{project.shortDescription}</p>
-          <dl className="article-meta project-profile-meta" aria-label="Project metadata">
-            <div>
-              <dt>Rank</dt>
-              <dd>#{project.rank}</dd>
-            </div>
-            <div>
-              <dt>Score</dt>
-              <dd>{project.score}</dd>
-            </div>
-            <div>
-              <dt>Chain</dt>
-              <dd>{project.chain}</dd>
-            </div>
-            <div>
-              <dt>Category</dt>
-              <dd>{project.category}</dd>
-            </div>
-          </dl>
+          <ProjectLinks compact project={project} />
         </header>
 
         <aside className="promo-slot article-placement" aria-label="Project profile placement">
@@ -178,8 +349,10 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
         <section className="article-content">
           <section>
             <h2>Overview</h2>
-            <p>{project.fullDescription}</p>
+            <p>{overview}</p>
           </section>
+
+          <DetailGrid project={project} />
 
           {project.keyMetrics ? (
             <section>
@@ -205,6 +378,7 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
             </section>
           ) : null}
 
+          <TechnicalInfo project={project} />
           <ProjectLists project={project} />
         </section>
 
@@ -217,14 +391,12 @@ export default async function ProjectProfilePage({ params }: ProjectPageProps) {
             </section>
           ) : null}
 
-          <section className="external-link-panel">
-            <h2>External Links</h2>
-            <div>
-              <a href={project.websiteUrl}>Website</a>
-              <a href={project.twitterUrl}>Twitter/X</a>
-              {project.telegramUrl ? <a href={project.telegramUrl}>Telegram</a> : null}
-            </div>
-          </section>
+          {hasExternalProjectLinks(project) ? (
+            <section className="external-link-panel">
+              <h2>External Links</h2>
+              <ProjectLinks project={project} />
+            </section>
+          ) : null}
 
           {project.isSponsored ? (
             <section className="attribution-block">

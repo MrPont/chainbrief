@@ -29,6 +29,24 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+function getProjectInitials(name: string, symbol: string) {
+  return (symbol && symbol !== "N/A" ? symbol : name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 4)
+    .toUpperCase();
+}
+
+function formatRank(rank: number) {
+  if (!Number.isFinite(rank) || rank <= 0 || rank >= 999) {
+    return "Ranked";
+  }
+
+  return String(rank).padStart(2, "0");
+}
+
 export default async function RankingsPage() {
   const projects = await getRankedPublicProjects();
 
@@ -49,13 +67,20 @@ export default async function RankingsPage() {
       <section className="project-grid wide-grid">
         {projects.map((project) => (
           <Link className="project-card" href={`/projects/${project.slug}`} key={project.slug}>
-            <span className="project-rank">{String(project.rank).padStart(2, "0")}</span>
+            <span className="project-rank">{formatRank(project.rank)}</span>
             {project.logoUrl ? (
               <img className="project-card-logo" src={project.logoUrl} alt="" />
-            ) : null}
+            ) : (
+              <span className="project-card-logo project-card-logo-fallback">
+                {getProjectInitials(project.name, project.symbol)}
+              </span>
+            )}
             <div>
               <h2>{project.name}</h2>
-              <p>{project.category}</p>
+              <p>
+                {project.category}
+                {project.chain ? ` / ${project.chain}` : ""}
+              </p>
             </div>
             <strong>{project.score}</strong>
             <p>{project.shortDescription}</p>
