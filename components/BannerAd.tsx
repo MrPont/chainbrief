@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getBannerPlacementConfig } from "../lib/bannerPlacements";
 import { fetchActiveBannerAd, type BannerPlacement } from "../lib/publicBanners";
 
 type BannerAdProps = {
@@ -23,7 +24,7 @@ const fallbackCopy: Record<
   }
 > = {
   header: {
-    eyebrow: "Header Banner",
+    eyebrow: "Advertisement",
     inventoryLabel: "",
     heading: "",
     text: "",
@@ -31,7 +32,7 @@ const fallbackCopy: Record<
     href: "/contact",
   },
   homepage_top: {
-    eyebrow: "Homepage Top Banner",
+    eyebrow: "Advertisement",
     inventoryLabel: "",
     heading: "",
     text: "",
@@ -39,7 +40,7 @@ const fallbackCopy: Record<
     href: "/contact",
   },
   homepage_mid: {
-    eyebrow: "Homepage Mid Banner",
+    eyebrow: "Featured Project Spotlight",
     inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
     heading: "Project Visibility on ChainBrief",
     text: "Sponsored coverage and project placements for Web3 teams.",
@@ -49,7 +50,27 @@ const fallbackCopy: Record<
     secondaryHref: "/media-kit",
   },
   article_inline: {
-    eyebrow: "Article Inline Banner",
+    eyebrow: "Featured Project Spotlight",
+    inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
+    heading: "Project Visibility on ChainBrief",
+    text: "Sponsored coverage and project placements for Web3 teams.",
+    cta: "Request Placement",
+    href: "/contact",
+    secondaryCta: "Media Kit",
+    secondaryHref: "/media-kit",
+  },
+  article_inline_large: {
+    eyebrow: "Featured Project Spotlight",
+    inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
+    heading: "Project Visibility on ChainBrief",
+    text: "Sponsored coverage and project placements for Web3 teams.",
+    cta: "Request Placement",
+    href: "/contact",
+    secondaryCta: "Media Kit",
+    secondaryHref: "/media-kit",
+  },
+  article_inline_small: {
+    eyebrow: "Featured Project Spotlight",
     inventoryLabel: "FEATURED PROJECT SPOTLIGHT",
     heading: "Project Visibility on ChainBrief",
     text: "Sponsored coverage and project placements for Web3 teams.",
@@ -59,7 +80,7 @@ const fallbackCopy: Record<
     secondaryHref: "/media-kit",
   },
   article_sidebar: {
-    eyebrow: "Article Sidebar Banner",
+    eyebrow: "Partner Placement",
     inventoryLabel: "PARTNER PLACEMENT",
     heading: "Reach Crypto Readers",
     text: "Campaign options and media placements are available on request.",
@@ -69,7 +90,7 @@ const fallbackCopy: Record<
     secondaryHref: "/contact",
   },
   sidebar: {
-    eyebrow: "Sidebar Banner",
+    eyebrow: "Partner Placement",
     inventoryLabel: "PARTNER PLACEMENT",
     heading: "Reach Crypto Readers",
     text: "Campaign options and media placements are available on request.",
@@ -79,7 +100,7 @@ const fallbackCopy: Record<
     secondaryHref: "/contact",
   },
   footer: {
-    eyebrow: "Footer Banner",
+    eyebrow: "Campaign Options",
     inventoryLabel: "CAMPAIGN OPTIONS",
     heading: "Work With ChainBrief",
     text: "Media kit, sponsored articles and campaign options available on request.",
@@ -89,7 +110,7 @@ const fallbackCopy: Record<
     secondaryHref: "/advertise",
   },
   leaderboard: {
-    eyebrow: "Leaderboard Banner",
+    eyebrow: "Advertisement",
     inventoryLabel: "",
     heading: "",
     text: "",
@@ -109,6 +130,8 @@ const placementTone: Record<BannerPlacement, string> = {
   homepage_top: "media-kit",
   homepage_mid: "spotlight",
   article_inline: "spotlight",
+  article_inline_large: "spotlight",
+  article_inline_small: "spotlight",
   article_sidebar: "partner",
   sidebar: "partner",
   footer: "options",
@@ -117,14 +140,13 @@ const placementTone: Record<BannerPlacement, string> = {
 
 export default async function BannerAd({
   placement,
-  fallbackLabel,
-  fallbackSize,
   variant = "banner",
   className = "",
 }: BannerAdProps) {
   const banner = await fetchActiveBannerAd(placement);
 
   if (banner) {
+    const placementConfig = getBannerPlacementConfig(placement);
     const activeClassName = [
       variant === "box" ? "promo-panel" : "promo-slot",
       "media-placement-live",
@@ -134,11 +156,19 @@ export default async function BannerAd({
       .join(" ");
 
     return (
-      <aside className={activeClassName} aria-label={`Sponsored placement: ${banner.title}`}>
-        <a href={banner.targetUrl}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- Ad creatives can come from arbitrary advertiser/CDN domains. */}
-          <img src={banner.imageUrl} alt={banner.title} />
-          <span>{banner.advertiserName}</span>
+      <aside className={activeClassName} aria-label="Sponsored placement">
+        <a href={banner.targetUrl} rel="noopener noreferrer sponsored" target="_blank">
+          <span className="sr-only">Advertisement</span>
+          <span
+            className="media-placement-frame"
+            style={{
+              aspectRatio: placementConfig.aspectRatio,
+              maxWidth: `${placementConfig.maxWidth}px`,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- Public ad creatives can be GIF, SVG, or advertiser-hosted assets. */}
+            <img src={banner.imageUrl} alt={banner.title || "Advertisement"} loading="lazy" />
+          </span>
         </a>
       </aside>
     );
@@ -152,8 +182,6 @@ export default async function BannerAd({
     return (
       <FallbackBanner
         className={className}
-        fallbackLabel={fallbackLabel}
-        fallbackSize={fallbackSize}
         placement={placement}
         variant="box"
       />
@@ -163,8 +191,6 @@ export default async function BannerAd({
   return (
     <FallbackBanner
       className={className}
-      fallbackLabel={fallbackLabel}
-      fallbackSize={fallbackSize}
       placement={placement}
       variant="banner"
     />
@@ -173,22 +199,14 @@ export default async function BannerAd({
 
 function FallbackBanner({
   className,
-  fallbackLabel,
-  fallbackSize,
   placement,
   variant,
 }: {
   className: string;
-  fallbackLabel?: string;
-  fallbackSize?: string;
   placement: BannerPlacement;
   variant: "banner" | "box";
 }) {
   const copy = fallbackCopy[placement];
-  const eyebrow =
-    !fallbackLabel || fallbackLabel === "Available placement"
-      ? copy.eyebrow
-      : fallbackLabel;
   const wrapperClassName = [
     variant === "box" ? "promo-panel" : "promo-slot",
     "campaign-slot",
@@ -201,13 +219,12 @@ function FallbackBanner({
     .join(" ");
 
   return (
-    <section className={wrapperClassName} aria-label={`${eyebrow} sponsored placement`}>
+    <section className={wrapperClassName} aria-label="Sponsored placement">
       <div className="campaign-slot-copy">
-        <span className="campaign-slot-eyebrow">{eyebrow}</span>
+        <span className="campaign-slot-eyebrow">{copy.eyebrow}</span>
         <span className="campaign-slot-label">{copy.inventoryLabel}</span>
         <h2>{copy.heading}</h2>
         <p>{copy.text}</p>
-        {fallbackSize ? <strong className="campaign-slot-size">{fallbackSize}</strong> : null}
       </div>
       <div className="campaign-slot-actions">
         <Link className="campaign-slot-button" href={copy.href}>

@@ -6,6 +6,8 @@ export type BannerPlacement =
   | "homepage_top"
   | "homepage_mid"
   | "article_inline"
+  | "article_inline_large"
+  | "article_inline_small"
   | "article_sidebar"
   | "sidebar"
   | "footer"
