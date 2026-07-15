@@ -3,6 +3,8 @@ type ArticleCoverProps = {
   category: string;
   title: string;
   imageUrl?: string;
+  resolvedImageAlt?: string;
+  resolvedImageUrl?: string;
   isImported?: boolean;
   isSponsored?: boolean;
   variant?: "card" | "hero";
@@ -87,10 +89,20 @@ export default function ArticleCover({
   category,
   title,
   imageUrl,
+  resolvedImageAlt,
+  resolvedImageUrl,
   isImported,
   isSponsored,
   variant = "card",
 }: ArticleCoverProps) {
+  if (resolvedImageUrl) {
+    return (
+      <div className={`article-cover article-cover-${variant} article-cover-uploaded`}>
+        <img src={resolvedImageUrl} alt={resolvedImageAlt || ""} />
+      </div>
+    );
+  }
+
   const canShowImage = imageUrl && (!isImported || isOwnedMediaUrl(imageUrl));
 
   if (canShowImage) {

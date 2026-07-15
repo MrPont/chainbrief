@@ -4,6 +4,8 @@ import ArticleCover from "../components/ArticleCover";
 import BannerAd from "../components/BannerAd";
 import FeaturedProjects from "../components/FeaturedProjects";
 import { getMarketData } from "../lib/marketData";
+import { getActiveNewsFallbackImages } from "../lib/news-fallback-images";
+import { resolveArticleImage } from "../lib/news-image-resolver";
 import { getPublicNewsArticles } from "../lib/publicArticles";
 import { getPublicProjects } from "../lib/publicProjects";
 
@@ -108,6 +110,7 @@ export default async function Home() {
   ]);
   const marketCards = marketData.assets.slice(0, 4);
   const homepageArticles = publicArticles.slice(0, 4);
+  const fallbackImages = getActiveNewsFallbackImages();
   const heroHeadlines = publicArticles.slice(0, 3);
   const heroMarketPulse = ["bitcoin", "ethereum", "solana", "ripple"]
     .map((id) => marketData.assets.find((coin) => coin.id === id))
@@ -236,34 +239,47 @@ export default async function Home() {
             <Link href="/news">View all</Link>
           </div>
           <div className="news-grid">
-            {homepageArticles.map((article) => (
-              <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
-                <ArticleCover
-                  category={article.category}
-                  imageUrl={article.featuredImage}
-                  isImported={article.isImported}
-                  isSponsored={article.isSponsored}
-                  title={article.title}
-                />
-                <div className="card-meta">
-                  <span>{article.category}</span>
-                  <span>{formatArticleDate(article.publishedDate)}</span>
-                </div>
-                <h3>{article.title}</h3>
-                <p>{article.excerpt}</p>
-                <div className="article-card-footer">
-                  <span>{article.author || article.sourceName}</span>
-                  <span>{article.readingTime}</span>
-                </div>
-                {article.isSponsored ? (
-                  <span className="impact-pill">
-                    Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
-                  </span>
-                ) : article.impact ? (
-                  <span className="impact-pill">{article.impact}</span>
-                ) : null}
-              </Link>
-            ))}
+            {homepageArticles.map((article) => {
+              const image = resolveArticleImage({
+                articleId: article.id,
+                slug: article.slug,
+                featuredImageUrl: article.featuredImage,
+                category: article.category,
+                tags: article.tags,
+                fallbackImages,
+              });
+
+              return (
+                <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
+                  <ArticleCover
+                    category={article.category}
+                    imageUrl={article.featuredImage}
+                    isImported={article.isImported}
+                    isSponsored={article.isSponsored}
+                    resolvedImageAlt={image?.altText}
+                    resolvedImageUrl={image?.imageUrl}
+                    title={article.title}
+                  />
+                  <div className="card-meta">
+                    <span>{article.category}</span>
+                    <span>{formatArticleDate(article.publishedDate)}</span>
+                  </div>
+                  <h3>{article.title}</h3>
+                  <p>{article.excerpt}</p>
+                  <div className="article-card-footer">
+                    <span>{article.author || article.sourceName}</span>
+                    <span>{article.readingTime}</span>
+                  </div>
+                  {article.isSponsored ? (
+                    <span className="impact-pill">
+                      Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
+                    </span>
+                  ) : article.impact ? (
+                    <span className="impact-pill">{article.impact}</span>
+                  ) : null}
+                </Link>
+              );
+            })}
           </div>
         </div>
 

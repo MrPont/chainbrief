@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ArticleCover from "../../../components/ArticleCover";
 import BannerAd from "../../../components/BannerAd";
+import { getActiveNewsFallbackImages } from "../../../lib/news-fallback-images";
+import { resolveArticleImage } from "../../../lib/news-image-resolver";
 import {
   getPublicArticleBySlug,
   getRelatedPublicArticles,
@@ -107,6 +109,14 @@ export async function generateMetadata({
   const canonicalUrl = getArticleUrl(article.slug);
   const title = article.seoTitle || article.title;
   const description = article.seoDescription || article.excerpt;
+  const image = resolveArticleImage({
+    articleId: article.id,
+    slug: article.slug,
+    featuredImageUrl: article.featuredImage,
+    category: article.category,
+    tags: article.tags,
+    fallbackImages: getActiveNewsFallbackImages(),
+  });
 
   return {
     title,
@@ -122,7 +132,7 @@ export async function generateMetadata({
       publishedTime: article.publishedDate || undefined,
       authors: [article.author],
       tags: article.tags,
-      images: [article.featuredImage || "/chainbrief-market-intelligence.png"],
+      images: [image?.imageUrl || "/chainbrief-market-intelligence.png"],
     },
   };
 }
@@ -136,6 +146,15 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
   }
 
   const relatedArticles = await getRelatedPublicArticles(article);
+  const fallbackImages = getActiveNewsFallbackImages();
+  const articleImage = resolveArticleImage({
+    articleId: article.id,
+    slug: article.slug,
+    featuredImageUrl: article.featuredImage,
+    category: article.category,
+    tags: article.tags,
+    fallbackImages,
+  });
   const articleUrl = getArticleUrl(article.slug);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -200,6 +219,8 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
               imageUrl={article.featuredImage}
               isImported={article.isImported}
               isSponsored={article.isSponsored}
+              resolvedImageAlt={articleImage?.altText}
+              resolvedImageUrl={articleImage?.imageUrl}
               title={article.title}
               variant="hero"
             />
@@ -255,32 +276,45 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             <Link href="/news">All news</Link>
           </div>
           <div className="news-grid">
-            {relatedArticles.map((relatedArticle) => (
-              <Link
-                className="news-card"
-                href={`/news/${relatedArticle.slug}`}
-                key={relatedArticle.slug}
-              >
-                <ArticleCover
-                  category={relatedArticle.category}
-                  imageUrl={relatedArticle.featuredImage}
-                  isImported={relatedArticle.isImported}
-                  isSponsored={relatedArticle.isSponsored}
-                  title={relatedArticle.title}
-                />
-                <div className="card-meta">
-                  <span>{relatedArticle.category}</span>
-                  <span>{relatedArticle.readingTime}</span>
-                </div>
-                <h3>{relatedArticle.title}</h3>
-                <p>{relatedArticle.excerpt}</p>
-                {relatedArticle.isSponsored ? (
-                  <span className="impact-pill">Sponsored</span>
-                ) : relatedArticle.impact ? (
-                  <span className="impact-pill">{relatedArticle.impact}</span>
-                ) : null}
-              </Link>
-            ))}
+            {relatedArticles.map((relatedArticle) => {
+              const image = resolveArticleImage({
+                articleId: relatedArticle.id,
+                slug: relatedArticle.slug,
+                featuredImageUrl: relatedArticle.featuredImage,
+                category: relatedArticle.category,
+                tags: relatedArticle.tags,
+                fallbackImages,
+              });
+
+              return (
+                <Link
+                  className="news-card"
+                  href={`/news/${relatedArticle.slug}`}
+                  key={relatedArticle.slug}
+                >
+                  <ArticleCover
+                    category={relatedArticle.category}
+                    imageUrl={relatedArticle.featuredImage}
+                    isImported={relatedArticle.isImported}
+                    isSponsored={relatedArticle.isSponsored}
+                    resolvedImageAlt={image?.altText}
+                    resolvedImageUrl={image?.imageUrl}
+                    title={relatedArticle.title}
+                  />
+                  <div className="card-meta">
+                    <span>{relatedArticle.category}</span>
+                    <span>{relatedArticle.readingTime}</span>
+                  </div>
+                  <h3>{relatedArticle.title}</h3>
+                  <p>{relatedArticle.excerpt}</p>
+                  {relatedArticle.isSponsored ? (
+                    <span className="impact-pill">Sponsored</span>
+                  ) : relatedArticle.impact ? (
+                    <span className="impact-pill">{relatedArticle.impact}</span>
+                  ) : null}
+                </Link>
+              );
+            })}
           </div>
         </section>
       ) : null}

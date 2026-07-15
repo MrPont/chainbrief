@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import ArticleCover from "../../components/ArticleCover";
 import BannerAd from "../../components/BannerAd";
 import PageHero from "../../components/PageHero";
+import { getActiveNewsFallbackImages } from "../../lib/news-fallback-images";
+import { resolveArticleImage } from "../../lib/news-image-resolver";
 import { getPublicNewsArticles } from "../../lib/publicArticles";
 
 export const metadata: Metadata = {
@@ -51,6 +53,7 @@ function formatArticleDate(date: string) {
 
 export default async function NewsPage() {
   const articles = await getPublicNewsArticles();
+  const fallbackImages = getActiveNewsFallbackImages();
 
   return (
     <>
@@ -78,34 +81,47 @@ export default async function NewsPage() {
       </section>
 
       <section className="news-grid">
-        {articles.map((article) => (
-          <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
-            <ArticleCover
-              category={article.category}
-              imageUrl={article.featuredImage}
-              isImported={article.isImported}
-              isSponsored={article.isSponsored}
-              title={article.title}
-            />
-            <div className="card-meta">
-              <span>{article.category}</span>
-              <span>{formatArticleDate(article.publishedDate)}</span>
-            </div>
-            <h2>{article.title}</h2>
-            <p>{article.excerpt}</p>
-            <div className="article-card-footer">
-              <span>{article.author || article.sourceName}</span>
-              <span>{article.readingTime}</span>
-            </div>
-            {article.isSponsored ? (
-              <span className="impact-pill">
-                Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
-              </span>
-            ) : article.impact ? (
-              <span className="impact-pill">{article.impact}</span>
-            ) : null}
-          </Link>
-        ))}
+        {articles.map((article) => {
+          const image = resolveArticleImage({
+            articleId: article.id,
+            slug: article.slug,
+            featuredImageUrl: article.featuredImage,
+            category: article.category,
+            tags: article.tags,
+            fallbackImages,
+          });
+
+          return (
+            <Link className="news-card" href={`/news/${article.slug}`} key={article.slug}>
+              <ArticleCover
+                category={article.category}
+                imageUrl={article.featuredImage}
+                isImported={article.isImported}
+                isSponsored={article.isSponsored}
+                resolvedImageAlt={image?.altText}
+                resolvedImageUrl={image?.imageUrl}
+                title={article.title}
+              />
+              <div className="card-meta">
+                <span>{article.category}</span>
+                <span>{formatArticleDate(article.publishedDate)}</span>
+              </div>
+              <h2>{article.title}</h2>
+              <p>{article.excerpt}</p>
+              <div className="article-card-footer">
+                <span>{article.author || article.sourceName}</span>
+                <span>{article.readingTime}</span>
+              </div>
+              {article.isSponsored ? (
+                <span className="impact-pill">
+                  Sponsored{article.sponsorName ? ` by ${article.sponsorName}` : ""}
+                </span>
+              ) : article.impact ? (
+                <span className="impact-pill">{article.impact}</span>
+              ) : null}
+            </Link>
+          );
+        })}
       </section>
     </>
   );
