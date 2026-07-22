@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import MarketTicker from "./MarketTicker";
+import { getMarketTickerAssets } from "../lib/marketTicker";
 
 const navigationLinks = [
   { label: "News", href: "/news" },
@@ -10,20 +12,25 @@ const navigationLinks = [
   { label: "Advertise", href: "/advertise" },
 ];
 
-export default function Header() {
-  return (
-    <header className="site-header">
-      <Link className="logo" href="/" aria-label="ChainBrief home">
-        <Logo />
-      </Link>
+export default async function Header() {
+  const tickerData = await getMarketTickerAssets();
 
-      <nav className="main-nav" aria-label="Primary navigation">
-        {navigationLinks.map((link) => (
-          <Link href={link.href} key={link.href}>
-            {link.label}
-          </Link>
-        ))}
-      </nav>
-    </header>
+  return (
+    <>
+      <header className="site-header">
+        <Link className="logo" href="/" aria-label="ChainBrief home">
+          <Logo />
+        </Link>
+
+        <nav className="main-nav" aria-label="Primary navigation">
+          {navigationLinks.map((link) => (
+            <Link href={link.href} key={link.href}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </header>
+      <MarketTicker assets={tickerData.assets} isLive={tickerData.isLive} />
+    </>
   );
 }

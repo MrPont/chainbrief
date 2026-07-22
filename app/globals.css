@@ -184,6 +184,112 @@ a {
   text-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
 }
 
+.market-ticker {
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.09), transparent 28%),
+    linear-gradient(270deg, rgba(167, 139, 250, 0.08), transparent 28%),
+    rgba(5, 7, 11, 0.78);
+  box-shadow:
+    0 14px 48px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  margin-top: 10px;
+  overflow: hidden;
+  position: relative;
+  z-index: 12;
+}
+
+.market-ticker::before,
+.market-ticker::after {
+  content: "";
+  inset: 0 auto 0 0;
+  pointer-events: none;
+  position: absolute;
+  width: 72px;
+  z-index: 2;
+}
+
+.market-ticker::before {
+  background: linear-gradient(90deg, rgba(5, 7, 11, 0.96), transparent);
+}
+
+.market-ticker::after {
+  background: linear-gradient(270deg, rgba(5, 7, 11, 0.96), transparent);
+  inset: 0 0 0 auto;
+}
+
+.market-ticker-track {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: max-content;
+  padding: 7px 0;
+  width: max-content;
+  animation: market-ticker-scroll 34s linear infinite;
+}
+
+.market-ticker:hover .market-ticker-track {
+  animation-play-state: paused;
+}
+
+.market-ticker-item {
+  align-items: center;
+  border-right: 1px solid rgba(148, 163, 184, 0.14);
+  color: var(--muted);
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  min-height: 24px;
+  padding: 0 15px;
+  white-space: nowrap;
+}
+
+.market-ticker-item strong {
+  color: var(--text);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.market-ticker-item span,
+.market-ticker-item em {
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 750;
+}
+
+.market-ticker-item .is-up {
+  color: var(--green);
+}
+
+.market-ticker-item .is-down {
+  color: var(--red);
+}
+
+.market-ticker-item .is-neutral {
+  color: var(--muted);
+}
+
+@keyframes market-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .market-ticker {
+    overflow-x: auto;
+  }
+
+  .market-ticker-track {
+    animation: none;
+  }
+}
+
 .promo-slot {
   align-items: center;
   border: 1px solid rgba(56, 189, 248, 0.22);
@@ -3895,6 +4001,25 @@ tbody tr:hover {
   .main-nav,
   .site-footer nav {
     gap: 12px 16px;
+  }
+
+  .market-ticker {
+    margin-top: 8px;
+  }
+
+  .market-ticker::before,
+  .market-ticker::after {
+    width: 32px;
+  }
+
+  .market-ticker-track {
+    animation-duration: 26s;
+    padding: 6px 0;
+  }
+
+  .market-ticker-item {
+    gap: 7px;
+    padding: 0 12px;
   }
 
   .hero-content {

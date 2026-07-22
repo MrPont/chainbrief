@@ -10,6 +10,7 @@ const MARKET_IDS = [
   "ripple",
   "cardano",
   "dogecoin",
+  "usd-coin",
   "chainlink",
   "arbitrum",
   "avalanche-2",
@@ -74,6 +75,8 @@ const fallbackExtras = [
     accent: "red" as const,
   },
 ];
+
+let hasLoggedMarketDataFailure = false;
 
 function formatCurrency(value: number | null) {
   if (value === null || Number.isNaN(value)) {
@@ -147,6 +150,25 @@ function formatLastUpdated(value: string | null) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function logMarketDataFailure(message: string, error?: unknown) {
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return;
+  }
+
+  if (hasLoggedMarketDataFailure) {
+    return;
+  }
+
+  hasLoggedMarketDataFailure = true;
+
+  if (error) {
+    console.warn(message, error);
+    return;
+  }
+
+  console.warn(message);
 }
 
 function normalizeAccent(value: string): MarketAsset["accent"] {
@@ -239,7 +261,7 @@ export async function getMarketData(): Promise<MarketDataResult> {
     });
 
     if (!response.ok) {
-      console.error(`CoinGecko market request failed: ${response.status}`);
+      logMarketDataFailure(`CoinGecko market request failed: ${response.status}`);
       return {
         assets: getSampleMarketAssets(),
         isLive: false,
@@ -263,7 +285,7 @@ export async function getMarketData(): Promise<MarketDataResult> {
       source: "coingecko",
     };
   } catch (error) {
-    console.error("CoinGecko market request failed:", error);
+    logMarketDataFailure("CoinGecko market request failed:", error);
     return {
       assets: getSampleMarketAssets(),
       isLive: false,
